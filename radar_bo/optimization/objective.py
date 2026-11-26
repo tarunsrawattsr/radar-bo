@@ -37,6 +37,7 @@ M4 interface specification (instructions 12 and 14):
 from __future__ import annotations
 
 import time
+import traceback
 import uuid
 from typing import Literal, Protocol, runtime_checkable
 
@@ -53,6 +54,19 @@ from radar_bo.radar.tracking_cost import position_tracking_cost
 from radar_bo.simulation.simulation_state import FrozenSimulationState
 
 RandomnessPolicy = Literal["common_random_numbers", "independent_realizations", "deterministic"]
+
+#: Exception types treated as EXPECTED evaluation failures (domain/usage errors
+#: that a component may legitimately raise for invalid inputs). They become
+#: explicit ``failed`` evaluation records. Anything else is an UNEXPECTED
+#: programming error; see ``ObjectiveEvaluator.strict_unexpected_errors``.
+DEFAULT_HANDLED_EXCEPTIONS: tuple[type[BaseException], ...] = (
+    ValueError,
+    TypeError,
+    ArithmeticError,
+    KeyError,
+    AttributeError,
+    RuntimeError,
+)
 
 
 @runtime_checkable
@@ -203,6 +217,8 @@ class ObjectiveEvaluator:
         scanning_model: ScanningPerformanceModel,
         resource_config: ResourceConfig,
         randomness_policy: RandomnessPolicy = "common_random_numbers",
+        handled_exception_types: tuple[type[BaseException], ...] = DEFAULT_HANDLED_EXCEPTIONS,
+        strict_unexpected_errors: bool = False,
     ) -> None:
         self.constraint_manager = constraint_manager
         self.accountant = accountant
@@ -210,6 +226,14 @@ class ObjectiveEvaluator:
         self.scanning_model = scanning_model
         self.resource_config = resource_config
         self.randomness_policy = randomness_policy
+        # M4 review 3.2: expected evaluation failures become explicit FAILED
+        # records (with full tracebacks preserved in the error field);
+        # unexpected exception types are programming errors. With
+        # ``strict_unexpected_errors=True`` (development/testing) they are
+        # RE-RAISED so they are exposed instead of silently converted into
+        # ordinary failed observations.
+        self.handled_exception_types = handled_exception_types
+        self.strict_unexpected_errors = strict_unexpected_errors
 
     # ---- Weights (proposed uniform default when unconfigured) --------------------
     def _task_weights(self, num_tasks: int) -> np.ndarray:
@@ -254,8 +278,19 @@ class ObjectiveEvaluator:
         feasibility = self.constraint_manager.check_allocation(allocation)
         try:
             usage = self.accountant.account(allocation)
-        except (ValueError, TypeError) as exc:
-            return self._failed(snapshot, allocation, feasibility, started, f"Resource accounting failed: {exc}")
+        except self.handled_exception_types as exc:
+            return self._failed(
+                snapshot, allocation, feasibility, started,
+                f"Resource accounting failed: {exc}\n{traceback.format_exc()}",
+            )
+        except Exception as exc:  # unexpected: strict mode re-raises (M4 review 3.2)
+            if self.strict_unexpected_errors:
+                raise
+            return self._failed(
+                snapshot, allocation, feasibility, started,
+                f"UNEXPECTED exception type {type(exc).__name__} in resource accounting: {exc}\n"
+                f"{traceback.format_exc()}",
+            )
 
         if not feasibility.is_feasible:
             return EvaluationResult(
@@ -286,8 +321,21 @@ class ObjectiveEvaluator:
             utility = -aggregate + beta * scanning.gamma
             if not np.isfinite(utility) or not np.isfinite(aggregate) or not np.isfinite(scanning.gamma):
                 raise ValueError("Non-finite utility components; evaluation rejected rather than returned.")
-        except Exception as exc:  # any component failure must yield an explicit FAILED record
-            return self._failed(snapshot, allocation, feasibility, started, f"Component evaluation failed: {exc}")
+        except self.handled_exception_types as exc:
+            # Expected evaluation failure: explicit FAILED record; the full
+            # traceback is preserved inside the error field for diagnosis.
+            return self._failed(
+                snapshot, allocation, feasibility, started,
+                f"Component evaluation failed: {exc}\n{traceback.format_exc()}",
+            )
+        except Exception as exc:  # unexpected: strict mode re-raises (M4 review 3.2)
+            if self.strict_unexpected_errors:
+                raise
+            return self._failed(
+                snapshot, allocation, feasibility, started,
+                f"UNEXPECTED exception type {type(exc).__name__} in component evaluation: {exc}\n"
+                f"{traceback.format_exc()}",
+            )
 
         integrity_ok = snapshot.verify_integrity()
         if not integrity_ok:

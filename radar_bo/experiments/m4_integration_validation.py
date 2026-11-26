@@ -38,6 +38,7 @@ Run::
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -164,25 +165,36 @@ def run(output_dir: str | Path = "results/m4_integration_validation") -> dict:
     )
 
     # ---- Hand-verifiable numerical examples --------------------------------------
-    # mixed_budget: tau = (0.3, 0.6, 0.8), sum = 1.7 s. Expected values follow
-    # the paper formulas INDEPENDENTLY: Eq. (24) remaining time is
-    # T0 * max(0, 1 - sum(tau)/T0) (this exact expression, not T0 - sum),
-    # gamma = k * tau_s / S0 (Eq. (21) via the synthetic model constants),
-    # utility = -sum(costs) + beta * gamma (Eq. (23)).
+    # M4 review 3.3: expected values are derived INDEPENDENTLY from the paper
+    # formulas and analytic arithmetic (mixed_budget: sum(tau) = 1.7 s,
+    # remaining = 2.5 * (1 - 1.7/2.5) = 0.8 s, gamma = 2000*0.8/4000 = 0.4,
+    # utility = -sum(costs) + 1e6 * 0.4 = 399889.0) and compared with justified
+    # relative tolerances (1e-9) — the implementation's internal float
+    # operation order is NOT reproduced here. Exact bitwise reproducibility of
+    # repeated identical runs is verified separately in the test suite.
     diag_costs = [float(snapshot.posterior_covariance(k)[0, 0] + snapshot.posterior_covariance(k)[1, 1]) for k in range(N_TASKS)]
     beta = resource_profile.tracking_scanning_tradeoff
     mixed = results["mixed_budget"]
-    mixed_remaining_expected = T0 * max(0.0, 1.0 - (0.3 + 0.6 + 0.8) / T0)  # paper Eq. (24)
-    mixed_gamma_expected = 2000.0 * mixed_remaining_expected / 4000.0  # synthetic response + Eq. (21)
-    mixed_utility_expected = -sum(diag_costs) + beta * mixed_gamma_expected  # Eq. (23)
+    mixed_remaining_expected = 2.5 * (1.0 - 1.7 / 2.5)  # independent analytic value: 0.8
+    mixed_gamma_expected = 2000.0 * 0.8 / 4000.0        # independent analytic value: 0.4
+    mixed_utility_expected = -sum(diag_costs) + 1.0e6 * 0.4  # independent analytic value
+
+    def close(a: float | None, b: float, rel: float = 1e-9) -> bool:
+        return a is not None and math.isclose(float(a), b, rel_tol=rel, abs_tol=1e-12)
+
     hand_checks = {
+        "comparison_policy": "independent analytic derivation + isclose(rel_tol=1e-9); float operation order NOT mirrored",
         "mixed_budget": {
             "expected_remaining_time_s": mixed_remaining_expected,
             "expected_gamma": mixed_gamma_expected,
             "expected_utility": mixed_utility_expected,
             "reported_utility": mixed.utility,
             "reported_gamma": mixed.scanning_gamma,
-            "matches": bool(mixed.scanning_gamma == mixed_gamma_expected and mixed.utility == mixed_utility_expected),
+            "matches": bool(
+                close(mixed.resource_usage.remaining_scanning_time_s_paper_eq24, mixed_remaining_expected)
+                and close(mixed.scanning_gamma, mixed_gamma_expected)
+                and close(mixed.utility, mixed_utility_expected)
+            ),
         },
         "exact_budget": {
             "expected_remaining_time_s": 0.0,
@@ -190,8 +202,9 @@ def run(output_dir: str | Path = "results/m4_integration_validation") -> dict:
             "expected_utility": -sum(diag_costs),
             "reported_utility": results["exact_budget"].utility,
             "matches": bool(
-                results["exact_budget"].scanning_gamma == 0.0
-                and results["exact_budget"].utility == -sum(diag_costs)
+                close(results["exact_budget"].resource_usage.remaining_scanning_time_s_paper_eq24, 0.0, rel=0.0)
+                and close(results["exact_budget"].scanning_gamma, 0.0, rel=0.0)
+                and close(results["exact_budget"].utility, -sum(diag_costs))
             ),
         },
     }
@@ -250,11 +263,6 @@ def run(output_dir: str | Path = "results/m4_integration_validation") -> dict:
         encoding="utf-8",
     )
     return metrics
-
-
-def pytest_approx(value: float, rel: float = 1e-9) -> float:
-    """Tolerance helper mirroring pytest.approx semantics for the JSON report."""
-    return value  # comparisons below use exact arithmetic on these hand-built numbers
 
 
 def main(argv: list[str]) -> int:

@@ -48,11 +48,12 @@ class OptimizationConfig(StrictModel):
         default="log_expected_improvement",
         description=(
             "LogExpectedImprovement for the low-noise synthetic baseline; "
-            "qLogNoisyExpectedImprovement only when a noisy objective is justified."
+            "qLogNoisyExpectedImprovement only when a noisy objective is justified. "
+            "M5: the installed LogExpectedImprovement accepts NO exploration-offset "
+            "parameter, so Benzaghta's xi = 0.01 is preserved only in the provenance "
+            "register (conventional LogEI without an offset is a methodological "
+            "adaptation); no no-effect configuration parameter is retained."
         ),
-    )
-    acquisition_xi: float = Field(
-        default=0.01, ge=0.0, description="EI exploration parameter xi = 0.01 (Benzaghta et al.)."
     )
     search_mode: SearchMode = Field(
         default="joint",
@@ -85,6 +86,17 @@ class OptimizationConfig(StrictModel):
     )
     evaluation_budget: int | None = Field(
         default=None, ge=1, description="Total number of objective evaluations per optimization run; no paper default. Must be set before an experiment runs."
+    )
+    max_iterations: int | None = Field(
+        default=None, ge=1, description="Optional maximum number of BO iterations (experimental; distinct from the evaluation budget)."
+    )
+    refit_per_observation: bool = Field(
+        default=True,
+        description=(
+            "M5 initial GP-fitting policy (experimental): a fresh refit after each successful "
+            "new observation. Warm-starting or incremental updates would be a different, "
+            "explicitly identified and tested strategy."
+        ),
     )
     patience: int | None = Field(
         default=None, ge=1, description="Optional early-stop patience in iterations without improvement (experimental)."

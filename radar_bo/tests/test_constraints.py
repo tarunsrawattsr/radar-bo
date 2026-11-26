@@ -158,7 +158,8 @@ class TestBudgetSemantics:
         assert len(terms) == 1
         assert terms[0].severity == "note"
         assert terms[0].category == "valid"
-        assert "not" in terms[0].detail and "equivalent" in terms[0].detail
+        lowered = terms[0].detail.lower()
+        assert "not" in lowered and "equivalent" in lowered
 
     def test_within_budget_under_paper_semantics_also_recorded(self):
         report = manager("discounted_cumulative").check_allocation(alloc((0, 1, 2)))
@@ -190,3 +191,26 @@ class TestReportStructure:
         before = allocation.to_flat_vector().copy()
         manager().check_allocation(allocation)
         np.testing.assert_array_equal(allocation.to_flat_vector(), before)
+
+
+class TestPolicyLevelFeasibility:
+    """M4 review 3.1: local (per-action) feasibility distinguished from
+    policy-level feasibility of the paper's cumulative discounted budget."""
+
+    def test_hard_semantics_determines_feasibility_locally(self):
+        report = manager("hard_per_slot").check_allocation(alloc((9, 9, 9)))
+        assert report.policy_level_feasibility == "determined_locally"
+        assert not report.is_feasible
+
+    def test_paper_semantics_requires_horizon_for_policy_level(self):
+        report = manager("discounted_cumulative").check_allocation(alloc((9, 9, 9)))
+        # Locally over-budget, but NOT proof of discounted-budget infeasibility:
+        assert report.is_feasible
+        assert report.policy_level_feasibility == "not_assessed_horizon_required"
+        detail = next(v for v in report.violations if v.constraint == "discounted_cumulative_slot_term")
+        assert "does NOT establish policy-level" in detail.detail
+
+    def test_within_budget_action_does_not_prove_discounted_feasibility(self):
+        report = manager("discounted_cumulative").check_allocation(alloc((0, 1, 2)))
+        assert report.is_feasible
+        assert report.policy_level_feasibility == "not_assessed_horizon_required"

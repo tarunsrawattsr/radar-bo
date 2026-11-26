@@ -257,9 +257,9 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 - [x] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters. *(2026-11-26: 39-entry provenance register, 16 unresolved preserved as None; see section 16.)*
 - [x] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations. *(2026-11-26: Eqs. (1)-(15) implemented, synthetic validation in `results/m3_synthetic_validation/`; see section 16.)*
 - [x] M4: Implement metric interfaces, generic allocations, feasibility and frozen-state evaluation. *(2026-11-26: scanning abstraction, allocation/constraints/accounting/objective evaluator, frozen snapshots, non-mutating candidate evaluation; 323 tests passing; see section 16.)*
-- [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
-- [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
-- [ ] M6: Implement dataset, GP, acquisition, candidate selection and stopping criteria using BoTorch.
+- [x] M5: Build independently verifiable synthetic constrained objective and direct benchmark. *(2026-11-26: three synthetic benchmarks A/B/C with independently derived references — A analytic exact f\*=10.0, B enumeration exact f\*=11.0 with the analytic clamped inner optimum, C numerical approximate computed by an independent solver — plus independent reference solvers and a random-search comparator; see section 16.)*
+- [x] M5 (duplicate line in this specification): same scope; the duplicate is marked once with the line above.
+- [x] M6: Implement dataset, GP, acquisition, candidate selection and stopping criteria using BoTorch. *(2026-11-26: delivered INSIDE M5 as application-independent infrastructure per the working instructions — observation dataset, NumPy↔torch conversions, float64-CPU SingleTaskGP with explicit Matérn-5/2 + Normalize/Standardize, conventional LogExpectedImprovement (installed API verified: no xi), 500-candidate feasible pools, generic 15-step single-candidate loop with budget accounting and 7 stopping conditions; the README-M7 multi-mode scope (alternating/coordinate) remains NOT implemented.)*
 - [ ] M7: Validate joint, alternating and coordinate-wise BO on synthetic objectives using equal budgets.
 - [ ] M8: Implement reproducible experiment runner, logs, statistics and figures.
 - [ ] M9: Document unresolved application-specific physical assumptions and scope of subsequent research; do not represent unfinished extensions as operational.
@@ -287,15 +287,16 @@ A reproducible research repository exists with validated configuration models, a
 
 This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
 
-### Status: M1–M4 complete — M5+ not started
+### Status: M1–M5 complete — M6+ milestones beyond M5's delivered scope not started
 
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (48 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (62 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
 | M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
-| M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py`; 323 tests passing |
-| M5–M9 | Not started | No BO models, acquisition, benchmarks, or experiment-runner code exists yet |
+| M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py` |
+| M5 generic BO engine (incl. README-M6 components) | Done | `radar_bo/optimization/bo/` (problem interface, benchmarks A/B/C, reference solvers, random search, dataset, conversions, GP surrogate, LogEI acquisition, candidate pools, results records, 15-step loop), `radar_bo/experiments/m5_synthetic_bo_validation.py`, `results/m5_synthetic_bo_validation/` (seeds 0-9); 469 tests passing |
+| M7 joint/alternating/coordinate multi-mode validation, M8 experiment runner/figures, M9 final documentation | Not started | M5 implements the single-candidate JOINT mode only; alternating/coordinate search modes are not implemented |
 
 ### Installation
 
@@ -310,7 +311,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 323 passed (~0.7 s): M1/M2 config + M3 estimation + M4 interfaces
+.venv/bin/python -m pytest        # 469 passed (~4.5 min): M1-M5 config + estimation + interfaces + generic BO engine
 ```
 
 ### Experiment execution
@@ -324,6 +325,11 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 # both budget semantics, Eq. (23) aggregation with hand-checked examples, non-mutation
 # guarantees, order invariance; artifacts under results/m4_integration_validation/
 .venv/bin/python -m radar_bo.experiments.m4_integration_validation
+
+# M5 generic synthetic BO validation (benchmarks A/B/C x seeds 0-9, BO vs random
+# search, budget 100, initial design 30; ~1 h wall-clock); artifacts under
+# results/m5_synthetic_bo_validation/
+.venv/bin/python -m radar_bo.experiments.m5_synthetic_bo_validation
 
 # Regenerate the authoritative provenance register snapshot
 .venv/bin/python -m radar_bo.config.provenance provenance_register.json
@@ -344,16 +350,21 @@ radar_bo/                  package root (editable install; suggested top-level d
 │                          (Eqs. (14)-(15)), scanning-performance abstraction (Eq. (21)) (M3+M4)
 ├── optimization/          ResourceAllocation, ConstraintManager, ResourceAccounting,
 │                          Eq. (23) objective evaluator, tracking-cost providers  (M4)
+│   └── bo/                GENERIC BO engine, radar-free (M5): problem interface,
+│                          benchmarks A/B/C, reference solvers, random search, dataset,
+│                          conversions, GP surrogate, LogEI acquisition, candidate
+│                          pools, result records, 15-step loop
 ├── simulation/            authoritative SimulationState + frozen estimator-facing snapshots (M4)
-├── experiments/           m3_synthetic_validation.py, m4_integration_validation.py
+├── experiments/           m3_synthetic_validation.py, m4_integration_validation.py,
+│                          m5_synthetic_bo_validation.py
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 323 tests incl. layer-separation and ground-truth-leakage guards
+└── tests/                 469 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored, regenerable)
 ```
 
-Planned but not yet created: `benchmarks/`, `analysis/`, `main.py` and the BO modules inside `optimization/` (dataset, surrogate, acquisition, search modes).
+Planned but not yet created: `analysis/`, `main.py` and the multi-mode search (alternating/coordinate) on top of the generic engine.
 
 ### M3+M4 component-to-equation mapping (Lu et al., ICC 2024)
 
@@ -370,6 +381,24 @@ Planned but not yet created: `benchmarks/`, `analysis/`, `main.py` and the BO mo
 | `optimization/resource_accounting.py` | Eq. (24) | tau_s = T0*max(0, 1 - sum(tau)/T0) paper convention verbatim; raw deficit recorded separately so clipping never hides an exceedance; peak/average/duty-cycle power conventions separated |
 | `optimization/objective.py` | Eq. (23) | U = -sum_n w_n c_n + beta*Gamma over explicit provider/model interfaces; beta = 1e6 paper value; uniform w_n is the documented proposed default; no GP/acquisition/BO code |
 
+### M5 generic-BO-engine decision mapping (sources separated)
+
+| Decision | Classification | Notes |
+|---|---|---|
+| GP surrogate: `SingleTaskGP` + Matérn-5/2 | **Benzaghta methodology** (methodological adaptation) | Paper: Matérn-5/2 GP. The EXPLICIT kernel configuration is a **library necessity**: the installed BoTorch 0.18.1 `SingleTaskGP` default is `RBFKernel` — verified at runtime and by a dedicated test; the kernel is never assumed |
+| Acquisition: conventional `LogExpectedImprovement` WITHOUT xi | **Conventional BO + library decision** | Benzaghta reports EI with xi = 0.01; the INSTALLED `LogExpectedImprovement` accepts NO xi parameter (verified via `inspect.signature` + runtime guard + test). Conventional log-EI without an offset is the documented methodological adaptation; the paper value survives only in the provenance register (`optimization.acquisition_xi`) — no no-effect config field is retained |
+| Input `Normalize(d)` / outcome `Standardize(1)` as BoTorch transforms | **Library decision** | ONE normalization mechanism (BoTorch `Normalize`); no manual pre-normalization; constraint checks and selection stay in ORIGINAL coordinates; `Standardize` is the outcome transform only (dataset keeps original units); posterior and `best_f` share the original-unit coordinate system |
+| Observation noise INFERRED by the likelihood | **Library behavior, documented** | Deterministic benchmarks declare no noise, but the fitted likelihood noise is in general NOT numerically zero; latent predictive variance is kept distinct from observation-noise variance |
+| Initial design: seeded uniform feasible random sampling, size 30 | **Proposed/experimental** | Not paper-derived; deliberately NOT Latin hypercube/Sobol; distinct from the acquisition search |
+| Candidate pool 500 per iteration | **Benzaghta setting** (`Nc = 500`) | Pool scoring consumes ZERO objective evaluations; feasibility enforced by rejection (never repaired); duplicates rejected and counted |
+| Evaluation budget (100 provisional in the M5 experiment) | **Synthetic/experimental** | No paper default exists; `evaluation_budget` stays UNRESOLVED in the register and is set per experiment (`ensure_ready` fails otherwise); initial evaluations, BO evaluations AND failed attempts all consume it |
+| Refit per observation (fresh `fit_gpytorch_mll`, no warm-start) | **Proposed/experimental** | M5 initial policy; diagnostics recorded per fit (size, duration, status, warnings, noise, lengthscales) |
+| Improvement tolerance / patience / max-iterations / runtime budget | **Proposed/experimental** | Stopping reason always recorded exactly; termination is NEVER described as proof of global convergence |
+| Incumbent = best OBSERVED feasible configuration | **Proposed design rule** | Never replaced by an unevaluated GP prediction; history nondecreasing for deterministic problems |
+| Duplicate policy (tolerance 1e-9, never silently merged) | **Proposed** | Deterministic benchmarks skip known configurations; noisy problems may repeat deliberately |
+| Benchmarks A/B/C and their references | **Synthetic (self-defined)** | NOT from either paper; A: analytic exact f\*=10.0 at (3.5, 7.2); B: enumeration exact f\*=11.0 at (d=2, x=2) with the analytic clamped inner optimum; C: numerical approximate, value computed by the solver and recorded (never assumed) |
+| Random-search comparator | **Proposed comparison method** | Same interface, same budget, same seed; records every evaluation; initial sampling cost counted. Comparability note: BO's initial design and random search share the SAME seeded uniform sampler, so with equal seeds RS's sequence begins with the BO initial design (exact BO/RS ties can result and are reported as measured) |
+
 ### Current limitations
 
 - M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
@@ -378,6 +407,7 @@ Planned but not yet created: `benchmarks/`, `analysis/`, `main.py` and the BO mo
 - The M4 tracking-cost provider is diagnostic and allocation-independent (paper Eq. (14) on current posteriors); a candidate's effect on FUTURE tracking requires simulation advancement (M5+).
 - Dwell time is fixed at the paper reference tau0 = 1 s in the M3 validation; dwell allocation enters M4 only through the resource interfaces (no optimization).
 - The `paper_zero_identity` initialization cannot run a full tracking episode from the origin (by design, diagnostic mode).
+- M5 limitations: the generic engine implements the SINGLE-candidate JOINT mode only (no batching, no alternating/coordinate modes); acquisition supports conventional LogEI for low-noise/deterministic objectives (no noisy qLog variant is exercised); the GP likelihood noise is INFERRED (never forced to zero) even for deterministic benchmarks; the M5 validation budgets (100 evaluations, initial design 30) are provisional synthetic settings, not paper-derived; the seed 0-9 comparison is descriptive over 10 seeds and makes no superiority claim; BO results that fail to beat random search on some seeds are reported as measured; termination at a budget is not proof of global convergence; benchmark C's reference is numerical_approximate and may be exceeded legitimately.
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
 - Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 

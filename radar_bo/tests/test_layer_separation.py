@@ -1,12 +1,23 @@
-"""Extended layer-separation and ground-truth-leakage guards (M3 instruction 12).
+"""Extended layer-separation and ground-truth-leakage guards (M3 instruction 12,
+extended for M5 instruction 30).
 
-* The tracking layer (``radar_bo.environment``, ``radar_bo.radar``) and the
-  config layer must not import optimization libraries (torch/botorch/gpytorch)
-  or the optimizer package. The estimation core is NumPy-only (no scipy/
-  matplotlib), keeping the "standalone NumPy baseline" claim verifiable.
-* No function in the environment/radar layers may accept a parameter that
-  looks like ground truth: the true simulated state is for simulation and
-  evaluation only (README non-negotiables).
+Import-matrix rules enforced per file class:
+
+* ``config`` / ``environment`` / ``radar`` / ``simulation``: no torch-stack
+  imports and no ``radar_bo.optimization`` imports at all (README section 3:
+  config and simulation must not import the optimizer).
+* ``optimization`` top level (M4 utility layer: allocation, constraints,
+  resource accounting, objective, simulation state): stays NumPy-only and must
+  not depend on the BO engine (``radar_bo.optimization.bo``) — existing
+  components stay independent of the BO engine.
+* ``optimization/bo`` (M5 generic BO engine): MAY import the torch stack (that
+  is its purpose) but MUST NOT import the simulator layers
+  (``radar_bo.environment`` / ``radar_bo.radar`` / ``radar_bo.simulation``) nor
+  the M4 optimizer modules: the problem interface is application-free.
+* The estimation core (``environment`` / ``radar``) stays NumPy-only beyond
+  torch (no scipy/matplotlib/pandas) — the "standalone NumPy baseline" claim.
+* No function in the environment/radar layers may accept a parameter that looks
+  like ground truth (README non-negotiables).
 """
 
 from __future__ import annotations
@@ -18,11 +29,17 @@ import pytest
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
-BANNED_ROOTS = {"torch", "botorch", "gpytorch", "linear_operator"}
-# Simulation/config/environment/radar must not import the optimization-support
-# layer (README section 3: config and simulation must not import the optimizer).
-BANNED_MODULES = {"radar_bo.optimization"}
+TORCH_ROOTS = {"torch", "botorch", "gpytorch", "linear_operator"}
 NUMPY_ONLY_EXTRA_BANS = {"scipy", "matplotlib", "pandas"}
+SIMULATOR_MODULES = ("radar_bo.environment", "radar_bo.radar", "radar_bo.simulation")
+M4_OPTIMIZER_MODULES = (
+    "radar_bo.optimization.allocation",
+    "radar_bo.optimization.constraints",
+    "radar_bo.optimization.resource_accounting",
+    "radar_bo.optimization.objective",
+    "radar_bo.optimization.simulation_state",
+)
+OPTIMIZER_MODULES = ("radar_bo.optimization",)  # any submodule (prefix match)
 
 GUARDED_PACKAGES = ("config", "environment", "radar", "optimization", "simulation")
 
@@ -30,7 +47,7 @@ TRUTH_PARAM_TOKENS = ("truth", "true_state", "true_position", "true_velocity", "
 
 
 def _iter_module_paths(package: str):
-    return sorted((PACKAGE_ROOT / package).glob("*.py"))
+    return sorted((PACKAGE_ROOT / package).rglob("*.py"))
 
 
 def _imported_roots_and_modules(tree: ast.AST):
@@ -46,16 +63,40 @@ def _imported_roots_and_modules(tree: ast.AST):
     return roots, modules
 
 
+def _matches_banned_module(module_name: str, banned: tuple[str, ...]) -> bool:
+    """Exact or submodule match (``radar_bo.optimization.bo`` counts as an
+    import of the banned ``radar_bo.optimization`` layer)."""
+    return any(module_name == b or module_name.startswith(b + ".") for b in banned)
+
+
+def _banned_for_file(py_file: str) -> tuple[set[str], tuple[str, ...]]:
+    """(banned import roots, banned module prefixes) for one guarded file."""
+    f = py_file.replace("\\", "/")
+    if f.startswith("optimization/bo/"):
+        # M5 BO engine: torch allowed; simulator and M4-optimizer imports banned.
+        return set(), SIMULATOR_MODULES + M4_OPTIMIZER_MODULES
+    if f.startswith("optimization/"):
+        # M4 optimizer layer: NumPy-only and independent of the BO engine.
+        return TORCH_ROOTS, ("radar_bo.optimization.bo",)
+    # config / environment / radar / simulation: no torch, no optimizer at all.
+    return TORCH_ROOTS, OPTIMIZER_MODULES
+
+
 @pytest.mark.parametrize(
     "py_file",
-    sorted(str(p.relative_to(PACKAGE_ROOT)) for pkg in GUARDED_PACKAGES for p in (PACKAGE_ROOT / pkg).glob("*.py")),
+    sorted(
+        str(p.relative_to(PACKAGE_ROOT))
+        for pkg in GUARDED_PACKAGES
+        for p in (PACKAGE_ROOT / pkg).rglob("*.py")
+    ),
 )
 def test_no_optimizer_or_torch_imports(py_file: str):
+    banned_roots, banned_modules = _banned_for_file(py_file)
     tree = ast.parse((PACKAGE_ROOT / py_file).read_text(encoding="utf-8"))
     roots, modules = _imported_roots_and_modules(tree)
-    bad_roots = roots & (BANNED_ROOTS | BANNED_MODULES)
-    assert not bad_roots, f"{py_file} imports banned: {sorted(bad_roots)}"
-    bad_modules = modules & BANNED_MODULES
+    bad_roots = roots & banned_roots
+    assert not bad_roots, f"{py_file} imports banned roots: {sorted(bad_roots)}"
+    bad_modules = {m for m in modules if _matches_banned_module(m, banned_modules)}
     assert not bad_modules, f"{py_file} imports banned module: {sorted(bad_modules)}"
 
 
@@ -87,5 +128,22 @@ def test_config_layer_guard_still_in_place():
     """Retain the original M2 guard scope: config must not import optimizer."""
     for path in _iter_module_paths("config"):
         roots, modules = _imported_roots_and_modules(ast.parse(path.read_text(encoding="utf-8")))
-        assert not (roots & BANNED_ROOTS), f"{path.name} imports banned root"
-        assert not (modules & BANNED_MODULES), f"{path.name} imports banned module"
+        assert not (roots & TORCH_ROOTS), f"{path.name} imports banned root"
+        assert not {m for m in modules if _matches_banned_module(m, OPTIMIZER_MODULES)}, (
+            f"{path.name} imports banned module"
+        )
+
+
+def test_problem_interface_is_radar_free():
+    """M5 instruction 30: the generic problem interface and the whole bo/
+    subpackage contain no radar/simulator references (defense in depth on top
+    of the parametrized per-file guard)."""
+    bo_root = PACKAGE_ROOT / "optimization" / "bo"
+    offenders = []
+    for path in sorted(bo_root.rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        _, modules = _imported_roots_and_modules(tree)
+        for module in modules:
+            if _matches_banned_module(module, SIMULATOR_MODULES + M4_OPTIMIZER_MODULES):
+                offenders.append(f"{path.relative_to(PACKAGE_ROOT)}:{module}")
+    assert not offenders, f"BO engine has radar-layer dependencies: {offenders}"

@@ -18,13 +18,18 @@ class TestOptimizationConfig:
         assert o.surrogate == "single_task_gp"
         assert o.kernel == "matern_5_2"
         assert o.acquisition == "log_expected_improvement"
-        assert o.acquisition_xi == 0.01
         assert o.search_mode == "joint"
         assert o.input_normalization is True
         assert o.outcome_standardization is True
         assert o.precision == "float64"
         assert o.device == "cpu"
         assert o.maximize is True
+        assert o.refit_per_observation is True
+
+    def test_acquisition_xi_removed_no_effect_parameter(self):
+        """M5 instruction 18: the installed LogEI accepts no xi parameter, so the
+        config must not retain an inactive exploration-offset field."""
+        assert not hasattr(OptimizationConfig(), "acquisition_xi")
 
     def test_no_budgets_by_default(self):
         """Budgets have no paper default; they must be set per experiment."""
@@ -50,9 +55,12 @@ class TestOptimizationConfig:
         o = OptimizationConfig(acquisition="q_log_noisy_expected_improvement")
         assert o.acquisition == "q_log_noisy_expected_improvement"
 
-    def test_negative_xi_rejected(self):
+    def test_max_iterations_and_refit_fields(self):
+        o = OptimizationConfig(max_iterations=25, refit_per_observation=True)
+        assert o.max_iterations == 25
+        assert o.refit_per_observation is True
         with pytest.raises(ValidationError):
-            OptimizationConfig(acquisition_xi=-0.01)
+            OptimizationConfig(max_iterations=0)
 
 
 class TestExperimentConfig:

@@ -384,7 +384,7 @@
       "unit": "dimensionless",
       "source": "paper_benzaghta_2023",
       "reference": "M. Benzaghta et al., IEEE GLOBECOM 2023, DOI 10.1109/GLOBECOM54140.2023.10437768",
-      "rationale": "Expected-improvement exploration parameter xi = 0.01.",
+      "rationale": "Expected-improvement exploration parameter xi = 0.01 reported by Benzaghta et al. NOT carried as a configuration field: the installed BoTorch LogExpectedImprovement (verified at runtime) accepts NO exploration-offset parameter, so the M5 engine uses conventional LogEI without xi. This entry preserves the paper value in the provenance record only (methodological adaptation); no no-effect configuration parameter is retained.",
       "sensitivity_range": [
         0.0,
         0.1
@@ -514,6 +514,166 @@
       "reference": null,
       "rationale": "M4 tracking-cost retrieval uses the paper's Eq. (14) on the snapshot's CURRENT posteriors - allocation-independent by design. A candidate's effect on FUTURE tracking requires simulation advancement (M5+); a synthetic allocation-dependent provider exists for aggregation testing only (clearly labeled synthetic).",
       "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.problem_interface.scope",
+      "value": "application_free",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "The generic problem interface (dimension, variable names/types/bounds, discrete values, instantaneous feasibility, scalar objective, direction, noise declaration, evaluation ids) imports NOTHING from the radar/environment/simulation layers (enforced by test_layer_separation). Evaluation ids have the format '{problem_id}_eval_{counter:05d}_{uuid8}'.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.benchmarks.a_b_c.origin",
+      "value": "synthetic_self_defined_for_verification",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Benchmarks A/B/C are synthetic problems defined in M5 to VERIFY the generic BO engine (analytic/enumeration-checkable optima). They are NOT taken from Benzaghta et al. or Lu et al.; the M4 diagnostic tracking provider is NOT used as a BO benchmark (M5 instruction 5).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.benchmark_a.reference",
+      "value": {
+        "f_star": 10.0,
+        "u_star": 3.5,
+        "v_star": 7.2
+      },
+      "unit": "dimensionless",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Synthetic continuous quadratic benchmark A: f(u,v) = 10 - (u-3.5)^2 - (v-7.2)^2 on [-10,10]^2, maximize. Analytic exact reference derived independently (vertex of the concave quadratic); verified by tests with math.isclose.",
+      "sensitivity_range": null,
+      "notes": [
+        "verification_method = analytic_exact; used as the BO gap reference in the M5 validation experiment."
+      ]
+    },
+    {
+      "name": "bo.benchmark_b.reference",
+      "value": {
+        "f_star": 11.0,
+        "d_star": 2.0,
+        "x_star": 2.0
+      },
+      "unit": "dimensionless",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Synthetic constrained mixed-variable benchmark B: discrete d in {0.5,1.0,1.5,2.0}, continuous x in [0,10], constraint x + 3d <= 8, objective f = 4d + x^2/4 (maximize). Enumeration over the 4 discrete values with the analytic clamped inner optimum (x* = min(10, 8 - 3d)) gives per-d optima 3.0/6.0/9.0/11.0; f* = 11.0 at (d=2.0, x=2.0).",
+      "sensitivity_range": null,
+      "notes": [
+        "verification_method = enumeration_exact (per-d values independently derived)."
+      ]
+    },
+    {
+      "name": "bo.benchmark_c.reference",
+      "value": "numerical_approximate (computed by the reference solver at run time)",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Synthetic multimodal benchmark C on [-2.5,2.5]^2 (sum of Gaussian bumps). NO analytic optimum is claimed: the reference is computed numerically (differential evolution plus a dense grid scan) by an independent solver and recorded with the result; it may be exceeded by BO because it is approximate.",
+      "sensitivity_range": null,
+      "notes": [
+        "verification_method = numerical_approximate; the reference VALUE is never assumed, only computed and recorded."
+      ]
+    },
+    {
+      "name": "bo.duplicate_tolerance",
+      "value": 1e-9,
+      "unit": "dimensionless",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Exact-match tolerance for duplicate-configuration detection (dataset insert and pool generation). Deterministic problems never re-evaluate a known configuration; noisy problems may repeat deliberately (allow_duplicates). Duplicates are never silently merged.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.feasibility_tolerance",
+      "value": 1e-9,
+      "unit": "dimensionless",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Numerical tolerance of the instantaneous constraint check in the generic problem interface. Synthetic problems define their OWN explicit constraints (M4 review 3.1: per-action feasibility is distinct from discounted-budget feasibility).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.consecutive_failure_cap",
+      "value": 3.0,
+      "unit": "count",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Maximum consecutive objective/GP-fitting failures before the loop stops (prevents unlimited failure loops; failures consume budget by documented policy).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.initial_design_sampling",
+      "value": "seeded_uniform_feasible_random",
+      "unit": null,
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "The initial design is seeded uniform random sampling over the feasible region (provisional size 30, README BOConfig experimental). Deliberately NOT Latin hypercube or Sobol (explicit M5 instruction: initial design is random sampling, distinct from the acquisition search).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.refit_policy",
+      "value": "fresh_refit_per_observation",
+      "unit": null,
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "M5 initial GP-fitting policy: a fresh fit_gpytorch_mll refit after each successful new observation (no warm-start; warm-starting would be a different, explicitly identified and tested strategy).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.selection_policy",
+      "value": "argmax_finite_log_ei_first_index_tiebreak",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Candidates are scored as a batch of single candidates (k, 1, d) against the installed single-candidate LogExpectedImprovement (q=1 verified at runtime); selection is argmax over FINITE log-domain scores with deterministic first-index tie-breaking; non-finite scores are masked and reported, never repaired.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.failures_policy",
+      "value": "consume_budget_log_separately",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Failed objective-evaluation attempts consume the evaluation budget (real evaluation cost), are recorded as explicit failure records with preserved tracebacks, and NEVER enter the training dataset (M4 review 3.2 semantics).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.incumbent_policy",
+      "value": "best_observed_never_predicted",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "The incumbent is the best successfully OBSERVED feasible configuration (exact vector preserved); it is NEVER replaced by an unevaluated GP prediction. Termination is never described as proof of global convergence.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "experiment.m5_synthetic_validation_budget",
+      "value": {
+        "evaluation_budget": 100.0,
+        "initial_design": 30.0
+      },
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Provisional synthetic budgets for the M5 generic-validation experiment only (benchmarks A/B/C x seeds 0-9 x BO vs random search). Not paper-derived; the general evaluation_budget remains UNRESOLVED and is set per experiment.",
+      "sensitivity_range": [
+        30.0,
+        300.0
+      ],
       "notes": []
     },
     {

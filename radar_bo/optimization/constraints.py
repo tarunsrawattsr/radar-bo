@@ -11,20 +11,32 @@ distinguishes outcome categories:
 * ``unresolved_parameter``  — a required check depends on a configuration value still ``None``;
 * ``numerical_failure``     — a check could not be computed numerically.
 
-Budget semantics (never treated as equivalent; M4 instruction 9):
+Budget semantics (never treated as equivalent; M4 instruction 9, M4 review 3.1):
 
 * ``hard_per_slot`` (PROPOSED, BO configuration profile): the per-slot
   normalized dwell sum ``sum(tau) / T0 <= Theta_max`` is ENFORCED — a
-  violating allocation is reported infeasible.
+  violating allocation is reported infeasible. Under this PROPOSED semantics,
+  per-slot checking fully determines feasibility
+  (``policy_level_feasibility = "determined_locally"``).
 * ``discounted_cumulative`` (PAPER-REFERENCE profile, Lu et al. Eq. (22)):
   the per-slot term ``sum(tau)/T0 - Theta_max`` of the discounted cumulative
-  budget is RECORDED as informational. A single-slot exceedance is not, by
-  itself, a hard infeasibility: the paper's constraint is cumulative and
-  discounted over a horizon, whose judgment is outside M4 scope.
+  budget is RECORDED as informational. LOCAL feasibility of an individual
+  action neither establishes nor refutes POLICY-LEVEL satisfaction of the
+  paper's cumulative discounted budget: that judgment spans a discounted
+  horizon and is outside M4/M5 scope
+  (``policy_level_feasibility = "not_assessed_horizon_required"``). An
+  over-budget individual action is NOT proof of discounted-budget
+  infeasibility, and a within-budget action is NOT proof of
+  discounted-budget feasibility.
 
 The revisit interval ``T0`` is received from the composed SimulationConfig
 (single authoritative source: TrackingConfig). Invalid allocations are never
 clipped, rounded, repaired or replaced.
+
+M5 synthetic optimization problems use their own explicitly defined
+instantaneous mathematical constraints (see
+``radar_bo.optimization.bo.benchmarks``); they do not reuse or reinterpret
+the radar budget semantics above.
 """
 
 from __future__ import annotations
@@ -68,6 +80,21 @@ class FeasibilityReport(StrictModel):
     normalized_time_usage: float | None = Field(default=None, description="Sum of dwell times divided by T0.")
     budget_threshold: float | None = Field(default=None, description="Theta_max from the resource configuration.")
     budget_semantics: str | None = Field(default=None, description="Configured budget semantics.")
+    policy_level_feasibility: Literal[
+        # PROPOSED hard semantics: the per-slot check fully determines feasibility.
+        "determined_locally",
+        # Paper-reference semantics: the cumulative discounted budget spans a
+        # horizon; local checks neither prove nor refute policy-level feasibility.
+        "not_assessed_horizon_required",
+    ] = Field(
+        default="not_assessed_horizon_required",
+        description=(
+            "M4 review 3.1: distinguishes LOCAL (per-action) feasibility from POLICY-LEVEL "
+            "feasibility of the paper's cumulative discounted budget. Local within-budget "
+            "actions do not establish discounted-budget satisfaction; local over-budget "
+            "actions do not by themselves establish discounted-budget infeasibility."
+        ),
+    )
 
     @property
     def violations_only(self) -> list[ViolationDetail]:
@@ -205,11 +232,13 @@ class ConstraintManager:
                             )
                         )
 
-        # Shared time budget under the configured semantics (instructions 9 and 11).
+        # Shared time budget under the configured semantics (instructions 9 and 11;
+        # M4 review 3.1: local vs policy-level feasibility distinguished).
         slot_dwell_sum = float(np.sum(np.asarray(allocation.dwell_times_s, dtype=np.float64)))
         normalized = slot_dwell_sum / self.revisit_interval_s
         theta = rc.normalized_time_budget_threshold
         if rc.time_budget_semantics == "hard_per_slot":
+            policy_level = "determined_locally"  # proposed semantics: per-slot check is decisive
             if normalized > theta + BUDGET_TOLERANCE:
                 violations.append(
                     ViolationDetail(
@@ -222,14 +251,17 @@ class ConstraintManager:
                 )
         else:  # 'discounted_cumulative' (paper-reference profile)
             slot_term = normalized - theta
+            policy_level = "not_assessed_horizon_required"
             violations.append(
                 ViolationDetail(
                     constraint="discounted_cumulative_slot_term", severity="note",
                     category="valid",
-                    detail=f"Paper-reference semantics: per-slot term sum(tau)/T0 - Theta_max = "
-                    f"{slot_term:.6e} (normalized usage {normalized:.6f}). The cumulative discounted "
-                    "judgment spans a horizon and is outside M4 scope; a single slot is not "
-                    "auto-infeasible, and this is NOT equivalent to the proposed hard per-slot rule.",
+                    detail=f"Paper-reference semantics: LOCAL per-slot term sum(tau)/T0 - Theta_max = "
+                    f"{slot_term:.6e} (normalized usage {normalized:.6f}). This instantaneous residual "
+                    "does NOT establish policy-level satisfaction of the cumulative discounted "
+                    "budget (Eq. (22)), which spans a discounted horizon; that judgment is outside "
+                    "M4/M5 scope. A single slot is neither auto-infeasible nor proven feasible, and "
+                    "this is NOT equivalent to the proposed hard per-slot rule.",
                 )
             )
 
@@ -259,4 +291,5 @@ class ConstraintManager:
             normalized_time_usage=normalized,
             budget_threshold=theta,
             budget_semantics=rc.time_budget_semantics,
+            policy_level_feasibility=policy_level,
         )

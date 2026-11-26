@@ -228,3 +228,57 @@ class TestTraceabilityAndTiming:
             make_snapshot(), alloc((0, 0, 0))
         )
         assert result.randomness_policy == "common_random_numbers"
+
+
+class TestExceptionPolicy:
+    """M4 review 3.2: expected failures vs unexpected programming errors;
+    tracebacks preserved; strict mode exposes unexpected errors."""
+
+    def test_expected_failure_record_preserves_traceback(self):
+        class FailingProvider:
+            identifier = "failing"
+            is_synthetic = True
+
+            def tracking_costs(self, snapshot, allocation, rng):
+                raise ValueError("bad input")
+
+        evaluator = make_evaluator()
+        evaluator.tracking_provider = FailingProvider()
+        result = evaluator.evaluate_candidate(make_snapshot(), alloc((0, 0, 0)))
+        assert result.status == "failed"
+        assert "bad input" in result.error
+        assert "Traceback" in result.error  # traceback preserved in the record
+
+    def test_unexpected_error_re_raised_in_strict_mode(self):
+        class ProgrammingError(Exception):
+            """Custom type outside the handled set (a genuine programming error)."""
+
+        class BuggyProvider:
+            identifier = "buggy"
+            is_synthetic = True
+
+            def tracking_costs(self, snapshot, allocation, rng):
+                raise ProgrammingError("programming error")  # NOT in the handled set
+
+        evaluator = make_evaluator(strict_unexpected_errors=True)
+        evaluator.tracking_provider = BuggyProvider()
+        with pytest.raises(ProgrammingError):
+            evaluator.evaluate_candidate(make_snapshot(), alloc((0, 0, 0)))
+
+    def test_unexpected_error_flagged_in_lenient_mode(self):
+        class ProgrammingError(Exception):
+            """Custom type outside the handled set."""
+
+        class BuggyProvider:
+            identifier = "buggy"
+            is_synthetic = True
+
+            def tracking_costs(self, snapshot, allocation, rng):
+                raise ProgrammingError("programming error")
+
+        evaluator = make_evaluator(strict_unexpected_errors=False)
+        evaluator.tracking_provider = BuggyProvider()
+        result = evaluator.evaluate_candidate(make_snapshot(), alloc((0, 0, 0)))
+        assert result.status == "failed"
+        assert "UNEXPECTED exception type ProgrammingError" in result.error
+        assert "Traceback" in result.error
