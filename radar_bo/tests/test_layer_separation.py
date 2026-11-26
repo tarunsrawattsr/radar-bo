@@ -19,10 +19,12 @@ import pytest
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
 BANNED_ROOTS = {"torch", "botorch", "gpytorch", "linear_operator"}
+# Simulation/config/environment/radar must not import the optimization-support
+# layer (README section 3: config and simulation must not import the optimizer).
 BANNED_MODULES = {"radar_bo.optimization"}
 NUMPY_ONLY_EXTRA_BANS = {"scipy", "matplotlib", "pandas"}
 
-GUARDED_PACKAGES = ("config", "environment", "radar")
+GUARDED_PACKAGES = ("config", "environment", "radar", "optimization", "simulation")
 
 TRUTH_PARAM_TOKENS = ("truth", "true_state", "true_position", "true_velocity", "ground")
 

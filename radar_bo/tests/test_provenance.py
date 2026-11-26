@@ -55,11 +55,15 @@ class TestPaperEntries:
         assert e.source == "standard_constant"
 
     def test_ambiguities_are_flagged_in_notes_or_rationale(self, register):
-        assert "AMBIGUITY" in flagged(register.get("tracking.maneuverability_noise"))
+        man = register.get("tracking.maneuverability_noise")
+        # M4 review terminology: multiplier-based, unambiguous.
+        assert "TERMINOLOGY" in flagged(man)
+        assert "multiplier 625" in flagged(man)
+        assert "multiplier 25" in flagged(man)
         assert "DEGENERATE" in flagged(register.get("tracking.initialization_policy"))
         semantics = register.get("tracking.measurement_variance_semantics")
         assert "DECREASES" in flagged(semantics)
-        assert any("M2 mis-recording" in n for n in semantics.notes)
+        assert any("EXTRACTION ARTIFACT" in n for n in semantics.notes)
 
     def test_m3_review_entries(self, register):
         """M3 review outcomes are recorded: operational init policy, covariance

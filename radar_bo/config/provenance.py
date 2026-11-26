@@ -38,7 +38,7 @@ ProvenanceSource = Literal[
     "experimental_setting",
 ]
 
-ProvenanceValue = float | int | str | list[float] | None
+ProvenanceValue = float | int | str | list[float] | dict[str, float] | None
 
 
 class ProvenanceEntry(StrictModel):
@@ -158,9 +158,12 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
     reg.register(_entry(
         "tracking.maneuverability_noise", t.maneuverability_noise, "(m/s^2)^2", "paper_lu_2024",
         reference=f"{_LU}; Table II, p. 2789; Eq. (3)",
-        rationale="AMBIGUITY: Eq. (3) scales Q_t by sigma_w^2, while the prose and Table II units "
-                  "describe sigma_w as a variance. Default 'table_variance' scales Q by 25; "
-                  "'equation_literal' scales Q by 625.",
+        rationale="TERMINOLOGY (M4 review): the interpretations are distinguished by the "
+                  "process-noise covariance MULTIPLIER. 'table_variance' -> multiplier 25 "
+                  "(sigma_w = 25 read as the acceleration-noise variance per Table II units "
+                  "and prose); 'equation_literal' -> multiplier 625 (= 25 squared, Eq. (3) as "
+                  "printed). The multiplier is applied to the structured Eq. (3) matrix "
+                  "directly; no further squaring occurs.",
         sensitivity=(5.0, 625.0),
         notes=["Switchable: tracking.maneuverability_noise_interpretation in "
                "{'table_variance', 'equation_literal'}; both implemented, default documented, "
@@ -289,10 +292,13 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
                   "'according to equations (5) and (6)'; (b) SNR grows with dwell time and "
                   "proximity per Eq. (5); (c) standard radar behaviour. Only the inverse reading "
                   "satisfies all three.",
-        notes=["M2 mis-recording corrected in M3: layout-mode PDF re-inspection shows the printed "
-               "glyphs juxtapose sigma^2_{.,0} and SNR_t on one line (a multiplication reading), "
-               "contradicting the same paper's prose; the multiplication variant was consolidated "
-               "away per review directive and inverse-SNR scaling is NOT classified as a deviation.",
+        notes=["EXTRACTION HISTORY (settled): an early plain-text PDF extraction juxtaposed "
+               "sigma^2_{.,0} and SNR_t on one line, producing a transient multiplication "
+               "reading that contradicted the same paper's prose. Re-inspection with "
+               "layout-aware extraction and the M3/M4 reviews identified this as a PDF-"
+               "EXTRACTION ARTIFACT, not an unresolved mathematical ambiguity; the division "
+               "semantics is the accepted paper reading and inverse-SNR scaling is NOT "
+               "classified as a proposed deviation.",
                "Implemented in radar_bo/radar/measurement_noise.py; requires the unresolved SNR0 "
                "(see tracking.reference_snr)."]))
 
@@ -317,6 +323,81 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
                   "(block-wise); 'alternating' mirrors that scheme and 'coordinate' is experimental.",
         notes=["Adaptation, not reproduction: the paper's block-wise scheme is per-BS in their "
                "problem, not a generic harness mode."]))
+
+    # ---- M4: scanning metric, remaining time, aggregation design -------------
+    reg.register(_entry(
+        "scanning.area_ratio_metric", "Gamma = S_max / S_0 (uncapped)", None, "paper_lu_2024",
+        reference=f"{_LU}; Eq. (21)",
+        rationale="Eq. (21) implemented as a pure metric accepting a modeled detectable area and a "
+                  "strictly positive reference area; the ratio is NOT capped at one. Physical "
+                  "scanning calculations (Eqs. (16)-(20)) are NOT implemented: their parameters are "
+                  "unspecified (Table I).",
+        notes=["The paper's S0 remains unresolved (scanning.reference_area); the metric raises a "
+               "parameter-resolution error rather than substituting a default."]))
+    reg.register(_entry(
+        "resource.remaining_scanning_time_convention",
+        "tau_s = T0 * max(0, 1 - sum(tau)/T0)", "s", "paper_lu_2024",
+        reference=f"{_LU}; Eq. (24)",
+        rationale="Paper's own nonnegative remaining-time convention implemented verbatim in the "
+                  "resource accountant. The RAW time deficit is recorded alongside so an over-budget "
+                  "allocation is never silently made valid by the clipping; feasibility is judged "
+                  "separately by the constraint manager.",
+        notes=["M4: an allocation violating the proposed hard per-slot budget is reported infeasible; "
+               "the Eq. (24) clipping does not rescue it."]))
+    reg.register(_entry(
+        "objective.eq23_aggregation",
+        "U = -sum_n w_n c^n_t + beta * Gamma(tau_s)", None, "paper_lu_2024",
+        reference=f"{_LU}; Eq. (23)",
+        rationale="Aggregation structure implemented by the objective evaluator over explicit "
+                  "component interfaces (tracking-cost provider, scanning-performance model). No GP "
+                  "training, acquisition optimization or BO candidate generation inside the evaluator.",
+        notes=["Single-slot objective; the paper's long-term discounted CMDP objective remains a "
+               "recorded deviation (README section 14)."]))
+    reg.register(_entry(
+        "resource.task_utility_weights", r.task_utility_weights, "dimensionless", "proposed_assumption",
+        reference=f"{_LU}; Eq. (23) weights w_n",
+        rationale="Per-task weights of the weighted tracking aggregate. None (default) means UNIFORM "
+                  "weights - a proposed software default, NOT a paper value. When supplied, weights "
+                  "must be finite, non-negative and match the task count."))
+
+    # ---- M4: synthetic testing components (clearly labeled) -------------------
+    reg.register(_entry(
+        "scanning.synthetic_linear_scanning_model",
+        {"area_rate_m2_per_s": 2000.0, "reference_area_m2": 4000.0},
+        "m^2/s, m^2", "experimental_setting",
+        rationale="SYNTHETIC scanning response S_det(tau_s) = k_synth * tau_s with gamma = S_det / "
+                  "S0_synth, for software integration tests ONLY. Constants are synthetic testing "
+                  "values, not radar physics; outputs must never be presented as validated coverage, "
+                  "detectable range or detection probability.",
+        notes=["Deterministic; documented numerical domain tau_s >= 0 finite; invalid inputs rejected."]))
+    reg.register(_entry(
+        "objective.randomness_policy", "common_random_numbers", None, "proposed_assumption",
+        rationale="Candidate evaluations rebuild the NumPy generator from the snapshot's CAPTURED "
+                  "state, so all candidates see identical random realizations and evaluation order "
+                  "cannot change outcomes. An independent-realizations policy would draw fresh "
+                  "entropy per evaluation; CRN is the documented M4 default and is recorded in "
+                  "every evaluation result."))
+
+    # ---- M4: software design decisions ---------------------------------------
+    reg.register(_entry(
+        "allocation.discrete_membership_policy", "exact_match_no_snapping", None, "proposed_assumption",
+        rationale="Flat-vector dwell values must match the configured action set EXACTLY "
+                  "(tolerance 1e-12); near-members are rejected with the nearest member reported "
+                  "for diagnosis. No snapping, rounding, clipping or repair (M4 instruction 9)."))
+    reg.register(_entry(
+        "objective.snapshot_truth_exclusion", "frozen_snapshot_is_estimator_facing", None, "proposed_assumption",
+        rationale="The frozen snapshot carries posterior means/covariances, time, task ids and the "
+                  "captured generator state; TRUE simulated states are deliberately NOT copied into "
+                  "snapshots, so candidate-evaluation components cannot receive ground truth through "
+                  "the snapshot interface. Truth stays in the authoritative SimulationState.",
+        notes=["Snapshot integrity is content-hashed (sha256) and re-verified after every evaluation."]))
+    reg.register(_entry(
+        "objective.tracking_provider_m4_scope",
+        "snapshot_diagnostic_eq14 (allocation-independent)", None, "proposed_assumption",
+        rationale="M4 tracking-cost retrieval uses the paper's Eq. (14) on the snapshot's CURRENT "
+                  "posteriors - allocation-independent by design. A candidate's effect on FUTURE "
+                  "tracking requires simulation advancement (M5+); a synthetic allocation-dependent "
+                  "provider exists for aggregation testing only (clearly labeled synthetic)."))
 
     # ---- Experimental settings ------------------------------------------------
     reg.register(_entry(

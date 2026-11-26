@@ -92,6 +92,16 @@ class ResourceConfig(StrictModel):
         default=None, gt=0.0, description="PROPOSED total energy budget, J; no paper default."
     )
 
+    task_utility_weights: list[float] | None = Field(
+        default=None,
+        description=(
+            "PROPOSED per-task weights w_n of the Eq. (23) weighted tracking aggregate "
+            "(M4). None means UNIFORM weights (a proposed software default, not a paper "
+            "value); when supplied, weights must be finite, non-negative and match the "
+            "task count (validated where the objective evaluator is composed)."
+        ),
+    )
+
     # ---- Validators ----------------------------------------------------------
     @field_validator("dwell_time_action_set")
     @classmethod

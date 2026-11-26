@@ -9,14 +9,14 @@ Conventions
 * SI units; angles in radians; linear (not dB) quantities; double precision.
 * Variance fields already ARE variances; they are never squared a second time
   (README section 4.1).
-* Eq. (6) measurement-variance semantics (consolidated in the M3 review):
-  sigma^2_{.,t} = sigma^2_{.,0} / SNR_t — reference variance divided by the
-  linear SNR. Consistent with the paper prose ("the variance of the
-  measurement noise decreases when a longer dwell time is allocated to the
-  target or when the target moves closer to the radar") and with the
-  owner-reviewed reading of Eq. (6); inverse-SNR scaling is not a deviation.
-  See radar_bo/radar/measurement_noise.py and the provenance register for the
-  full evidence trail.
+* Eq. (6) measurement-variance semantics (settled; see the provenance entry
+  ``tracking.measurement_variance_semantics``): sigma^2_{.,t} = sigma^2_{.,0} / SNR_t
+  — reference variance divided by the linear SNR, consistent with the paper
+  prose ("the variance of the measurement noise decreases when a longer dwell
+  time is allocated to the target or when the target moves closer to the
+  radar"). The earlier multiplication reading was a PDF-extraction artifact,
+  not a mathematical ambiguity of the paper; inverse-SNR scaling is the
+  accepted paper semantics, not a proposed deviation.
 * Values not reported by the paper are ``None`` and must never be invented;
   see :mod:`radar_bo.config.provenance`.
 """
@@ -43,11 +43,12 @@ InitializationPolicy = Literal[
 ]
 
 ManeuverabilityInterpretation = Literal[
-    # sigma_w = 25 is the acceleration variance ((m/s^2)^2): Table II units and
-    # prose say "variance", so the process-noise covariance is scaled by 25.
-    # M3 review: accepted as the default; NOT an author-confirmed correction.
+    # Process-noise covariance multiplier equals 25: sigma_w = 25 (Table II
+    # units (m/s^2)^2 and prose) is the acceleration-noise variance, so Q is
+    # scaled by 25. Accepted default; NOT an author-confirmed correction.
     "table_variance",
-    # Eq. (3) taken literally: Q_t is scaled by sigma_w^2 = 25^2 = 625.
+    # Eq. (3) taken literally: process-noise covariance multiplier equals
+    # 625 (= 25 squared).
     "equation_literal",
 ]
 
@@ -105,11 +106,12 @@ class TrackingConfig(StrictModel):
     maneuverability_noise_interpretation: ManeuverabilityInterpretation = Field(
         default="table_variance",
         description=(
-            "'table_variance' (default): sigma_w = 25 is the acceleration "
-            "variance ((m/s^2)^2), so the process-noise covariance is scaled "
-            "by 25. 'equation_literal': Eq. (3) as printed, Q is scaled by "
-            "sigma_w^2 = 625. Both are kept switchable; sensitivity to this "
-            "choice must be tested (README section 4.1)."
+            "Terminology (M4 review): the two interpretations are distinguished by the "
+            "PROCESS-NOISE COVARIANCE MULTIPLIER. 'table_variance' (default): "
+            "multiplier = 25 (sigma_w = 25 read as the acceleration-noise variance per "
+            "Table II units ((m/s^2)^2) and prose). 'equation_literal': multiplier = "
+            "625 (= 25 squared, Eq. (3) as printed). Both stay switchable; sensitivity "
+            "to this choice must be tested (README section 4.1)."
         ),
     )
     reference_distance: float = Field(

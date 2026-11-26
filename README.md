@@ -255,8 +255,9 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 
 - [x] M1: Establish repository, environment, dependency records, naming and units. *(2026-11-26: venv + pyproject + lock; 81 tests passing; see section 16.)*
 - [x] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters. *(2026-11-26: 39-entry provenance register, 16 unresolved preserved as None; see section 16.)*
-- [x] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations. *(2026-11-26: Eqs. (1)-(15) implemented, 208 tests passing, synthetic validation in `results/m3_synthetic_validation/`; see section 16.)*
-- [ ] M4: Implement metric interfaces, generic allocations, feasibility and frozen-state evaluation.
+- [x] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations. *(2026-11-26: Eqs. (1)-(15) implemented, synthetic validation in `results/m3_synthetic_validation/`; see section 16.)*
+- [x] M4: Implement metric interfaces, generic allocations, feasibility and frozen-state evaluation. *(2026-11-26: scanning abstraction, allocation/constraints/accounting/objective evaluator, frozen snapshots, non-mutating candidate evaluation; 323 tests passing; see section 16.)*
+- [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
 - [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
 - [ ] M6: Implement dataset, GP, acquisition, candidate selection and stopping criteria using BoTorch.
 - [ ] M7: Validate joint, alternating and coordinate-wise BO on synthetic objectives using equal budgets.
@@ -286,14 +287,15 @@ A reproducible research repository exists with validated configuration models, a
 
 This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
 
-### Status: M1, M2 and M3 complete — M4+ not started
+### Status: M1–M4 complete — M5+ not started
 
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (39 entries, 16 unresolved preserved as `None`), layer-separation guard tests |
-| M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/`, `radar_bo/numerics.py`, `radar_bo/experiments/m3_synthetic_validation.py` — Eqs. (1)-(15); 208 tests passing; synthetic validation artifacts in `results/m3_synthetic_validation/` (gitignored; regenerate via the documented command) |
-| M4–M9 | Not started | No optimizer, benchmark, or experiment-runner code exists yet |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (48 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
+| M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
+| M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py`; 323 tests passing |
+| M5–M9 | Not started | No BO models, acquisition, benchmarks, or experiment-runner code exists yet |
 
 ### Installation
 
@@ -308,16 +310,20 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 208 passed (0.5 s): M1/M2 config tests + M3 estimation tests
+.venv/bin/python -m pytest        # 323 passed (~0.7 s): M1/M2 config + M3 estimation + M4 interfaces
 ```
 
 ### Experiment execution
 
 ```bash
-# M3 synthetic validation (single target, seeded): writes config.json,
-# provenance_register.json, metrics.json, trajectory_data.npz and a 2x2
-# diagnostic figure under results/m3_synthetic_validation/
+# M3 synthetic validation (single target, seeded): config, provenance, metrics,
+# trajectory data and a 2x2 diagnostic figure under results/m3_synthetic_validation/
 .venv/bin/python -m radar_bo.experiments.m3_synthetic_validation
+
+# M4 synthetic multi-task integration validation: feasibility classification under
+# both budget semantics, Eq. (23) aggregation with hand-checked examples, non-mutation
+# guarantees, order invariance; artifacts under results/m4_integration_validation/
+.venv/bin/python -m radar_bo.experiments.m4_integration_validation
 
 # Regenerate the authoritative provenance register snapshot
 .venv/bin/python -m radar_bo.config.provenance provenance_register.json
@@ -333,36 +339,45 @@ radar_bo/                  package root (editable install; suggested top-level d
 │                          SimulationConfig master model, provenance register   (M2)
 ├── environment/           TargetState/GaussianState/Observation representations, CV motion
 │                          model (Lu et al. Eqs. (1)-(3))                        (M3)
-├── radar/                 range/azimuth measurement model (Eqs. (4), (7)), SNR measurement
-│                          noise (Eqs. (5), (6), (8)), EKF (Eqs. (9)-(13)), initialization
-│                          policies, tracking cost (Eqs. (14)-(15))              (M3)
-├── experiments/           m3_synthetic_validation.py                            (M3)
+├── radar/                 measurement model (Eqs. (4), (7)), SNR noise (Eqs. (5), (6), (8)),
+│                          EKF (Eqs. (9)-(13)), initialization policies, tracking cost
+│                          (Eqs. (14)-(15)), scanning-performance abstraction (Eq. (21)) (M3+M4)
+├── optimization/          ResourceAllocation, ConstraintManager, ResourceAccounting,
+│                          Eq. (23) objective evaluator, tracking-cost providers  (M4)
+├── simulation/            authoritative SimulationState + frozen estimator-facing snapshots (M4)
+├── experiments/           m3_synthetic_validation.py, m4_integration_validation.py
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 208 tests incl. layer-separation and ground-truth-leakage guards
+└── tests/                 323 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored, regenerable)
 ```
 
-Planned but not yet created: `optimization/`, `benchmarks/`, `simulation/`, `analysis/`, `main.py`.
+Planned but not yet created: `benchmarks/`, `analysis/`, `main.py` and the BO modules inside `optimization/` (dataset, surrogate, acquisition, search modes).
 
-### M3 component-to-equation mapping (Lu et al., ICC 2024)
+### M3+M4 component-to-equation mapping (Lu et al., ICC 2024)
 
 | Component | Paper source | Notes |
 |---|---|---|
-| `environment/motion_model.py` | Eqs. (1)-(3) | F from Eq. (2) with revisit interval; Q from Eq. (3) scaled by sigma_w^2 under the configured interpretation; stochastic propagation samples per-axis accelerations through a low-rank factor G with Q = G G^T sigma_w^2 (exact: Q has rank 2) |
+| `environment/motion_model.py` | Eqs. (1)-(3) | F from Eq. (2) with revisit interval; Q from Eq. (3) multiplied DIRECTLY by the configured process covariance multiplier (25 under `table_variance`, 625 under `equation_literal`; M4 review terminology); stochastic propagation samples per-axis accelerations through a low-rank factor G with Q = G G^T q_a (exact: Q has rank 2) |
 | `radar/measurement_model.py` | Eqs. (4), (7) | quadrant-aware atan2 (documented convention for the printed tan^-1(y/x)); Jacobian validated against numerical differentiation; singular origin raises `MeasurementGeometryError` |
-| `radar/measurement_noise.py` | Eqs. (5), (6), (8) | Eq. (6) consolidated to division semantics (see provenance `tracking.measurement_variance_semantics`); SNR0 unresolved -> `UnresolvedParameterError` |
+| `radar/measurement_noise.py` | Eqs. (5), (6), (8) | Eq. (6) = reference variance DIVIDED by linear SNR (settled; the transient multiplication reading was a PDF-extraction artifact — see provenance `tracking.measurement_variance_semantics`); SNR0 unresolved -> `UnresolvedParameterError` |
 | `radar/extended_kalman_filter.py` | Eqs. (9)-(13) | prior/posterior distinction preserved; gain via `linalg.solve` (no explicit inverse); angular residuals wrapped to [-pi, pi); optional Joseph-form update documented as numerically equivalent to Eq. (13) (tested); symmetrization only, no eigenvalue clipping |
-| `radar/initialization.py` | p. 2786 + M3 review | `paper_zero_identity` diagnostic mode fails loudly at the origin; `measurement_driven` operational policy uses only the first observation plus configured velocity priors |
+| `radar/initialization.py` | p. 2786 + M3 review | `paper_zero_identity` diagnostic mode fails loudly at the origin; `measurement_driven` operational policy uses only the first observation plus configured velocity priors; step-0 observation is never reused as an update measurement (sequencing test) |
 | `radar/tracking_cost.py` | Eqs. (14), (15) | standalone trace(E P E^T); validated on hand-constructed covariances |
+| `radar/scanning_model.py` | Eq. (21) | area-ratio metric Gamma = S_max/S0, UNCAPPED; physical Eqs. (16)-(20) NOT implemented (parameters unspecified, Table I); substitution interface `ScanningPerformanceModel`; `SyntheticLinearScanningModel` clearly labeled synthetic |
+| `optimization/constraints.py` | Eq. (22) | per-slot budget under BOTH semantics: proposed `hard_per_slot` (enforced, violations infeasible) vs paper-reference `discounted_cumulative` (slot term recorded as informational; horizon judgment out of M4 scope) — never treated as equivalent |
+| `optimization/resource_accounting.py` | Eq. (24) | tau_s = T0*max(0, 1 - sum(tau)/T0) paper convention verbatim; raw deficit recorded separately so clipping never hides an exceedance; peak/average/duty-cycle power conventions separated |
+| `optimization/objective.py` | Eq. (23) | U = -sum_n w_n c_n + beta*Gamma over explicit provider/model interfaces; beta = 1e6 paper value; uniform w_n is the documented proposed default; no GP/acquisition/BO code |
 
 ### Current limitations
 
-- M3 validates numerical correctness only: results are synthetic-validation artifacts, NOT reproductions of the paper's experiments and NOT operational surveillance capability.
-- SNR0 and all scanning physics parameters remain unresolved (`None` + provenance records); the synthetic validation supplies an explicitly labeled synthetic SNR = 100 to the noise model only, while `tracking.reference_snr` stays `None`.
-- Dwell time is fixed at the paper reference tau0 = 1 s in the synthetic validation; dwell allocation is M4+ scope.
+- M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
+- SNR0, all scanning physics parameters, the paper's S0, and task utility weights (uniform default) remain `None`/proposed where applicable; the synthetic validations supply explicitly labeled synthetic values to the components that need them, while the corresponding config fields stay unresolved.
+- The synthetic scanning model is NOT validated radar physics; its outputs must never be presented as coverage, detectable range or detection probability results.
+- The M4 tracking-cost provider is diagnostic and allocation-independent (paper Eq. (14) on current posteriors); a candidate's effect on FUTURE tracking requires simulation advancement (M5+).
+- Dwell time is fixed at the paper reference tau0 = 1 s in the M3 validation; dwell allocation enters M4 only through the resource interfaces (no optimization).
 - The `paper_zero_identity` initialization cannot run a full tracking episode from the origin (by design, diagnostic mode).
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
-- Ambiguity handling (switchable, documented defaults): Eq. (3) sigma_w interpretation (`table_variance` default — accepted in the M3 review as a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` alternative scales Q by 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` reserved for the proposed BO profile, M4+).
+- Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 

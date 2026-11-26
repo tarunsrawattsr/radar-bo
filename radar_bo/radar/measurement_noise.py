@@ -7,24 +7,22 @@ Paper-reported expressions (authoritative source: supplied PDF):
 * Eq. (6): measurement-noise variances follow the SNR;
 * Eq. (8): ``R_t = diag(sigma^2_{r,t}, sigma^2_{theta,t})``.
 
-Eq. (6) semantics — consolidated in the M3 review (instruction 3.2)
---------------------------------------------------------------------
-The printed glyphs juxtapose ``sigma^2_{.,0}`` and ``SNR_t`` on one line
-(multiplication reading), but the paper's own prose directly below Eq. (6)
-states that "the variance of the measurement noise decreases when a longer
-dwell time is allocated to the target or when the target moves closer to the
-radar according to equations (5) and (6)". Only the INVERSE reading
+Eq. (6) semantics — settled (M3 review, reaffirmed M4)
+------------------------------------------------------
+The accepted relationship is
 
     sigma^2_{.,t} = sigma^2_{.,0} / SNR_t
 
-is consistent with that prose (SNR grows with dwell time and proximity via
-Eq. (5)), with standard radar behaviour, and with the project owner's review
-directive that Eq. (6) defines the variance as reference variance divided by
-linear SNR. The former ``paper_as_printed`` vs ``proposed_inverse_snr``
-config switch from M2 was therefore CONSOLIDATED: a single division
-semantics is implemented, inverse-SNR scaling is not classified as a
-deviation, and the typographic observation is preserved here and in the
-provenance register.
+(reference measurement variance divided by the linear SNR). This is the
+paper's intended semantics: the prose directly below Eq. (6) states that
+"the variance of the measurement noise decreases when a longer dwell time is
+allocated to the target or when the target moves closer to the radar
+according to equations (5) and (6)". The transient multiplication reading in
+early extractions was a PDF-EXTRACTION ARTIFACT (fraction/glyph layout in
+the two-column layout), not an unresolved mathematical ambiguity of the
+paper; it is preserved only as extraction history in the provenance entry
+``tracking.measurement_variance_semantics``. Inverse-SNR scaling is the
+paper semantics and is NOT classified as a proposed mathematical deviation.
 
 ``reference_snr`` (SNR0) is NOT reported anywhere in the paper: it stays
 ``None`` in the configuration and any operation requiring it raises

@@ -25,6 +25,19 @@ the simulation/measurement layer from the true operating point (paper Eqs.
 and is supplied to the estimator through the Observation interface. The
 estimator never receives the true simulated state.
 
+Initialization/update indexing convention (M4 review, instruction 3.3): the
+step-0 observation (``step_index=0``) is consumed ONLY by measurement-driven
+initialization. Steps 1..N each generate a FRESH observation (``step_index=k``)
+consumed by the ordinary EKF update at that step, after one predict over the
+revisit interval. The initialization observation is never reused as an update
+measurement; regression test:
+``radar_bo/tests/test_m3_integration.py::TestInitializationSequencing``.
+
+Statistical claim scope: the reported RMS position error is a SINGLE-RUN
+numerical-validation result. It is NOT evidence of statistical filter
+consistency (no consistency analysis, e.g. NEES/NIS studies, is performed
+here).
+
 Outputs (under ``results/m3_synthetic_validation/``): serialized config,
 metrics JSON, trajectory data NPZ, and a 2x2 diagnostic figure (true vs
 estimated trajectory; position error; prior/posterior covariance traces;
