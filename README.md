@@ -340,6 +340,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 .venv/bin/python -m radar_bo.experiments.m6_block_architecture_comparison results/m6_pilot --pilot
 .venv/bin/python -m radar_bo.experiments.m6_block_architecture_comparison results/m6_primary --benchmarks=separable_4d,coupled_8d,constrained_mixed_8d,block_stagnation_4d
 .venv/bin/python -m radar_bo.experiments.m6_block_architecture_comparison results/m6_dimension_study --benchmarks=separable_8d,separable_16d --methods=random_search,joint,pairwise
+.venv/bin/python -m radar_bo.experiments.m6_merge_results    # assemble merged results + durable archive
 
 # M6 figures (labeled generic synthetic M6 experiment; regenerable from tracked data)
 .venv/bin/python -m radar_bo.experiments.m6_generate_figures results/m6_block_architecture_comparison
@@ -371,7 +372,7 @@ radar_bo/                  package root (editable install; suggested top-level d
 ├── simulation/            authoritative SimulationState + frozen estimator-facing snapshots (M4)
 ├── experiments/           m3_synthetic_validation.py, m4_integration_validation.py,
 │                          m5_synthetic_bo_validation.py, m6_block_architecture_comparison.py,
-│                          m6_generate_figures.py
+│                          m6_generate_figures.py, m6_merge_results.py
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
 └── tests/                 553 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
@@ -431,6 +432,31 @@ Planned but not yet created: `analysis/` and `main.py` (unified experiment-runne
 | Block-wise stagnation | **Demonstrated limitation** | `BlockStagnationLP` (analytic LP): from budget-tight configurations the alternating a/b grouping provably cannot improve while the joint optimum exists; skipped-block and no-improvement-cycle counters are recorded; stagnation never proves global optimality |
 | M6 synthetic benchmarks 4/8/16-D | **Synthetic (self-defined)** | Separable quadratic (analytic exact f\*=10d), coupled quadratic via fixed PD matrix (analytic exact f\*=20), constrained mixed 8-D (numerical_approximate: enumeration + KKT multiplier bisection — a BO result exceeding it is reported and investigated, never clipped), block-stagnation LP (analytic exact f\*=9.6) |
 | M6 experiment settings | **Synthetic/experimental** | Budget 100 total ATTEMPTED evaluations shared by all architectures (not per block), initial design 30, pool 500, seeds 0-9, identical initial designs per seed across architectures; pilot phase validated correctness before the full matrix |
+
+### M6 unit-test coverage audit (instruction-stream item 27; 20 areas)
+
+| # | Requirement area | Tests |
+|---|---|---|
+| 1 | Block representation: unique id, ordered active indices, block dimensionality, names/types; index-range + intra-block-duplicate + partition-coverage validation | `test_blocks.py` (21 tests: `test_valid_block_resolves`, `test_index_outside_dimension_rejected`, `test_duplicate_indices_within_block_rejected`, `test_empty_block_rejected`, `test_overlap_rejected`, `test_duplicate_block_ids_rejected`, `test_full_coverage_requirement`, `test_uncovered_indices_reported`, …) |
+| 2 | Radar-free, application-free blocks (index-based on any problem) | `test_blocks.py::test_blocks_on_mixed_variable_problem`; layer-separation guards |
+| 3 | Scheduling interface + deterministic cyclic scheduler; tickets carry block id, cycle number, within-cycle index | `test_blocks.py::test_cyclic_order_and_ticket_fields`, `test_strategy_constructors`; `test_block_bo.py::test_partial_cycle_termination` |
+| 4 | ONE generic engine; M5 joint behavior preserved exactly (no second joint implementation) | `test_block_bo.py::test_joint_mode_matches_m5_behavior`, `::test_joint_trajectory_bit_for_bit_m5` (frozen M5 trajectory, bit-for-bit) |
+| 5 | Mode compatibility + declared-mode resolution (1 block rejected; ≥2 blocks; `coordinate` iff every block has exactly 2 variables; ambiguity resolved by `search_mode`) | `test_block_bo.py::test_two_single_variable_blocks_declared_alternating`, `::test_two_two_variable_blocks_declared_coordinate`, `::test_search_mode_must_match_blocks`; `test_blocks.py::test_pairwise_requires_two_variables_per_block`, `::test_pairwise_requires_at_least_two_blocks`, `::test_alternating_requires_nonempty_groups` |
+| 6 | Current configuration ≠ global incumbent; both from stored observations, never GP predictions; never inconsistent with fixed coordinates | `test_block_bo.py::test_current_config_and_incumbent_distinct`, `::test_incumbent_always_evaluated_never_predicted`, `::test_fixed_coordinates_traceable_across_block_visits` |
+| 7 | Block candidates vary only active coordinates; fixed coordinates preserved exactly; COMPLETE-vector validation against shared constraints; invalid/duplicates rejected, never repaired | `test_block_candidates.py` (9 tests: `test_fixed_coordinates_preserved_exactly`, `test_shared_constraint_validated_on_complete_vectors`, `test_all_rejected_returns_empty_pool_with_report`, `test_current_config_excluded_as_duplicate`, `test_evaluated_configs_excluded`, …) |
+| 8 | Empty-pool handling: skip + recorded reason, run continues; all-blocks-exhausted cycle terminates with exact reason | `test_block_bo.py::test_empty_block_skipped_not_terminal`, `::test_all_blocks_skipped_stops_with_exact_reason`; `test_m6_integration.py::test_empty_blocks_never_create_infinite_loops` |
+| 9 | Block-restricted stagnation demonstrable while a better joint solution exists | `test_benchmarks_highdim.py::test_no_single_block_improvement_at_tight_config`, `::test_joint_improvement_exists`; `test_block_bo.py::test_alternating_stagnation_on_lp_benchmark`; `test_m6_integration.py::test_pairwise_on_stagnation_lp` |
+| 10 | Shared dataset holds complete M×d vectors; block ids metadata only; failures never enter GP training | `test_block_bo.py::test_dataset_stays_full_dimension_and_shared`; `test_m6_integration.py::test_failures_never_enter_gp_training` |
+| 11 | ONE shared GP (SingleTaskGP, explicit Matérn-5/2, Normalize/Standardize, float64 CPU, M5 noise convention); block dimension does NOT shrink GP training dimension | `test_bo_loop.py` (M5 GP construction/convention tests) + full-dimension dataset assertions in `test_block_bo.py` |
+| 12 | Block-restricted acquisition scoring on complete vectors; batched LogEI reused; score↔config association; scored candidates ≠ evaluations | `test_block_candidates.py::test_pool_size_is_not_evaluation_count`, `::test_reproducible_pool_for_same_seed`; `test_block_bo.py::test_budget_enforced_exactly`; `test_accounting_identities.py` |
+| 13 | 1 evaluation per block visit (configurable); one selected evaluation ≠ exact block maximization | `test_block_bo.py::test_evaluations_per_block_visit_two`; visit accounting (`n_block_visits`) |
+| 14 | Improvement-only current-config acceptance; failed-to-improve evaluations stay in the dataset | `test_block_bo.py::test_non_improving_observations_retained`, `::test_current_config_and_incumbent_distinct` |
+| 15 | Alternating workflow (2 blocks) through the same engine | `test_block_bo.py::test_alternating_on_benchmark_a`; `test_m6_integration.py::test_complete_workflow_on_mixed_problem` |
+| 16 | Pair-wise workflow (2-variable blocks) through the same engine; differences only in block definitions/scheduling | `test_m6_integration.py::test_pairwise_on_constrained_mixed_8d`, `::test_identical_initial_design_across_architectures`, `::test_unfavorable_comparison_is_valid_output` |
+| 17 | Stopping distinguishes evaluations/iterations/visits/cycles/skips; fixed total budget; partial-cycle termination without overrun; exact reason recorded | `test_block_bo.py::test_budget_enforced_exactly`, `::test_partial_cycle_termination`, `::test_cycle_patience_stops`, `::test_max_iterations_still_applies`; `test_accounting_identities.py` (I1–I4 incl. injected-failure runs) |
+| 18 | Global budget (never per block); requested/feasible/scored candidate counts reported | `test_accounting_identities.py::test_random_search_identities`; pool accounting fields in every run record |
+| 19 | Reproducibility (same seed → same trajectory; serialization round trip with block fields) | `test_block_bo.py::test_reproducible_same_seed`, `::test_serialization_round_trip_with_block_fields` |
+| 20 | Failure accounting (failures consume budget, carry block metadata, never enter the success dataset) | `test_block_bo.py::test_failures_consume_budget_and_carry_block_metadata`; `test_accounting_identities.py::test_joint_run_with_failures`, `::test_block_run_with_failures_and_k2`, `::test_all_failing_problem` |
 
 ### Current limitations
 

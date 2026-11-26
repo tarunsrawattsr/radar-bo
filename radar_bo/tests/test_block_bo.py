@@ -37,6 +37,18 @@ class CountingA(BenchmarkAQuadratic):
 
 
 class TestJointRegressionCompatibility:
+    # Frozen M5 joint trajectory (BenchmarkAQuadratic, budget 25, initial 10,
+    # seed 0) — recorded from the M5 engine at commit 8c825a6 and required to
+    # stay bit-for-bit identical after the M6 block refactor (ONE generic
+    # engine; joint behavior is preserved via regression tests, M6
+    # instruction 4). Initial incumbent + one entry per BO evaluation.
+    M5_JOINT_SEED0_TRAJECTORY = [
+        1.3180741000165792,
+        9.905619188792086,
+    ] + [9.905619188792086] * 14
+    M5_JOINT_SEED0_FINAL = 9.905619188792086
+    M5_JOINT_SEED0_BEST_CONFIG = [3.431752679614066, 6.900461831366929]
+
     def test_joint_mode_matches_m5_behavior(self):
         """variable_blocks=None must reproduce the M5 joint trajectory exactly
         (same initial design, same pool generator, same iteration order)."""
@@ -53,6 +65,20 @@ class TestJointRegressionCompatibility:
         # Known M5 seed-4 trajectory properties hold:
         assert r1.n_initial_evaluations == 10
         assert r1.n_initial_evaluations + r1.n_bo_evaluations == 30
+
+    def test_joint_trajectory_bit_for_bit_m5(self):
+        """The M6-refactored engine reproduces the frozen M5 joint trajectory
+        (seed 0, BenchmarkA, budget 25/initial 10) bit-for-bit — final
+        incumbent, full incumbent history and best configuration."""
+        result = BayesianOptimizer(
+            BenchmarkAQuadratic(),
+            OptimizationConfig(evaluation_budget=25, num_initial_observations=10),
+            seed=0,
+        ).optimize()
+        assert result.best_objective == self.M5_JOINT_SEED0_FINAL
+        assert result.incumbent_history == self.M5_JOINT_SEED0_TRAJECTORY
+        assert result.best_config == self.M5_JOINT_SEED0_BEST_CONFIG
+        assert result.stopping_reason == "evaluation_budget_exhausted"
 
     def test_joint_single_block_explicitly_rejected(self):
         """Redundant explicit joint spec (same as default) is rejected to avoid

@@ -52,17 +52,20 @@ def _method_color() -> dict:
 def _history_points(row: dict, budget: int) -> tuple[np.ndarray, np.ndarray]:
     """(evaluations, best-so-far) points from the incumbent history.
 
-    The history records the best OBSERVED value after each improvement; steps
-    are reconstructed on the attempted-evaluation axis: the incumbent after
-    the initial design is at n_initial evaluations and subsequent improvements
-    are placed at their attempted-evaluation positions (best-known placement:
-    the history list is monotone; positions are approximated by even spacing
-    across the BO phase — exact per-eval curves are in the archived records
-    via the full results file when needed)."""
+    Full-matrix records have PER-EVALUATION resolution: entry 0 is the best
+    after the initial design (at ``n_initial_evaluations``) and each following
+    entry is the best after one more successful BO evaluation (x = n_initial +
+    k, since every entry is appended in evaluation order — see the enriched
+    ``run_bo`` record). Older compact records (pilot phase) without that
+    resolution fall back to the documented even-spacing approximation.
+    """
     history = row["incumbent_history"]
     if not history:
         return np.array([]), np.array([])
     n_initial = row.get("n_initial_evaluations", 30)
+    if row.get("n_bo_evaluations") is not None and len(history) == 1 + row["n_bo_evaluations"]:
+        xs = [n_initial] + [n_initial + k for k in range(1, len(history))]
+        return np.array(xs), np.array(history)
     n_bo = row.get("n_bo_evaluations", budget - n_initial)
     # improvement positions are not individually logged in the compact archive;
     # use the monotone envelope over the evaluation axis (documented placement):

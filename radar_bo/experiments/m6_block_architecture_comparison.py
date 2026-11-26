@@ -79,6 +79,25 @@ NUM_CANDIDATES = 500      # Benzaghta Nc (inherited from M5)
 PILOT_BUDGET = 40
 PILOT_INITIAL = 10
 
+# Objective-quality thresholds (instruction 23): frozen BEFORE any full-matrix
+# result was examined (i.e. during the pilot phase). threshold = fraction x the
+# independent reference value f*; "evaluations_to_threshold" is the number of
+# objective evaluations until the running incumbent first reaches it.
+THRESHOLD_FRACTIONS = {
+    "separable_4d": 0.90,
+    "separable_8d": 0.90,
+    "separable_16d": 0.90,
+    "coupled_4d": 0.90,
+    "coupled_8d": 0.90,
+    "constrained_mixed_8d": 0.95,
+    "block_stagnation_4d": 0.90,
+}
+THRESHOLD_RULE = (
+    "frozen during the pilot phase, before any full-matrix comparative result "
+    "was examined: threshold = fraction * independent reference value f* "
+    "(0.90 for separable/coupled/block-stagnation, 0.95 for constrained_mixed)"
+)
+
 
 def git_commit() -> str:
     try:
@@ -133,7 +152,63 @@ def blocks_for(problem, method: str):
     raise ValueError(f"Unknown BO method: {method}")
 
 
-def run_bo(problem, method: str, seed: int, budget: int, initial: int, reference) -> dict:
+def _evaluations_to_threshold(history: list[float], threshold: float | None) -> int | None:
+    """Number of objective evaluations until the running incumbent first
+    reaches ``threshold`` (1-based; None when never reached). ``history`` has
+    per-evaluation resolution: one entry after the initial design plus one per
+    successful BO evaluation, in evaluation order."""
+    if threshold is None:
+        return None
+    for i, value in enumerate(history):
+        if value is not None and float(value) >= threshold:
+            return i + 1
+    return None
+
+
+def _out_of_block_evidence(result) -> dict:
+    """Instruction-25 stagnation metric: per-block attribution of incumbent
+    improvements plus evidence of how much each improvement event depends on
+    coordinates OUTSIDE the visited block.
+
+    For every incumbent-improving observation made under block ``b`` we record
+    how many coordinates outside ``b`` differ from the previous incumbent.
+    Block candidates only vary active coordinates, so differences outside
+    ``b`` come from the inherited search center (not from this visit's
+    sampling); the count documents how much of each improvement is inherited
+    rather than attributable to the visited block.
+    """
+    blocks = {b["block_id"]: set(int(i) for i in b["active_indices"]) for b in result.variable_blocks}
+    improvements_by_block: dict[str, int] = {}
+    events: list[dict] = []
+    prev_val: float | None = None
+    prev_cfg: list[float] | None = None
+    for rec in result.observations:
+        value = float(rec.objective)
+        block_id = rec.metadata.get("block_id") if rec.metadata else None
+        if prev_val is None or value > prev_val + 1e-12:
+            if prev_cfg is not None and block_id in blocks:
+                active = blocks[block_id]
+                outside = [
+                    i for i in range(len(rec.config))
+                    if i not in active and abs(float(prev_cfg[i]) - float(rec.config[i])) > 1e-9
+                ]
+                if outside:
+                    events.append({
+                        "block_id": block_id,
+                        "evaluation_id": rec.evaluation_id,
+                        "n_outside_changed": len(outside),
+                    })
+            key = block_id if block_id is not None else "initial_design"
+            improvements_by_block[key] = improvements_by_block.get(key, 0) + 1
+            prev_val, prev_cfg = value, [float(x) for x in rec.config]
+    return {
+        "incumbent_improvements_by_block": improvements_by_block,
+        "n_improvement_events_outside_visited_block": len(events),
+        "events": events,
+    }
+
+
+def run_bo(problem, method: str, seed: int, budget: int, initial: int, reference, threshold: float | None = None) -> dict:
     specs, mode = blocks_for(problem, method)
     config = OptimizationConfig(
         evaluation_budget=budget,
@@ -161,6 +236,9 @@ def run_bo(problem, method: str, seed: int, budget: int, initial: int, reference
     # Block-visit accounting (BO observations + skips == visits):
     bo_obs = sum(1 for r in result.observations if r.metadata.get("stage") == "bo_iteration")
     assert bo_obs + result.n_skipped_blocks == result.n_block_visits, "block-visit accounting violated"
+    # Per-evaluation incumbent history resolution (initial design + one entry
+    # per successful BO evaluation, in evaluation order):
+    assert len(result.incumbent_history) == 1 + bo_obs, "incumbent_history resolution violated"
     return {
         "seed": seed,
         "method": method,
@@ -176,10 +254,20 @@ def run_bo(problem, method: str, seed: int, budget: int, initial: int, reference
         "n_skipped_blocks": result.n_skipped_blocks,
         "n_accepted_updates": result.n_accepted_updates,
         "n_cycles_without_improvement": result.n_cycles_without_improvement,
+        "pool_requests": result.pool_requests,
         "pool_requested_total": result.pool_requested_total,
         "pool_delivered_total": result.pool_delivered_total,
         "pool_rejected_infeasible_total": result.pool_rejected_infeasible_total,
+        "pool_rejected_duplicate_within_pool_total": result.pool_rejected_duplicate_within_pool_total,
         "pool_rejected_duplicate_evaluated_total": result.pool_rejected_duplicate_evaluated_total,
+        "objective_threshold": threshold,
+        "evaluations_to_threshold": _evaluations_to_threshold(result.incumbent_history, threshold),
+        "improvement_over_initial_incumbent": (
+            float(result.incumbent_history[-1]) - float(result.incumbent_history[0])
+        ) if result.incumbent_history else None,
+        "out_of_block_improvement_evidence": _out_of_block_evidence(result),
+        "skipped_block_records": list(result.skipped_block_records),
+        "iteration_diagnostics": [d.model_dump() for d in result.iteration_diagnostics],
         "gp_fit_runtime_s": result.gp_fit_runtime_s,
         "acquisition_runtime_s": result.acquisition_runtime_s,
         "objective_runtime_s": result.objective_runtime_s,
@@ -194,12 +282,13 @@ def run_bo(problem, method: str, seed: int, budget: int, initial: int, reference
     }
 
 
-def run_random_search(problem, seed: int, budget: int) -> dict:
+def run_random_search(problem, seed: int, budget: int, threshold: float | None = None) -> dict:
     started = time.perf_counter()
     result = RandomSearchOptimizer(problem, budget, seed=seed).optimize()
     wall = time.perf_counter() - started
     assert result.n_objective_evaluations == budget, "RS budget violation"
     reference_value = None  # filled by caller
+    history = [entry[1] for entry in result.history]
     return {
         "seed": seed,
         "method": "random_search",
@@ -210,9 +299,14 @@ def run_random_search(problem, seed: int, budget: int) -> dict:
         "n_failed_attempts": result.n_failed_attempts,
         "n_rejected_infeasible": result.n_rejected_infeasible,
         "n_skipped_duplicates": result.n_skipped_duplicates,
+        "objective_threshold": threshold,
+        "evaluations_to_threshold": _evaluations_to_threshold(history, threshold),
+        "improvement_over_initial_incumbent": (
+            float(history[-1]) - float(history[0])
+        ) if history else None,
         "wall_runtime_s": wall,
         "stopping_reason": result.stopping_reason,
-        "incumbent_history": [entry[1] for entry in result.history],
+        "incumbent_history": history,
         "validity_checks_passed": True,
     }
 
@@ -234,15 +328,16 @@ def run_matrix(benchmark_names: list[str], methods: list[str], seeds: list[int],
         reference = spec["reference"]()
         maximize = problem.maximize
         rows: list[dict] = []
+        threshold = float(reference.objective_value) * THRESHOLD_FRACTIONS.get(name, 0.90)
         # Shared initial incumbent per seed across methods (instruction 23:
         # improvement over the shared initial incumbent).
         for seed in seeds:
             for method in methods:
                 if method == "random_search":
-                    row = run_random_search(spec["factory"](), seed, budget)
+                    row = run_random_search(spec["factory"](), seed, budget, threshold=threshold)
                     row["gap_to_reference"] = _simple_regret(row["best_objective"], reference.objective_value, maximize)
                 else:
-                    row = run_bo(spec["factory"](), method, seed, budget, initial, reference)
+                    row = run_bo(spec["factory"](), method, seed, budget, initial, reference, threshold=threshold)
                     row["regret_vs_reference"] = _simple_regret(row["best_objective"], reference.objective_value, maximize)
                     if maximize and row["best_objective"] > reference.objective_value and reference.verification_method == "numerical_approximate":
                         row["exceeds_numerical_reference"] = True  # reported, investigated, never clipped
@@ -258,6 +353,9 @@ def run_matrix(benchmark_names: list[str], methods: list[str], seeds: list[int],
             "budget": budget,
             "initial_design": initial,
             "num_candidates": NUM_CANDIDATES,
+            "objective_threshold": threshold,
+            "threshold_fraction": THRESHOLD_FRACTIONS.get(name, 0.90),
+            "threshold_rule": THRESHOLD_RULE,
             "seeds": seeds,
             "methods": methods,
             "runs": rows,
@@ -306,11 +404,27 @@ def aggregate(benchmark_block: dict) -> dict:
         if method != "random_search":
             agg["per_method"][method].update({
                 "accepted_updates_mean": float(np.mean([r["n_accepted_updates"] for r in mrows])),
+                "block_visits_mean": float(np.mean([r["n_block_visits"] for r in mrows])),
                 "skipped_blocks_total": sum(r["n_skipped_blocks"] for r in mrows),
                 "cycles_completed_mean": float(np.mean([r["n_cycles_completed"] for r in mrows])),
                 "cycles_without_improvement_mean": float(np.mean([r["n_cycles_without_improvement"] for r in mrows])),
                 "scores_total": sum(r["n_acquisition_scores"] for r in mrows),
+                "improvement_over_initial_incumbent_mean": float(np.mean([
+                    r["improvement_over_initial_incumbent"] for r in mrows
+                    if r.get("improvement_over_initial_incumbent") is not None
+                ])),
+                "out_of_block_improvement_events_total": int(np.sum([
+                    r.get("out_of_block_improvement_evidence", {}).get(
+                        "n_improvement_events_outside_visited_block", 0)
+                    for r in mrows
+                ])),
             })
+        thresholds = [r.get("evaluations_to_threshold") for r in mrows]
+        reached = [t for t in thresholds if t is not None]
+        agg["per_method"][method]["evaluations_to_threshold_mean"] = (
+            float(np.mean(reached)) if reached else None
+        )
+        agg["per_method"][method]["evaluations_to_threshold_reached"] = f"{len(reached)}/{len(thresholds)}"
     # Paired descriptive comparisons vs joint (same seed): counts only.
     if "joint" in methods:
         for method in methods:
@@ -355,32 +469,14 @@ def write_evidence_archive(output_dir: Path, data: dict) -> Path:
             "reference": block["reference"],
             "budget": block["budget"],
             "initial_design": block["initial_design"],
-            "runs": [
-                {
-                    "seed": r["seed"],
-                    "method": r["method"],
-                    "best_config": r["best_config"],
-                    "best_objective": r["best_objective"],
-                    "gap_to_reference": r.get("gap_to_reference"),
-                    "regret_vs_reference": r.get("regret_vs_reference"),
-                    "stopping_reason": r["stopping_reason"],
-                    "n_failed_attempts": r.get("n_failed_attempts", 0),
-                    "n_accepted_updates": r.get("n_accepted_updates"),
-                    "n_skipped_blocks": r.get("n_skipped_blocks"),
-                    "n_cycles_completed": r.get("n_cycles_completed"),
-                    "incumbent_history": r["incumbent_history"],
-                    "wall_runtime_s": r["wall_runtime_s"],
-                    "gp_fit_runtime_s": r.get("gp_fit_runtime_s"),
-                    "acquisition_runtime_s": r.get("acquisition_runtime_s"),
-                    "objective_runtime_s": r.get("objective_runtime_s"),
-                    "candidate_generation_runtime_s": r.get("candidate_generation_runtime_s"),
-                    "constraint_validation_runtime_s": r.get("constraint_validation_runtime_s"),
-                    "pool_rejected_infeasible_total": r.get("pool_rejected_infeasible_total",
-                                                            r.get("n_rejected_infeasible")),
-                    "exceeds_numerical_reference": r.get("exceeds_numerical_reference"),
-                }
-                for r in block["runs"]
-            ],
+            "objective_threshold": block.get("objective_threshold"),
+            "threshold_fraction": block.get("threshold_fraction"),
+            "threshold_rule": block.get("threshold_rule"),
+            # Full per-run records (including iteration diagnostics, skipped
+            # blocks, pool accounting, out-of-block evidence) — durable
+            # evidence over brevity; still plain JSON, no binaries.
+            "runs": [dict(r) for r in block["runs"]],
+            "aggregate": block.get("aggregate"),
         }
     archive_path = archive_dir / f"m6_block_architecture_{data.get('phase', 'full')}_evidence.json"
     archive_path.write_text(json.dumps(compact, indent=1), encoding="utf-8")
