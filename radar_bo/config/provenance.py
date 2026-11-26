@@ -164,7 +164,9 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
         sensitivity=(5.0, 625.0),
         notes=["Switchable: tracking.maneuverability_noise_interpretation in "
                "{'table_variance', 'equation_literal'}; both implemented, default documented, "
-               "sensitivity to be tested (README section 4.1)."]))
+               "sensitivity to be tested (README section 4.1).",
+               "M3 review decision: 'table_variance' accepted as the default based on Table II "
+               "units and prose; the default is NOT an author-confirmed correction of the paper."]))
     reg.register(_entry(
         "tracking.reference_distance", t.reference_distance, "m", "paper_lu_2024",
         reference=f"{_LU}; Table II, p. 2789; Eq. (5)", rationale="Reference range r0 in the SNR model.",
@@ -240,19 +242,59 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
         reference=f"{_LU}; p. 2786 (x0 = 0 vector, P0 = I_4)",
         rationale="DEGENERATE GEOMETRY: the paper initializes the estimate at the origin, where the "
                   "range/azimuth measurement is singular (atan2(0, 0) undefined; measurement Jacobian "
-                  "degenerate). Default reproduces the paper; 'proposed_measurement_driven' initializes "
-                  "from the first noisy observation instead and must be justified before use.",
-        notes=["Both interpretations switchable via config (user decision)."]))
-
-    # ---- Eq. (6) as printed: flagged deviation -------------------------------
+                  "degenerate). 'paper_zero_identity' reproduces the paper and is retained as a "
+                  "documented DIAGNOSTIC mode; it must never silently produce NaN/inf or an "
+                  "artificial Jacobian (an update at the origin raises MeasurementGeometryError).",
+        notes=["M3 review (instruction 3.3): the OPERATIONAL estimator uses the "
+               "'measurement_driven' policy, initializing from the first supplied observation "
+               "plus explicitly configured velocity prior assumptions; the true state is never "
+               "accessible to initialization.",
+               "No numerical initial-covariance values are attributed to the paper beyond x0 = 0, "
+               "P0 = I_4."]))
     reg.register(_entry(
-        "tracking.measurement_variance_scaling", t.measurement_variance_scaling, None, "paper_lu_2024",
-        reference=f"{_LU}; Eq. (6)",
-        rationale="AS PRINTED, sigma^2_{.,t} = sigma^2_{.,0} * SNR_t makes the measurement variance GROW "
-                  "with SNR - opposite of standard radar behaviour (higher SNR should shrink variance). "
-                  "Flagged deviation; 'proposed_inverse_snr' implements the standard inverse relation "
-                  "for sensitivity studies.",
-        notes=["Recorded per README 'record deviations'; default reproduces the paper."]))
+        "tracking.measurement_driven_initial_velocity", t.measurement_driven_initial_velocity,
+        "(m/s, m/s)", "proposed_assumption",
+        reference="M3 review instruction 9 (no paper value)",
+        rationale="Velocity prior MEAN for measurement-driven initialization. Unresolved by "
+                  "default (None): initialization raises an informative error rather than "
+                  "inventing a default. Synthetic experiments supply values labeled as "
+                  "synthetic settings."))
+    reg.register(_entry(
+        "tracking.measurement_driven_initial_velocity_variance", t.measurement_driven_initial_velocity_variance,
+        "(m/s)^2", "proposed_assumption",
+        reference="M3 review instruction 9 (no paper value)",
+        rationale="Velocity prior VARIANCE per axis (isotropic) for measurement-driven "
+                  "initialization; kept conceptually separate from the position uncertainty, "
+                  "which is derived from the first observation's covariance. Unresolved by "
+                  "default (None)."))
+    reg.register(_entry(
+        "tracking.covariance_update_method", t.covariance_update_method, None, "proposed_assumption",
+        reference=f"{_LU}; Eq. (13)",
+        rationale="NUMERICAL STABILITY option: default 'paper_equation_13' applies Eq. (13) as "
+                  "printed, P_{t|t} = (I - K_t H_t) P_{t|t-1}. 'joseph' uses the "
+                  "form-preserving PSD update P = (I-KH) P (I-KH)^T + K R K^T, mathematically "
+                  "equivalent for the exact Kalman gain; equivalence is tested under valid "
+                  "numerical conditions.",
+        notes=["Posterior covariances are symmetrized against floating-point drift; covariance "
+               "eigenvalues are never clipped to conceal defects."]))
+
+    # ---- Eq. (6): consolidated semantics (M3 review, instruction 3.2) --------
+    reg.register(_entry(
+        "tracking.measurement_variance_semantics",
+        "sigma^2_{r|theta,t} = sigma^2_{r|theta,0} / SNR_t (reference variance divided by linear SNR)",
+        None, "paper_lu_2024",
+        reference=f"{_LU}; Eq. (6) and surrounding prose, p. 2787",
+        rationale="Owner-reviewed reading of Eq. (6). Evidence: (a) the paper prose directly below "
+                  "Eq. (6) states the variance DECREASES with longer dwell time or closer target "
+                  "'according to equations (5) and (6)'; (b) SNR grows with dwell time and "
+                  "proximity per Eq. (5); (c) standard radar behaviour. Only the inverse reading "
+                  "satisfies all three.",
+        notes=["M2 mis-recording corrected in M3: layout-mode PDF re-inspection shows the printed "
+               "glyphs juxtapose sigma^2_{.,0} and SNR_t on one line (a multiplication reading), "
+               "contradicting the same paper's prose; the multiplication variant was consolidated "
+               "away per review directive and inverse-SNR scaling is NOT classified as a deviation.",
+               "Implemented in radar_bo/radar/measurement_noise.py; requires the unresolved SNR0 "
+               "(see tracking.reference_snr)."]))
 
     # ---- Benzaghta et al.: methodological settings ---------------------------
     reg.register(_entry(
@@ -300,7 +342,10 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
         reference=f"{_LU}; Eq. (22)",
         rationale="Default reproduces the paper's discounted cumulative budget. The proposed "
                   "'hard_per_slot' alternative is STRICTER (per-slot bound vs discounted cumulative "
-                  "bound); recorded as a deviation whenever used."))
+                  "bound); recorded as a deviation whenever used.",
+        notes=["M3 review (instruction 3.4): 'hard_per_slot' is reserved for the proposed BO "
+               "configuration profile (M4+); no resource allocation or budget optimization is "
+               "implemented in M3."]))
 
     return reg
 

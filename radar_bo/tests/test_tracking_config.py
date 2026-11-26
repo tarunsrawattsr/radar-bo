@@ -55,15 +55,45 @@ class TestAmbiguitySwitches:
         with pytest.raises(ValidationError):
             TrackingConfig(maneuverability_noise_interpretation="variance")  # not a valid literal
 
-    def test_measurement_variance_scaling_switch(self):
-        assert TrackingConfig().measurement_variance_scaling == "paper_as_printed"
-        alt = TrackingConfig(measurement_variance_scaling="proposed_inverse_snr")
-        assert alt.measurement_variance_scaling == "proposed_inverse_snr"
+    def test_measurement_variance_scaling_consolidated(self):
+        """M3 review instruction 3.2: Eq. (6) has ONE semantics (division by SNR).
+
+        The former paper_as_printed/proposed_inverse_snr switch was consolidated
+        away; the field no longer exists.
+        """
+        t = TrackingConfig()
+        assert not hasattr(t, "measurement_variance_scaling")
 
     def test_initialization_policy_switch(self):
         assert TrackingConfig().initialization_policy == "paper_zero_identity"
-        alt = TrackingConfig(initialization_policy="proposed_measurement_driven")
-        assert alt.initialization_policy == "proposed_measurement_driven"
+        alt = TrackingConfig(initialization_policy="measurement_driven")
+        assert alt.initialization_policy == "measurement_driven"
+
+    def test_covariance_update_method_default_and_alternative(self):
+        """Default reproduces Eq. (13); 'joseph' is the documented stability option."""
+        assert TrackingConfig().covariance_update_method == "paper_equation_13"
+        alt = TrackingConfig(covariance_update_method="joseph")
+        assert alt.covariance_update_method == "joseph"
+        with pytest.raises(ValidationError):
+            TrackingConfig(covariance_update_method="cholesky_update")
+
+    def test_measurement_driven_init_assumptions_unresolved_by_default(self):
+        """Velocity prior assumptions are proposed, unresolved (None) by default."""
+        t = TrackingConfig()
+        assert t.measurement_driven_initial_velocity is None
+        assert t.measurement_driven_initial_velocity_variance is None
+
+    def test_measurement_driven_init_assumptions_validation(self):
+        t = TrackingConfig(
+            measurement_driven_initial_velocity=(5.0, -2.0),
+            measurement_driven_initial_velocity_variance=25.0,
+        )
+        assert t.measurement_driven_initial_velocity == (5.0, -2.0)
+        assert t.measurement_driven_initial_velocity_variance == 25.0
+        with pytest.raises(ValidationError):
+            TrackingConfig(measurement_driven_initial_velocity_variance=-1.0)
+        with pytest.raises(ValidationError):
+            TrackingConfig(measurement_driven_initial_velocity_variance=0.0)
 
 
 class TestValidation:

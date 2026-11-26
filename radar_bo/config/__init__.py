@@ -28,9 +28,9 @@ from radar_bo.config.resource_config import ResourceConfig, TimeBudgetSemantics
 from radar_bo.config.scanning_config import RESOLVABLE_FIELDS, ScanningConfig
 from radar_bo.config.simulation_config import SimulationConfig
 from radar_bo.config.tracking_config import (
+    CovarianceUpdateMethod,
     InitializationPolicy,
     ManeuverabilityInterpretation,
-    MeasurementVarianceScaling,
     TrackingConfig,
 )
 
@@ -40,8 +40,8 @@ __all__ = [
     "ensure_resolved",
     "TrackingConfig",
     "InitializationPolicy",
+    "CovarianceUpdateMethod",
     "ManeuverabilityInterpretation",
-    "MeasurementVarianceScaling",
     "ScanningConfig",
     "RESOLVABLE_FIELDS",
     "ResourceConfig",

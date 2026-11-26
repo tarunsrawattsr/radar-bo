@@ -254,8 +254,8 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 ## 13. Milestones for the coding agent
 
 - [x] M1: Establish repository, environment, dependency records, naming and units. *(2026-11-26: venv + pyproject + lock; 81 tests passing; see section 16.)*
-- [x] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters. *(2026-11-26: 36-entry provenance register, 14 unresolved preserved as None; see section 16.)*
-- [ ] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations.
+- [x] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters. *(2026-11-26: 39-entry provenance register, 16 unresolved preserved as None; see section 16.)*
+- [x] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations. *(2026-11-26: Eqs. (1)-(15) implemented, 208 tests passing, synthetic validation in `results/m3_synthetic_validation/`; see section 16.)*
 - [ ] M4: Implement metric interfaces, generic allocations, feasibility and frozen-state evaluation.
 - [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
 - [ ] M6: Implement dataset, GP, acquisition, candidate selection and stopping criteria using BoTorch.
@@ -286,13 +286,14 @@ A reproducible research repository exists with validated configuration models, a
 
 This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
 
-### Status: M1 and M2 complete — M3+ not started
+### Status: M1, M2 and M3 complete — M4+ not started
 
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (36 entries, 14 unresolved preserved as `None`), 81 tests passing |
-| M3–M9 | Not started | No simulation, estimation, or optimization code exists yet |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (39 entries, 16 unresolved preserved as `None`), layer-separation guard tests |
+| M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/`, `radar_bo/numerics.py`, `radar_bo/experiments/m3_synthetic_validation.py` — Eqs. (1)-(15); 208 tests passing; synthetic validation artifacts in `results/m3_synthetic_validation/` (gitignored; regenerate via the documented command) |
+| M4–M9 | Not started | No optimizer, benchmark, or experiment-runner code exists yet |
 
 ### Installation
 
@@ -307,18 +308,22 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 81 passed (0.3 s)
+.venv/bin/python -m pytest        # 208 passed (0.5 s): M1/M2 config tests + M3 estimation tests
 ```
 
 ### Experiment execution
 
-No experiments exist yet (M3+). Currently runnable utilities:
-
 ```bash
-.venv/bin/python -m radar_bo.config.provenance provenance_register.json   # regenerate register
+# M3 synthetic validation (single target, seeded): writes config.json,
+# provenance_register.json, metrics.json, trajectory_data.npz and a 2x2
+# diagnostic figure under results/m3_synthetic_validation/
+.venv/bin/python -m radar_bo.experiments.m3_synthetic_validation
+
+# Regenerate the authoritative provenance register snapshot
+.venv/bin/python -m radar_bo.config.provenance provenance_register.json
 ```
 
-Every future run must save its exact serialized `SimulationConfig` (`cfg.save_json(...)`) together with its provenance register. Experiments that require unresolved parameters fail with `UnresolvedParameterError` listing the missing names and units — values are never invented.
+Every run saves its exact serialized `SimulationConfig` (`cfg.save_json(...)`) together with a provenance register. Experiments that require unresolved parameters fail with `UnresolvedParameterError` listing the missing names and units — values are never invented.
 
 ### Repository layout (maps the suggested structure in section 3)
 
@@ -326,18 +331,38 @@ Every future run must save its exact serialized `SimulationConfig` (`cfg.save_js
 radar_bo/                  package root (editable install; suggested top-level dirs are subpackages)
 ├── config/                tracking/scanning/resource/environment/optimization/experiment configs,
 │                          SimulationConfig master model, provenance register   (M2)
-└── tests/                 81 unit tests incl. a layer-separation guard test   (M1+M2)
+├── environment/           TargetState/GaussianState/Observation representations, CV motion
+│                          model (Lu et al. Eqs. (1)-(3))                        (M3)
+├── radar/                 range/azimuth measurement model (Eqs. (4), (7)), SNR measurement
+│                          noise (Eqs. (5), (6), (8)), EKF (Eqs. (9)-(13)), initialization
+│                          policies, tracking cost (Eqs. (14)-(15))              (M3)
+├── experiments/           m3_synthetic_validation.py                            (M3)
+├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
+└── tests/                 208 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored, regenerable)
 ```
 
-Planned but not yet created: `environment/`, `radar/`, `optimization/`, `benchmarks/`, `simulation/`, `experiments/`, `analysis/`, `main.py`.
+Planned but not yet created: `optimization/`, `benchmarks/`, `simulation/`, `analysis/`, `main.py`.
+
+### M3 component-to-equation mapping (Lu et al., ICC 2024)
+
+| Component | Paper source | Notes |
+|---|---|---|
+| `environment/motion_model.py` | Eqs. (1)-(3) | F from Eq. (2) with revisit interval; Q from Eq. (3) scaled by sigma_w^2 under the configured interpretation; stochastic propagation samples per-axis accelerations through a low-rank factor G with Q = G G^T sigma_w^2 (exact: Q has rank 2) |
+| `radar/measurement_model.py` | Eqs. (4), (7) | quadrant-aware atan2 (documented convention for the printed tan^-1(y/x)); Jacobian validated against numerical differentiation; singular origin raises `MeasurementGeometryError` |
+| `radar/measurement_noise.py` | Eqs. (5), (6), (8) | Eq. (6) consolidated to division semantics (see provenance `tracking.measurement_variance_semantics`); SNR0 unresolved -> `UnresolvedParameterError` |
+| `radar/extended_kalman_filter.py` | Eqs. (9)-(13) | prior/posterior distinction preserved; gain via `linalg.solve` (no explicit inverse); angular residuals wrapped to [-pi, pi); optional Joseph-form update documented as numerically equivalent to Eq. (13) (tested); symmetrization only, no eigenvalue clipping |
+| `radar/initialization.py` | p. 2786 + M3 review | `paper_zero_identity` diagnostic mode fails loudly at the origin; `measurement_driven` operational policy uses only the first observation plus configured velocity priors |
+| `radar/tracking_cost.py` | Eqs. (14), (15) | standalone trace(E P E^T); validated on hand-constructed covariances |
 
 ### Current limitations
 
-- No EKF, simulation, BO, or experiment code exists; nothing here validates the papers' numerical results.
-- All scanning physics parameters and SNR0 are unresolved (`None` + provenance records); any experiment needing them fails clearly.
+- M3 validates numerical correctness only: results are synthetic-validation artifacts, NOT reproductions of the paper's experiments and NOT operational surveillance capability.
+- SNR0 and all scanning physics parameters remain unresolved (`None` + provenance records); the synthetic validation supplies an explicitly labeled synthetic SNR = 100 to the noise model only, while `tracking.reference_snr` stays `None`.
+- Dwell time is fixed at the paper reference tau0 = 1 s in the synthetic validation; dwell allocation is M4+ scope.
+- The `paper_zero_identity` initialization cannot run a full tracking episode from the origin (by design, diagnostic mode).
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
-- Ambiguity handling (switchable, documented defaults): Eq. (3) σ_w interpretation (`table_variance` default / `equation_literal`), zero-vector initialization (`paper_zero_identity` default / `proposed_measurement_driven`), Eq. (6) variance-vs-SNR direction (`paper_as_printed` default / `proposed_inverse_snr`), time-budget semantics (`discounted_cumulative` default / `hard_per_slot`).
+- Ambiguity handling (switchable, documented defaults): Eq. (3) sigma_w interpretation (`table_variance` default — accepted in the M3 review as a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` alternative scales Q by 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` reserved for the proposed BO profile, M4+).
 

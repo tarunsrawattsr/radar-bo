@@ -19,6 +19,11 @@ def register():
     return build_default_provenance()
 
 
+def flagged(entry) -> str:
+    """Rationale + notes joined, for text-presence assertions."""
+    return " ".join([entry.rationale or "", *entry.notes])
+
+
 class TestPaperEntries:
     def test_table_ii_values_recorded(self, register):
         e = register.get("tracking.reference_range_variance")
@@ -50,12 +55,27 @@ class TestPaperEntries:
         assert e.source == "standard_constant"
 
     def test_ambiguities_are_flagged_in_notes_or_rationale(self, register):
-        def flagged(entry) -> str:
-            return " ".join([entry.rationale or "", *entry.notes])
-
         assert "AMBIGUITY" in flagged(register.get("tracking.maneuverability_noise"))
         assert "DEGENERATE" in flagged(register.get("tracking.initialization_policy"))
-        assert "deviation" in flagged(register.get("tracking.measurement_variance_scaling")).lower()
+        semantics = register.get("tracking.measurement_variance_semantics")
+        assert "DECREASES" in flagged(semantics)
+        assert any("M2 mis-recording" in n for n in semantics.notes)
+
+    def test_m3_review_entries(self, register):
+        """M3 review outcomes are recorded: operational init policy, covariance
+        update option, unresolved velocity priors, hard_per_slot reservation."""
+        init = register.get("tracking.initialization_policy")
+        assert "DIAGNOSTIC" in flagged(init)
+        assert "OPERATIONAL" in flagged(init)
+        assert register.get("tracking.measurement_driven_initial_velocity").value is None
+        assert register.get("tracking.measurement_driven_initial_velocity_variance").value is None
+        cov = register.get("tracking.covariance_update_method")
+        assert cov.source == "proposed_assumption"
+        assert "paper_equation_13" in (cov.rationale or "")
+        budget = register.get("resource.time_budget_semantics")
+        assert any("M4+" in n for n in budget.notes)
+        man = register.get("tracking.maneuverability_noise")
+        assert any("NOT an author-confirmed correction" in n for n in man.notes)
 
     def test_benzaghta_entries_separated(self, register):
         assert register.get("optimization.acquisition_xi").source == "paper_benzaghta_2023"

@@ -9,6 +9,14 @@ Conventions
 * SI units; angles in radians; linear (not dB) quantities; double precision.
 * Variance fields already ARE variances; they are never squared a second time
   (README section 4.1).
+* Eq. (6) measurement-variance semantics (consolidated in the M3 review):
+  sigma^2_{.,t} = sigma^2_{.,0} / SNR_t — reference variance divided by the
+  linear SNR. Consistent with the paper prose ("the variance of the
+  measurement noise decreases when a longer dwell time is allocated to the
+  target or when the target moves closer to the radar") and with the
+  owner-reviewed reading of Eq. (6); inverse-SNR scaling is not a deviation.
+  See radar_bo/radar/measurement_noise.py and the provenance register for the
+  full evidence trail.
 * Values not reported by the paper are ``None`` and must never be invented;
   see :mod:`radar_bo.config.provenance`.
 """
@@ -23,11 +31,13 @@ from pydantic import Field, field_validator, model_validator
 from radar_bo.config.base import StrictModel
 
 InitializationPolicy = Literal[
-    # x0 = zero vector, P0 = I_4 (Lu et al., p. 2786)
+    # x0 = zero vector, P0 = I_4 (Lu et al., p. 2786). M3 review: retained as
+    # a documented DIAGNOSTIC mode (singular origin geometry raises clearly).
     "paper_zero_identity",
-    # initialize the filter from the first noisy observation (proposed fix
-    # for the singular origin geometry; must be justified before use)
-    "proposed_measurement_driven",
+    # OPERATIONAL policy (M3 review): initialize the estimator from the first
+    # supplied sensor observation plus explicitly configured velocity prior
+    # assumptions; the true state is never accessible.
+    "measurement_driven",
     # use initial_state / initial_covariance exactly as supplied (experimental)
     "experimental_custom",
 ]
@@ -35,19 +45,18 @@ InitializationPolicy = Literal[
 ManeuverabilityInterpretation = Literal[
     # sigma_w = 25 is the acceleration variance ((m/s^2)^2): Table II units and
     # prose say "variance", so the process-noise covariance is scaled by 25.
+    # M3 review: accepted as the default; NOT an author-confirmed correction.
     "table_variance",
     # Eq. (3) taken literally: Q_t is scaled by sigma_w^2 = 25^2 = 625.
     "equation_literal",
 ]
 
-MeasurementVarianceScaling = Literal[
-    # Eq. (6) as printed: sigma^2_{.,t} = sigma^2_{.,0} * SNR_t, i.e. the
-    # measurement variance GROWS with SNR. Flagged as a printed deviation
-    # from standard radar behaviour (README: record deviations).
-    "paper_as_printed",
-    # Standard radar behaviour: measurement variance SHRINKS with SNR.
-    # Proposed alternative, enabled for sensitivity studies.
-    "proposed_inverse_snr",
+CovarianceUpdateMethod = Literal[
+    # Eq. (13) as printed: P_{t|t} = (I - K_t H_t) P_{t|t-1} (paper-faithful).
+    "paper_equation_13",
+    # Numerical-stability improvement: P = (I-KH) P (I-KH)^T + K R K^T.
+    # Mathematically equivalent for the exact gain; form-preserving PSD.
+    "joseph",
 ]
 
 _IDENTITY_4: list[list[float]] = [
@@ -173,25 +182,51 @@ class TrackingConfig(StrictModel):
         default="paper_zero_identity",
         description=(
             "'paper_zero_identity' (default) reproduces the paper (x0 = 0, "
-            "P0 = I) including its degenerate origin geometry. "
-            "'proposed_measurement_driven' initializes the filter from the "
-            "first noisy observation instead (proposed fix, implemented with "
-            "the estimator; must be justified before use). "
-            "'experimental_custom' uses the supplied initial_state and "
-            "initial_covariance as-is."
+            "P0 = I) including its degenerate origin geometry; per the M3 review "
+            "it is retained as a documented DIAGNOSTIC mode (an EKF update from "
+            "the origin raises a clear MeasurementGeometryError instead of "
+            "producing NaN/inf). 'measurement_driven' is the OPERATIONAL policy: "
+            "the estimator initializes from the first supplied observation plus "
+            "explicitly configured velocity prior assumptions (never from the "
+            "true state). 'experimental_custom' uses the supplied initial_state "
+            "and initial_covariance as-is."
         ),
     )
-    measurement_variance_scaling: MeasurementVarianceScaling = Field(
-        default="paper_as_printed",
+    # ---- Measurement-driven initialization assumptions (proposed, unresolved)
+    # Required only by initialization_policy='measurement_driven'; the paper
+    # reports no velocity prior, so these stay None until explicitly supplied
+    # (synthetic experiments must label their values as synthetic settings).
+    measurement_driven_initial_velocity: tuple[float, float] | None = Field(
+        default=None,
         description=(
-            "How Eq. (6) maps SNR to measurement variances. 'paper_as_printed' "
-            "reproduces sigma^2_{.,t} = sigma^2_{.,0} * SNR_t even though it "
-            "makes the variance grow with SNR (flagged deviation). "
-            "'proposed_inverse_snr' implements the standard inverse relation "
-            "for sensitivity studies."
+            "PROPOSED assumption for measurement-driven initialization: prior mean "
+            "of the velocity (m/s, m/s). None = unresolved; initialization then "
+            "raises an informative error instead of inventing a default."
         ),
     )
-
+    measurement_driven_initial_velocity_variance: float | None = Field(
+        default=None,
+        gt=0.0,
+        description=(
+            "PROPOSED assumption for measurement-driven initialization: prior "
+            "velocity variance per axis, (m/s)^2 (isotropic). Position uncertainty "
+            "is derived from the first observation's covariance; velocity "
+            "uncertainty comes from this field, keeping the two conceptually "
+            "separate. None = unresolved."
+        ),
+    )
+    # ---- Covariance-update numerical option (Eq. (13) vs Joseph form) --------
+    covariance_update_method: CovarianceUpdateMethod = Field(
+        default="paper_equation_13",
+        description=(
+            "'paper_equation_13' (default) applies Eq. (13) as printed: "
+            "P_{t|t} = (I - K_t H_t) P_{t|t-1}. 'joseph' is the documented "
+            "numerical-stability improvement P = (I-KH) P (I-KH)^T + K R K^T, "
+            "mathematically equivalent for the exact Kalman gain and "
+            "form-preserving positive semidefinite; equivalence is tested. "
+            "Symmetrization is applied in both modes and eigenvalues are never clipped."
+        ),
+    )
     # ---- Validators ----------------------------------------------------------
     @field_validator("initial_covariance")
     @classmethod
