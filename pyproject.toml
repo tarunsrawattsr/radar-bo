@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "radar-bo"
+version = "0.1.0"
+description = "Research framework: constrained Bayesian optimization, planar EKF tracking and radar resource allocation in a simulated UAV corridor scenario (synthetic, non-deployable)."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pydantic>=2.7",
+    "scipy>=1.11",
+    "pandas>=2.2",
+    "matplotlib>=3.8",
+    "torch>=2.2",
+    "gpytorch>=1.12",
+    "botorch>=0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["radar_bo*"]
+
+[tool.pytest.ini_options]
+testpaths = ["radar_bo/tests"]
+addopts = "-ra"

@@ -253,8 +253,8 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 
 ## 13. Milestones for the coding agent
 
-- [ ] M1: Establish repository, environment, dependency records, naming and units.
-- [ ] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters.
+- [x] M1: Establish repository, environment, dependency records, naming and units. *(2026-11-26: venv + pyproject + lock; 81 tests passing; see section 16.)*
+- [x] M2: Implement nested Pydantic configuration and provenance register; preserve unresolved parameters. *(2026-11-26: 36-entry provenance register, 14 unresolved preserved as None; see section 16.)*
 - [ ] M3: Implement and validate standalone NumPy planar estimation baseline on synthetic observations.
 - [ ] M4: Implement metric interfaces, generic allocations, feasibility and frozen-state evaluation.
 - [ ] M5: Build independently verifiable synthetic constrained objective and direct benchmark.
@@ -281,3 +281,63 @@ After each milestone, provide a concise summary of files created, tests executed
 ## 15. Definition of done for the initial project
 
 A reproducible research repository exists with validated configuration models, an independently tested planar estimation baseline, interchangeable metric and objective interfaces, generic constrained BoTorch optimization, joint and block-wise search on synthetic benchmarks, tests and traceable experiment outputs. Missing physical parameters and future application-specific extensions remain explicitly marked. The README explains exactly what has been implemented, what has been tested and what remains unresolved.
+
+## 16. Implementation status and usage (updated per milestone)
+
+This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
+
+### Status: M1 and M2 complete — M3+ not started
+
+| Milestone | State | Evidence |
+|---|---|---|
+| M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (36 entries, 14 unresolved preserved as `None`), 81 tests passing |
+| M3–M9 | Not started | No simulation, estimation, or optimization code exists yet |
+
+### Installation
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/pip install -r requirements-lock.txt   # exact pinned environment
+.venv/bin/pip install -e .                       # the radar_bo package itself
+```
+
+The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, torch 2.15.0 (+cu132 wheel; CUDA libraries are bundled by the PyPI wheel but execution is CPU-only — `torch.cuda.is_available()` is False here), gpytorch 1.15.2, botorch 0.18.1, scipy 1.17.1, matplotlib 3.11.2, pandas 3.1.1, pytest 9.2.0.
+
+### Test execution
+
+```bash
+.venv/bin/python -m pytest        # 81 passed (0.3 s)
+```
+
+### Experiment execution
+
+No experiments exist yet (M3+). Currently runnable utilities:
+
+```bash
+.venv/bin/python -m radar_bo.config.provenance provenance_register.json   # regenerate register
+```
+
+Every future run must save its exact serialized `SimulationConfig` (`cfg.save_json(...)`) together with its provenance register. Experiments that require unresolved parameters fail with `UnresolvedParameterError` listing the missing names and units — values are never invented.
+
+### Repository layout (maps the suggested structure in section 3)
+
+```
+radar_bo/                  package root (editable install; suggested top-level dirs are subpackages)
+├── config/                tracking/scanning/resource/environment/optimization/experiment configs,
+│                          SimulationConfig master model, provenance register   (M2)
+└── tests/                 81 unit tests incl. a layer-separation guard test   (M1+M2)
+provenance_register.json   authoritative parameter register snapshot (regenerable)
+requirements-lock.txt      pinned dependency lock
+notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored, regenerable)
+```
+
+Planned but not yet created: `environment/`, `radar/`, `optimization/`, `benchmarks/`, `simulation/`, `experiments/`, `analysis/`, `main.py`.
+
+### Current limitations
+
+- No EKF, simulation, BO, or experiment code exists; nothing here validates the papers' numerical results.
+- All scanning physics parameters and SNR0 are unresolved (`None` + provenance records); any experiment needing them fails clearly.
+- The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
+- Ambiguity handling (switchable, documented defaults): Eq. (3) σ_w interpretation (`table_variance` default / `equation_literal`), zero-vector initialization (`paper_zero_identity` default / `proposed_measurement_driven`), Eq. (6) variance-vs-SNR direction (`paper_as_printed` default / `proposed_inverse_snr`), time-budget semantics (`discounted_cumulative` default / `hard_per_slot`).
+

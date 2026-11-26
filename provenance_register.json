@@ -1,0 +1,445 @@
+{
+  "entries": [
+    {
+      "name": "tracking.reference_range_variance",
+      "value": 100.0,
+      "unit": "m^2",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789",
+      "rationale": "Variance of range measurement at reference SNR (Eq. (6) mapping).",
+      "sensitivity_range": [
+        10.0,
+        1000.0
+      ],
+      "notes": [
+        "Already a variance; never squared again."
+      ]
+    },
+    {
+      "name": "tracking.reference_angle_variance",
+      "value": 0.0004,
+      "unit": "rad^2",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789",
+      "rationale": "Variance of azimuth measurement at reference SNR (Eq. (6) mapping); radians.",
+      "sensitivity_range": [
+        0.00001,
+        0.01
+      ],
+      "notes": []
+    },
+    {
+      "name": "tracking.maneuverability_noise",
+      "value": 25.0,
+      "unit": "(m/s^2)^2",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789; Eq. (3)",
+      "rationale": "AMBIGUITY: Eq. (3) scales Q_t by sigma_w^2, while the prose and Table II units describe sigma_w as a variance. Default 'table_variance' scales Q by 25; 'equation_literal' scales Q by 625.",
+      "sensitivity_range": [
+        5.0,
+        625.0
+      ],
+      "notes": [
+        "Switchable: tracking.maneuverability_noise_interpretation in {'table_variance', 'equation_literal'}; both implemented, default documented, sensitivity to be tested (README section 4.1)."
+      ]
+    },
+    {
+      "name": "tracking.reference_distance",
+      "value": 3000.0,
+      "unit": "m",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789; Eq. (5)",
+      "rationale": "Reference range r0 in the SNR model.",
+      "sensitivity_range": [
+        1000.0,
+        10000.0
+      ],
+      "notes": []
+    },
+    {
+      "name": "tracking.reference_dwell_time",
+      "value": 1.0,
+      "unit": "s",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789; Eq. (5)",
+      "rationale": "Reference dwell time tau0 in the SNR model.",
+      "sensitivity_range": [
+        0.1,
+        1.0
+      ],
+      "notes": []
+    },
+    {
+      "name": "tracking.revisit_interval",
+      "value": 2.5,
+      "unit": "s",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Table II, p. 2789",
+      "rationale": "Revisit interval T0; single authoritative source is TrackingConfig (README 4.6).",
+      "sensitivity_range": [
+        0.5,
+        5.0
+      ],
+      "notes": []
+    },
+    {
+      "name": "tracking.reference_snr",
+      "value": null,
+      "unit": "linear SNR",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (5)",
+      "rationale": "UNRESOLVED: SNR0 is required by the SNR model Eq. (5) but is not reported anywhere in the paper. Preserved as None; never invented.",
+      "sensitivity_range": null,
+      "notes": [
+        "Experiments requiring Eq. (5) with absolute SNRs must resolve this first."
+      ]
+    },
+    {
+      "name": "resource.dwell_time_action_set",
+      "value": [
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "unit": "s",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; action space, Sections II-III",
+      "rationale": "Dwell-time actions tau in {0.1, ..., 1.0} s in 0.1 s steps.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "resource.normalized_time_budget_threshold",
+      "value": 1.0,
+      "unit": "dimensionless",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (22)",
+      "rationale": "Theta_max = 1, normalized time-budget threshold.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "resource.tracking_scanning_tradeoff",
+      "value": 1000000.0,
+      "unit": "dimensionless",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (23)",
+      "rationale": "beta = 1e6 weights scanning reward against tracking cost. Reproduction only; recalibrate if metric definitions change.",
+      "sensitivity_range": null,
+      "notes": [
+        "Units of the two weighted terms are not matched by construction in the paper."
+      ]
+    },
+    {
+      "name": "resource.discount_factor",
+      "value": 0.9,
+      "unit": "dimensionless",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (22)",
+      "rationale": "gamma = 0.9 in the discounted cumulative budget.",
+      "sensitivity_range": [
+        0.5,
+        0.99
+      ],
+      "notes": []
+    },
+    {
+      "name": "scanning.peak_transmit_power",
+      "value": null,
+      "unit": "W (peak pulse power)",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.transmit_antenna_gain",
+      "value": null,
+      "unit": "linear (dimensionless)",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.receive_antenna_gain",
+      "value": null,
+      "unit": "linear (dimensionless)",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.wavelength",
+      "value": null,
+      "unit": "m",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.radar_cross_section",
+      "value": null,
+      "unit": "m^2",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.loss_factor",
+      "value": null,
+      "unit": "linear, >= 1",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.system_temperature",
+      "value": null,
+      "unit": "K",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables)."
+      ]
+    },
+    {
+      "name": "scanning.beam_angular_spacing",
+      "value": null,
+      "unit": "deg",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables).",
+        "phi in Eq. (16) is called 'phase delay between adjacent beams'; interpreted as angular spacing in degrees (number of beams = 360/phi). Interpretational assumption, flagged."
+      ]
+    },
+    {
+      "name": "scanning.reference_area",
+      "value": null,
+      "unit": "m^2",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables).",
+        "S0 in Eq. (21); must be nonzero."
+      ]
+    },
+    {
+      "name": "scanning.detection_probability",
+      "value": null,
+      "unit": "probability",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables).",
+        "Pd, Shnidman-equation input of Eq. (21)."
+      ]
+    },
+    {
+      "name": "scanning.false_alarm_probability",
+      "value": null,
+      "unit": "probability",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables).",
+        "Pf, Shnidman-equation input of Eq. (21)."
+      ]
+    },
+    {
+      "name": "scanning.required_detection_snr",
+      "value": null,
+      "unit": "linear SNR",
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eqs. (16)-(21), Table I (symbols only, no values)",
+      "rationale": "Unspecified by the paper.",
+      "sensitivity_range": null,
+      "notes": [
+        "Unspecified in the paper; preserved as None, never invented (README non-negotiables).",
+        "Required detection SNR; the paper cites Shnidman's equation without all implementation settings (pulse count, integration mode)."
+      ]
+    },
+    {
+      "name": "scanning.boltzmann_constant",
+      "value": 1.380649e-23,
+      "unit": "J/K",
+      "source": "standard_constant",
+      "reference": "SI 2019 exact definition",
+      "rationale": "Boltzmann constant k = 1.380649e-23 J/K; a standard physical constant, not a fitted parameter.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "tracking.initialization_policy",
+      "value": "paper_zero_identity",
+      "unit": null,
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; p. 2786 (x0 = 0 vector, P0 = I_4)",
+      "rationale": "DEGENERATE GEOMETRY: the paper initializes the estimate at the origin, where the range/azimuth measurement is singular (atan2(0, 0) undefined; measurement Jacobian degenerate). Default reproduces the paper; 'proposed_measurement_driven' initializes from the first noisy observation instead and must be justified before use.",
+      "sensitivity_range": null,
+      "notes": [
+        "Both interpretations switchable via config (user decision)."
+      ]
+    },
+    {
+      "name": "tracking.measurement_variance_scaling",
+      "value": "paper_as_printed",
+      "unit": null,
+      "source": "paper_lu_2024",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (6)",
+      "rationale": "AS PRINTED, sigma^2_{.,t} = sigma^2_{.,0} * SNR_t makes the measurement variance GROW with SNR - opposite of standard radar behaviour (higher SNR should shrink variance). Flagged deviation; 'proposed_inverse_snr' implements the standard inverse relation for sensitivity studies.",
+      "sensitivity_range": null,
+      "notes": [
+        "Recorded per README 'record deviations'; default reproduces the paper."
+      ]
+    },
+    {
+      "name": "optimization.kernel",
+      "value": "matern_5_2",
+      "unit": null,
+      "source": "paper_benzaghta_2023",
+      "reference": "M. Benzaghta et al., IEEE GLOBECOM 2023, DOI 10.1109/GLOBECOM54140.2023.10437768",
+      "rationale": "Matern-5/2 kernel; our harness is a methodological adaptation, not an exact reproduction of that paper's algorithm (README research foundations).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "optimization.acquisition_xi",
+      "value": 0.01,
+      "unit": "dimensionless",
+      "source": "paper_benzaghta_2023",
+      "reference": "M. Benzaghta et al., IEEE GLOBECOM 2023, DOI 10.1109/GLOBECOM54140.2023.10437768",
+      "rationale": "Expected-improvement exploration parameter xi = 0.01.",
+      "sensitivity_range": [
+        0.0,
+        0.1
+      ],
+      "notes": []
+    },
+    {
+      "name": "optimization.num_acquisition_candidates",
+      "value": 500,
+      "unit": "count",
+      "source": "paper_benzaghta_2023",
+      "reference": "M. Benzaghta et al., IEEE GLOBECOM 2023, DOI 10.1109/GLOBECOM54140.2023.10437768",
+      "rationale": "Acquisition candidate pool Nc = 500 per iteration.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "optimization.search_mode",
+      "value": "joint",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": "M. Benzaghta et al., IEEE GLOBECOM 2023, DOI 10.1109/GLOBECOM54140.2023.10437768",
+      "rationale": "'joint' is the default harness mode. Benzaghta et al. update one BS at a time (block-wise); 'alternating' mirrors that scheme and 'coordinate' is experimental.",
+      "sensitivity_range": null,
+      "notes": [
+        "Adaptation, not reproduction: the paper's block-wise scheme is per-BS in their problem, not a generic harness mode."
+      ]
+    },
+    {
+      "name": "optimization.num_initial_observations",
+      "value": 30,
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Initial space-filling design size; no paper default (README BOConfig proposes 30).",
+      "sensitivity_range": [
+        10.0,
+        60.0
+      ],
+      "notes": []
+    },
+    {
+      "name": "optimization.evaluation_budget",
+      "value": null,
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "UNRESOLVED by design: no paper default; each experiment must set it explicitly (OptimizationConfig.ensure_ready fails clearly otherwise).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "environment.num_targets",
+      "value": 1,
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Fixed-population synthetic scenario (README 4.4); paper's population is not specified for reproduction.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "environment.random_seed",
+      "value": 0,
+      "unit": null,
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Master seed for reproducibility; per-repetition seeds derived deterministically.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "experiment.repetitions",
+      "value": 5,
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Independent repetitions for statistical reporting; no paper default.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "resource.time_budget_semantics",
+      "value": "discounted_cumulative",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": "Z. Lu et al., IEEE ICC 2024, DOI 10.1109/ICC51166.2024.10622225; Eq. (22)",
+      "rationale": "Default reproduces the paper's discounted cumulative budget. The proposed 'hard_per_slot' alternative is STRICTER (per-slot bound vs discounted cumulative bound); recorded as a deviation whenever used.",
+      "sensitivity_range": null,
+      "notes": []
+    }
+  ]
+}

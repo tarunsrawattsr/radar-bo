@@ -1,0 +1,27 @@
+# Virtual environments
+.venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Packaging artifacts
+*.egg-info/
+build/
+dist/
+
+# Generated experiment outputs (per-run configs, datasets, figures)
+results/*
+!results/.gitkeep
+
+# Paper text extracts (regenerable from the committed PDFs; not source)
+notes/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
