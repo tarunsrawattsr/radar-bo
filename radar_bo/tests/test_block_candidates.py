@@ -96,7 +96,12 @@ class TestBlockPoolGeneration:
         p1, r1 = g1.generate_pool(current)
         p2, r2 = g2.generate_pool(current)
         np.testing.assert_array_equal(p1, p2)
-        assert r1 == r2
+        # Report equality EXCLUDES the M6 wall-clock instrumentation fields
+        # (generation_duration_s / feasibility_validation_s are timings, not
+        # reproducible quantities):
+        def _strip(report):
+            return report.model_dump(exclude={"generation_duration_s", "feasibility_validation_s"})
+        assert _strip(r1) == _strip(r2)
 
     def test_invalid_current_config_rejected(self):
         problem = BenchmarkAQuadratic()

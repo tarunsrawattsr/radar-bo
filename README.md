@@ -296,7 +296,7 @@ This section records what is actually implemented and tested. It does not add re
 | M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
 | M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py` |
 | M5 generic BO engine (incl. README-M6 components) | Done | `radar_bo/optimization/bo/` (problem interface, benchmarks A/B/C, reference solvers, random search, dataset, conversions, GP surrogate, LogEI acquisition, candidate pools, results records, 15-step loop), `radar_bo/experiments/m5_synthetic_bo_validation.py`, `results/m5_synthetic_bo_validation/` (seeds 0-9; durably archived in `research_results/`) |
-| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`; results under `results/m6_*` + durable archives in `research_results/`; 553 tests passing |
+| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (230 runs, all validity checks green), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; 554 tests passing |
 | M7+ (instruction stream: unification/analysis extensions), M8 runner package, M9 final docs | Not started | Instruction-stream M7/M8 require explicit approval; the per-experiment figures/statistics exist but no unified runner package |
 
 ### Installation
@@ -312,7 +312,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 553 passed (~13 min): M1-M6 config + estimation + interfaces + generic BO engine + block architectures
+.venv/bin/python -m pytest        # 554 passed (~17 min): M1-M6 config + estimation + interfaces + generic BO engine + block architectures
 ```
 
 ### Experiment execution
@@ -374,7 +374,7 @@ radar_bo/                  package root (editable install; suggested top-level d
 │                          m5_synthetic_bo_validation.py, m6_block_architecture_comparison.py,
 │                          m6_generate_figures.py, m6_merge_results.py
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 553 tests incl. layer-separation and ground-truth-leakage guards
+└── tests/                 554 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 research_results/          TRACKED durable evidence archives (per-seed histories, references,
@@ -458,6 +458,88 @@ Planned but not yet created: `analysis/` and `main.py` (unified experiment-runne
 | 19 | Reproducibility (same seed → same trajectory; serialization round trip with block fields) | `test_block_bo.py::test_reproducible_same_seed`, `::test_serialization_round_trip_with_block_fields` |
 | 20 | Failure accounting (failures consume budget, carry block metadata, never enter the success dataset) | `test_block_bo.py::test_failures_consume_budget_and_carry_block_metadata`; `test_accounting_identities.py::test_joint_run_with_failures`, `::test_block_run_with_failures_and_k2`, `::test_all_failing_problem` |
 
+### End-of-M6 status (measured results, honest reporting; instruction 22/23/32)
+
+**Execution (phase 22):** pilot passed first (budget 40, initial 10, seeds 0–1; every per-run
+validity check green, exit 0), then the full matrix ran as two parallel processes
+(4 primary benchmarks × {RS, joint, alternating, pairwise} × seeds 0–9 + separable 8d/16d
+dimension study × {RS, joint, pairwise} × seeds 0–9; budget 100 total, initial design 30,
+pool 500, 1 evaluation per block visit — inherited M5 settings, NOT proven optimal).
+Every one of the 230 BO/RS runs passed the in-run validity assertions (budget identity
+`n_initial+n_bo == 100`, all observations feasible, incumbent ⊆ evaluated observations,
+`BO observations + skipped == block visits`, per-evaluation incumbent-history resolution);
+both processes exited 0. The two partials were merged with
+`m6_merge_results.py` (per-benchmark blocks unchanged) and figures regenerated.
+Merged results: `results/m6_block_architecture_comparison/` (gitignored, regenerable);
+durable per-run evidence (including iteration diagnostics, skipped-block records, pool
+accounting, out-of-block evidence, references, versions, commit id):
+`research_results/m6_block_architecture_full_evidence.json` (tracked; ~9.9 MB JSON, no binaries).
+
+**Primary benchmarks** (best-observed mean ± stdev over seeds 0–9; simple regret vs the
+independent reference; objective-quality thresholds were FROZEN during the pilot phase,
+before any full-matrix comparative result was examined — threshold = fraction × f\*,
+0.90 everywhere except 0.95 for constrained_mixed):
+
+| Benchmark (f\*) | random search | joint BO | alternating BO | pair-wise BO |
+|---|---|---|---|---|
+| separable_4d (40.0) | 34.807 ± 2.281 | 38.747 ± 0.618 | **39.906 ± 0.111** | **39.906 ± 0.111** |
+| coupled_8d (20.0) | −11.239 ± 10.700 | −2.650 ± 6.012 | 14.888 ± 2.308 | **19.649 ± 0.196** |
+| constrained_mixed_8d (39.53, numerical_approximate) | 38.486 ± 0.306 | 38.898 ± 0.226 | 38.858 ± 0.378 | **39.113 ± 0.292** |
+| block_stagnation_4d (9.6) | 8.120 ± 0.443 | 8.670 ± 0.241 | 8.249 ± 0.911 | **8.984 ± 0.299** |
+
+**Dimension study** (separable quadratic family, same budget):
+
+| Dimension | random search | joint BO | pair-wise BO |
+|---|---|---|---|
+| separable_8d (f\* = 80) | 62.293 ± 5.653 | 66.935 ± 3.261 | **79.782 ± 0.128** |
+| separable_16d (f\* = 160) | 81.238 ± 16.075 | 98.800 ± 8.860 | **157.796 ± 2.700** |
+
+**Key findings (descriptive over 10 seeds; no superiority claim):**
+
+1. **Architecture-structure match dominates in higher dimensions.** On the separable
+   family, pair-wise decomposition reached the 90 % threshold in 10/10 seeds (8d: mean
+   79.78, regret 0.22; 16d: mean 157.80, regret 2.20) while joint BO reached it in 1/10
+   (8d) and 0/10 (16d) seeds (16d regret 61.2). Same seed → pairwise better than joint on
+   10/10 seeds at both dimensions.
+2. **Coupled 8d: block-restricted search around the moving current configuration beat
+   joint LogEI under this budget** (pairwise regret 0.35, alternating 5.11, joint 22.65;
+   10/10 seeds pairwise/alternating > joint). Random search is catastrophic here
+   (regret 31.2) — GP guidance matters even when block-restricted.
+3. **Constrained mixed 8d: all methods within ~0.6 regret** (best observation 39.4605 by
+   pairwise, seed 7 — below the 39.53 numerical reference; **no `exceeds_numerical_reference`
+   flag in any run**). Pairwise vs joint same-seed: 9 better / 1 worse. The 95 % threshold
+   was already cleared by the shared initial design in most runs, so
+   evaluations-to-threshold is not discriminative on this benchmark.
+4. **Instruction-9 empty-pool behavior measured in the wild:** alternating on
+   constrained_mixed_8d skipped a mean of 50.2 visits per run (discrete 2-variable block:
+   4² = 16 distinct combinations get exhausted → `empty_feasible_pool_for_block` → skip,
+   run continues); pairwise skipped 9.7/run. Skips are recorded per visit with reasons in
+   the durable archive.
+5. **Block-stagnation evidence:** the alternating grouping on the stagnation LP averages
+   8.249 (vs joint 8.670, pairwise 8.984) — the provably-blocked grouping performs worst,
+   and per-run stagnation counters (cycles without improvement, visits without accepted
+   update, skipped blocks) are recorded. Stagnation is NOT a convergence proof.
+6. **Out-of-block improvement events: 0 in all 230 runs.** By construction, block
+   candidates vary only active coordinates and the current configuration carries fixed
+   coordinates; the metric confirms clean improvement attribution (every incumbent
+   improvement is attributable to the visited block — or the initial design).
+7. **Sample vs computational efficiency are distinct (instruction 24, separate stages).**
+   Joint BO wall-clock is GP-fit dominated (constrained_mixed: 37.1 s GP of 115.2 s total);
+   block-restricted search on the same problem is candidate-GENERATION dominated
+   (alternating: 251.5 s generation + 67.4 s feasibility validation of 324.7 s — small
+   blocks sample mostly-infeasible corners and never repair; ~14–26 infeasible rejections
+   per requested candidate slot). GP training dimension is M×d for every architecture:
+   smaller blocks do NOT reduce GP fit cost (block runs even fit slightly more often).
+8. **evaluations-to-threshold** (BO axis: 1 = initial design + k BO evaluations; RS axis:
+   attempted evaluations; thresholds frozen pre-results): separable_4d joint 2.1 /
+   alternating 2.5 / pairwise 2.5 (all 10/10 reached; RS 84.5, 2/10); coupled_8d pairwise
+   21.4 (10/10) vs alternating 23.0 (1/10), joint never (0/10); separable_8d pairwise 7.9
+   (10/10) vs joint 2.0 (1/10); separable_16d pairwise 41.9 (10/10) vs joint never.
+9. All 140 BO runs on the primary benchmarks stopped at `evaluation_budget_exhausted`
+   (fixed total budget respected; no early stopping); the joint-vs-random-search same-seed
+   counts (e.g. separable_4d: joint better on 10/10) and all per-seed histories are in the
+   merged results and the durable archive.
+
 ### Current limitations
 
 - M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
@@ -467,7 +549,7 @@ Planned but not yet created: `analysis/` and `main.py` (unified experiment-runne
 - Dwell time is fixed at the paper reference tau0 = 1 s in the M3 validation; dwell allocation enters M4 only through the resource interfaces (no optimization).
 - The `paper_zero_identity` initialization cannot run a full tracking episode from the origin (by design, diagnostic mode).
 - M5 limitations: the generic engine implements the SINGLE-candidate JOINT mode only (no batching, no alternating/coordinate modes); acquisition supports conventional LogEI for low-noise/deterministic objectives (no noisy qLog variant is exercised); the GP likelihood noise is INFERRED (never forced to zero) even for deterministic benchmarks; the M5 validation budgets (100 evaluations, initial design 30) are provisional synthetic settings, not paper-derived; the seed 0-9 comparison is descriptive over 10 seeds and makes no superiority claim; BO results that fail to beat random search on some seeds are reported as measured; termination at a budget is not proof of global convergence; benchmark C's reference is numerical_approximate and may be exceeded legitimately.
-- M6 limitations: the block architectures use ONE deterministic cyclic scheduler (priority/adaptive scheduling is future work); the improvement-only current-configuration acceptance policy can stall block-restricted search (demonstrated on the stagnation LP — this is honest evidence, not a defect); pair-wise and alternating coincide structurally on problems whose recommended groupings are identical (e.g. separable_4d) and their results must then be read as one architecture; convergence curves place incumbent improvements by monotone-envelope reconstruction (exact per-evaluation positions are in the full result records); BO wall-clock cost is dominated by GP fitting (~3 orders of magnitude above random search per run — sample efficiency and computational efficiency are distinct and reported separately); the M6 comparison is descriptive over 10 seeds on synthetic problems only; the constrained-mixed reference is numerical_approximate; figures are regenerable artifacts (not tracked) while the underlying per-seed data IS tracked under research_results/.
+- M6 limitations: the block architectures use ONE deterministic cyclic scheduler (priority/adaptive scheduling is future work); the improvement-only current-configuration acceptance policy can stall block-restricted search (demonstrated on the stagnation LP — this is honest evidence, not a defect); pair-wise and alternating coincide structurally on problems whose recommended groupings are identical (e.g. separable_4d) and their results must then be read as one architecture (identical numbers there); convergence curves use the per-evaluation incumbent history recorded by the full matrix (exact placement); block-restricted search on tightly constrained problems pays a large candidate-GENERATION cost (mostly-infeasible sampling, rejections never repaired) that can exceed the GP cost it was meant to save; the M6 comparison is descriptive over 10 seeds on synthetic problems only; the constrained-mixed reference is numerical_approximate; the discrete 2-variable block exhausts after 16 distinct combinations and then contributes only skips; figures are regenerable artifacts (not tracked) while the underlying per-seed data IS tracked under research_results/.
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
 - Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 
