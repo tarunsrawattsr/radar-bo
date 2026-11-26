@@ -22,6 +22,8 @@ StopReason = Literal[
     "gp_fitting_failure",
     "repeated_objective_failures",
     "no_feasible_initial_design",
+    "all_blocks_exhausted_in_cycle",
+    "cycle_patience_exhausted",
 ]
 
 
@@ -39,6 +41,13 @@ class IterationDiagnostics(StrictModel):
     gp_fit_duration_s: float
     acquisition_duration_s: float
     n_candidates_scored: int
+    # ---- M6 block fields (defaults keep M5 joint records unchanged) ----
+    block_id: str | None = Field(default=None, description="Active block for this iteration (None in pure joint runs).")
+    cycle_number: int | None = None
+    within_cycle_index: int | None = None
+    accepted_current_config: bool | None = Field(
+        default=None, description="Whether the current configuration was updated (improvement-only acceptance)."
+    )
 
 
 class OptimizationResult(StrictModel):
@@ -60,6 +69,37 @@ class OptimizationResult(StrictModel):
     pool_rejected_infeasible_total: int = Field(default=0)
     pool_rejected_duplicate_within_pool_total: int = Field(default=0)
     pool_rejected_duplicate_evaluated_total: int = Field(default=0)
+    # ---- M6 block-architecture fields (all defaulted: M5 joint records unchanged) ----
+    search_strategy: str = Field(default="joint", description="Search strategy id: joint / alternating / pairwise.")
+    variable_blocks: list[dict] = Field(
+        default_factory=list,
+        description="Resolved block descriptions (metadata; never GP input features).",
+    )
+    uncovered_variable_indices: list[int] = Field(
+        default_factory=list,
+        description="Decision-variable indices covered by NO block (stay fixed at the current configuration).",
+    )
+    current_config_final: list[float] | None = Field(
+        default=None,
+        description="Final current configuration (search center under the acceptance policy); distinct from the incumbent.",
+    )
+    current_config_value_final: float | None = Field(
+        default=None, description="Verified objective value of the final current configuration."
+    )
+    n_accepted_updates: int = Field(default=0, description="Current-configuration acceptances (improvement-only policy).")
+    n_block_visits: int = Field(default=0, description="Scheduler visits (a visit may perform >=1 evaluation attempt).")
+    n_cycles_completed: int = Field(default=0, description="Complete cycles (every block visited or skipped once).")
+    n_skipped_blocks: int = Field(default=0, description="Block visits skipped for lack of feasible candidates.")
+    skipped_block_records: list[dict] = Field(
+        default_factory=list,
+        description="Skipped-block log: block_id, cycle_number, reason (instruction 9).",
+    )
+    n_cycles_without_improvement: int = Field(
+        default=0, description="Consecutive complete cycles without accepted improvement or incumbent improvement."
+    )
+    evaluations_per_block_visit: int = Field(
+        default=1, description="Configured evaluations per block visit (instruction 13)."
+    )
     best_config: list[float] | None = Field(
         default=None,
         description="Exact decision vector of the best EVALUATED feasible configuration; "
@@ -79,6 +119,14 @@ class OptimizationResult(StrictModel):
     gp_fit_runtime_s: float
     acquisition_runtime_s: float
     objective_runtime_s: float
+    candidate_generation_runtime_s: float = Field(
+        default=0.0,
+        description="Wall-clock time of all candidate-pool generations (M6 instruction 24; includes feasibility validation).",
+    )
+    constraint_validation_runtime_s: float = Field(
+        default=0.0,
+        description="Time spent in feasibility/constraint validation inside candidate generation (M6 instruction 24).",
+    )
     total_runtime_s: float
     stopping_reason: StopReason
     settings: dict = Field(description="Optimizer settings snapshot (plain values; no tensors).")

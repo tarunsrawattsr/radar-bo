@@ -98,6 +98,34 @@ class OptimizationConfig(StrictModel):
             "explicitly identified and tested strategy."
         ),
     )
+    variable_blocks: list[tuple[str, tuple[int, ...]]] | None = Field(
+        default=None,
+        description=(
+            "M6: variable blocks for block-restricted search. None = joint search (one block "
+            "with every variable, the M5 baseline). Two blocks = alternating search; multiple "
+            "two-variable blocks = pair-wise coordinate search. Blocks must not overlap; full "
+            "coverage of all decision variables is NOT required (uncovered variables stay fixed "
+            "at the current configuration and are reported)."
+        ),
+    )
+    evaluations_per_block_visit: int = Field(
+        default=1, ge=1,
+        description=(
+            "M6 (experimental): objective evaluations performed per block visit. 1 = the "
+            "primary cyclic block-restricted strategy: one acquisition-selected evaluation "
+            "(which is NOT an exact maximization of the block). Larger values repeat "
+            "(regenerate pool, refit GP, reselect) within the visit, all inside the shared "
+            "global evaluation budget."
+        ),
+    )
+    cycle_patience: int | None = Field(
+        default=None, ge=1,
+        description=(
+            "M6 (experimental): stop after this many COMPLETE cycles without any accepted "
+            "current-configuration improvement or incumbent improvement. Distinct from "
+            "'patience' (which counts BO iterations). None disables cycle-level patience."
+        ),
+    )
     patience: int | None = Field(
         default=None, ge=1, description="Optional early-stop patience in iterations without improvement (experimental)."
     )

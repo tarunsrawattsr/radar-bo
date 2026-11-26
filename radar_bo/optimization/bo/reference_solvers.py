@@ -169,3 +169,144 @@ def reference_solutions() -> dict[str, ReferenceSolution]:
         "B": benchmark_b_reference(),
         "C": benchmark_c_reference(seed=0),
     }
+
+
+# =====================================================================================
+# M6 high-dimensional benchmark references (instruction 20) — independent of BO.
+# Analytic references are exact; the constrained mixed reference is
+# numerical_approximate (KKT multiplier bisection) and its value is COMPUTED,
+# never assumed. If a BO solution exceeds a numerical reference, the result is
+# reported and the reference is investigated — never silently clipped.
+# =====================================================================================
+
+def separable_hd_reference(dimension: int) -> ReferenceSolution:
+    """Analytic exact reference for the separable quadratic benchmark."""
+    from radar_bo.optimization.bo.benchmarks_highdim import SeparableQuadraticHD
+
+    problem = SeparableQuadraticHD(dimension)
+    config = problem.centers.tolist()
+    value = float(problem.objective(np.asarray(config)))
+    expected = 10.0 * dimension
+    if abs(value - expected) > 1e-9:  # defensive: the analytic claim must hold
+        raise RuntimeError(f"Separable reference inconsistency: computed {value}, analytic {expected}.")
+    if not problem.is_feasible(np.asarray(config)):
+        raise RuntimeError("Separable analytic optimum must be feasible.")
+    return ReferenceSolution(
+        problem_id=problem.problem_id,
+        config=[float(v) for v in config],
+        objective_value=value,
+        feasible=True,
+        verification_method="analytic_exact",
+        solver="per-coordinate completion of the square (independent derivation)",
+        notes=f"Exact optimum x* = centers, f* = 10*{dimension}. Approximate references are the only alternative "
+              "for multimodal problems; this problem admits an analytic proof.",
+    )
+
+
+def coupled_hd_reference(dimension: int) -> ReferenceSolution:
+    """Analytic exact reference for the coupled quadratic benchmark (x* = c)."""
+    from radar_bo.optimization.bo.benchmarks_highdim import CoupledQuadraticHD
+
+    problem = CoupledQuadraticHD(dimension)
+    config = problem.centers.tolist()
+    value = float(problem.objective(np.asarray(config)))
+    if abs(value - 20.0) > 1e-9:
+        raise RuntimeError(f"Coupled reference inconsistency: computed {value}, analytic 20.0.")
+    eigenvalues = np.linalg.eigvalsh(problem.M)
+    if float(eigenvalues.min()) <= 0.0:
+        raise RuntimeError("Mixing matrix must be positive definite for the analytic proof.")
+    if not problem.is_feasible(np.asarray(config)):
+        raise RuntimeError("Coupled analytic optimum must be feasible.")
+    return ReferenceSolution(
+        problem_id=problem.problem_id,
+        config=[float(v) for v in config],
+        objective_value=value,
+        feasible=True,
+        verification_method="analytic_exact",
+        solver="PD quadratic form vanishes at the center; eigvalsh verifies positive definiteness",
+        notes="Exact optimum x* = c, f* = 20 despite coupling: the coupling affects the landscape shape, "
+              "not the optimum location.",
+    )
+
+
+def constrained_mixed_hd_reference(dimension: int, bisection_tolerance: float = 1e-12) -> ReferenceSolution:
+    """Numerical reference for the constrained mixed benchmark: enumeration over
+    the 16 discrete combinations; per combination the continuous inner optimum
+    uses the KKT clamped form with the multiplier solved by bisection
+    (``ConstrainedMixedHD.inner_continuous_optimum``). The reference value is
+    computed here, never assumed. Classified numerical_approximate (bisection
+    truncation ~1e-12), NOT an analytic proof."""
+    from radar_bo.optimization.bo.benchmarks_highdim import ConstrainedMixedHD
+
+    problem = ConstrainedMixedHD(dimension)
+    discrete_values = problem.DISCRETE_D
+    best_value = -np.inf
+    best_config: np.ndarray | None = None
+    n_cont = dimension - 2
+    for d0 in discrete_values:
+        for d1 in discrete_values:
+            budget_r = problem.BUDGET_C - 3.0 * (float(d0) + float(d1))
+            x_cont, _binding = ConstrainedMixedHD.inner_continuous_optimum(
+                problem.cont_centers, budget_r, upper=4.0
+            )
+            candidate = np.concatenate([[float(d0), float(d1)], x_cont])
+            if not problem.is_feasible(candidate):
+                raise RuntimeError(f"Reference candidate infeasible: {candidate.tolist()}")
+            value = float(problem.objective(candidate))
+            if value > best_value:
+                best_value = value
+                best_config = candidate
+    return ReferenceSolution(
+        problem_id=problem.problem_id,
+        config=[float(v) for v in best_config],
+        objective_value=float(best_value),
+        feasible=bool(problem.is_feasible(best_config)),
+        verification_method="numerical_approximate",
+        solver=(f"enumeration over {len(discrete_values) ** 2} discrete combinations + KKT multiplier bisection "
+                f"(tol {bisection_tolerance:g}); no BO component"),
+        notes=("APPROXIMATE reference (bisection truncation); a BO result exceeding it is reported and "
+               "investigated, never clipped."),
+    )
+
+
+def stagnation_lp_reference() -> ReferenceSolution:
+    """Analytic exact LP reference: greedy fill of the highest-weight coordinates
+    (fractional knapsack with unit costs — standard LP argument)."""
+    from radar_bo.optimization.bo.benchmarks_highdim import BlockStagnationLP
+
+    problem = BlockStagnationLP()
+    weights = np.array([3.0, 1.0, 3.0, 1.0])
+    config = np.zeros(4)
+    remaining = problem.BUDGET
+    for idx in np.argsort(-weights):  # highest weight first
+        take = min(problem.UPPER, remaining)
+        config[idx] = take
+        remaining -= take
+    value = float(problem.objective(config))
+    if abs(value - 9.6) > 1e-9:
+        raise RuntimeError(f"Stagnation LP reference inconsistency: computed {value}, analytic 9.6.")
+    if not problem.is_feasible(config):
+        raise RuntimeError("LP reference configuration must be feasible.")
+    return ReferenceSolution(
+        problem_id=problem.problem_id,
+        config=[float(v) for v in config],
+        objective_value=value,
+        feasible=True,
+        verification_method="analytic_exact",
+        solver="fractional-knapsack greedy LP argument (independent of BO)",
+        notes="f* = 9.6 at (1.6, 0, 1.6, 0): all shared budget goes to the weight-3 coordinates. "
+              "Alternating block search from a budget-tight configuration cannot reach it (stagnation demo).",
+    )
+
+
+def reference_solutions_m6() -> dict[str, ReferenceSolution]:
+    """All M6 benchmark references (numerical ones computed, deterministic)."""
+    return {
+        "separable_4d": separable_hd_reference(4),
+        "separable_8d": separable_hd_reference(8),
+        "separable_16d": separable_hd_reference(16),
+        "coupled_4d": coupled_hd_reference(4),
+        "coupled_8d": coupled_hd_reference(8),
+        "constrained_mixed_8d": constrained_mixed_hd_reference(8),
+        "block_stagnation_4d": stagnation_lp_reference(),
+    }

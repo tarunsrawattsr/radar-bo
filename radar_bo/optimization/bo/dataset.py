@@ -58,6 +58,10 @@ class FailureRecord(StrictModel):
     error: str
     stage: str = Field(description="Where it failed: 'objective_evaluation', 'initial_design', ...")
     seed_info: str | None = None
+    metadata: dict[str, str] = Field(
+        default_factory=dict,
+        description="Additional context (e.g. M6 block_id / cycle_number); plain strings only.",
+    )
 
 
 class ObservationDataset(StrictModel):
@@ -113,7 +117,8 @@ class ObservationDataset(StrictModel):
         return record
 
     def record_failure(
-        self, evaluation_id: str, error: str, stage: str, config: np.ndarray | None = None, seed_info: str | None = None
+        self, evaluation_id: str, error: str, stage: str, config: np.ndarray | None = None,
+        seed_info: str | None = None, metadata: dict[str, str] | None = None,
     ) -> None:
         """Append to the SEPARATE failure log (never enters training data)."""
         self.failures.append(
@@ -124,6 +129,7 @@ class ObservationDataset(StrictModel):
                 error=error,
                 stage=stage,
                 seed_info=seed_info,
+                metadata=metadata or {},
             )
         )
 

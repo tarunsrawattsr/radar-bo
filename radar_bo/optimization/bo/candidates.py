@@ -17,6 +17,8 @@ objective evaluations).
 
 from __future__ import annotations
 
+import time
+
 import numpy as np
 from pydantic import Field
 
@@ -36,6 +38,13 @@ class CandidatePoolReport(StrictModel):
     rejected_duplicate_evaluated: int
     seed: int
     excluded_evaluated: bool
+    generation_duration_s: float = Field(
+        default=0.0, description="Wall-clock time of this pool generation (sampling + dedup + feasibility)."
+    )
+    feasibility_validation_s: float = Field(
+        default=0.0,
+        description="Time spent in problem.is_feasible constraint/bounds validation inside this generation.",
+    )
     notes: list[str] = Field(default_factory=list)
 
 
@@ -91,6 +100,8 @@ class CandidateGenerator:
         n_dup_pool = 0
         n_dup_evaluated = 0
         max_attempts = self.num_candidates * self.max_attempts_multiplier
+        generation_started = time.perf_counter()
+        feasibility_seconds = 0.0
 
         evaluated_list = (
             [] if evaluated_configs is None else [np.asarray(c, dtype=np.float64).flatten() for c in evaluated_configs]
@@ -99,7 +110,10 @@ class CandidateGenerator:
         while len(pool) < self.num_candidates and n_generated < max_attempts:
             n_generated += 1
             x = self._sample(rng)
-            if not problem.is_feasible(x):
+            t_feas = time.perf_counter()
+            feasible = problem.is_feasible(x)
+            feasibility_seconds += time.perf_counter() - t_feas
+            if not feasible:
                 n_infeasible += 1
                 continue
             if any(float(np.max(np.abs(x - p))) <= DUPLICATE_TOLERANCE for p in pool):
@@ -121,6 +135,8 @@ class CandidateGenerator:
             rejected_duplicate_evaluated=n_dup_evaluated,
             seed=self.seed,
             excluded_evaluated=self.exclude_evaluated,
+            generation_duration_s=time.perf_counter() - generation_started,
+            feasibility_validation_s=feasibility_seconds,
             notes=[
                 "Pool size is the number of acquisition-SCORED candidates; it consumes zero "
                 "objective evaluations.",

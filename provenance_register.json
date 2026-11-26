@@ -677,6 +677,109 @@
       "notes": []
     },
     {
+      "name": "bo.blocks.representation",
+      "value": "variable_blocks_index_based",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "A block names an ordered subset of decision-variable indices; block metadata (ids, active/fixed indices) is recorded as evaluation metadata, NEVER as GP input features. Blocks must not overlap; uncovered variables stay fixed at the current configuration and are reported. Full coverage is validated only when required.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.scheduling.strategy",
+      "value": "deterministic_cyclic",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Blocks are visited in given order, repeating; one complete cycle = every block visited or skipped once. Joint = one full-dimension block (M5 baseline); alternating = two user-defined blocks; pair-wise ('coordinate') = at least two two-variable blocks (two two-variable blocks match both readings; the declared search_mode resolves the ambiguity).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.current_config_vs_incumbent",
+      "value": "two_distinct_objects",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "The CURRENT CONFIGURATION is the feasible complete vector around which block candidates are built; the GLOBAL INCUMBENT is the best successfully evaluated feasible configuration of the whole run. Both always refer to actual stored observations; neither is ever replaced by an unevaluated GP prediction; they are maintained independently and may differ.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.acceptance_policy",
+      "value": "improvement_only_current_config",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "PROPOSED implementation choice: the current configuration is updated only when a verified evaluation improves its value by more than the configured tolerance improvement_tolerance (default 0). Exploratory evaluations that do not improve remain in the shared dataset. Non-improving-acceptance policies are separate experiments, not mixed with the primary comparison.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.evaluations_per_block_visit",
+      "value": 1.0,
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Primary M6 strategy: ONE acquisition-selected evaluation per block visit (which is NOT an exact block maximization). Configurable for later experiments; all evaluations share the global budget.",
+      "sensitivity_range": [
+        1.0,
+        5.0
+      ],
+      "notes": []
+    },
+    {
+      "name": "bo.full_gp_dimension_vs_block_dimension",
+      "value": "gp_trains_full_d",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "ONE shared GP trains on ALL successful COMPLETE configurations (M x d, full dimension) regardless of active block size; only the acquisition-SEARCH dimension shrinks per block. Reducing the block dimension does not reduce GP training cost. Separate per-block GPs would be a distinct, unapproved method.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.benchmark_stagnation_lp.reference",
+      "value": {
+        "f_star": 9.6,
+        "a_star": 1.6,
+        "b_star": 0.0
+      },
+      "unit": "dimensionless",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Synthetic block-stagnation LP (dim 4): max 3a1 + b1 + 3a2 + b2 s.t. a1+b1+a2+b2 <= 3.2, all in [0, 1.6]. Analytic exact LP optimum 9.6 at (1.6, 0, 1.6, 0) via the fractional-knapsack greedy argument. From budget-tight configurations the alternating a/b grouping provably cannot improve while the joint optimum exists (demonstrated in tests).",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "bo.highdim_benchmarks.origin",
+      "value": "synthetic_self_defined_4_8_16",
+      "unit": null,
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M6 synthetic benchmarks in dimensions 4/8/16: separable quadratic (analytic exact f* = 10d), coupled quadratic via fixed PD mixing matrix (analytic exact f* = 20), constrained mixed 2-discrete + continuous with shared budget (numerical_approximate reference via enumeration + KKT multiplier bisection), and the block-stagnation LP (analytic exact). All parameters synthetic; none from the reference papers.",
+      "sensitivity_range": null,
+      "notes": []
+    },
+    {
+      "name": "experiment.m6_block_architecture_budget",
+      "value": {
+        "evaluation_budget": 100.0,
+        "initial_design": 30.0
+      },
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "Primary M6 comparison settings inherited from M5: budget 100 total ATTEMPTED objective evaluations (NOT per block), initial design 30, pool 500 per search, seeds 0-9. The budget is shared across architectures for fairness.",
+      "sensitivity_range": [
+        30.0,
+        300.0
+      ],
+      "notes": []
+    },
+    {
       "name": "optimization.num_initial_observations",
       "value": 30,
       "unit": "count",

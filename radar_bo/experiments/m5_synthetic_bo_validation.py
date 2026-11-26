@@ -228,6 +228,67 @@ def _aggregate(rows: list[dict]) -> dict:
     }
 
 
+def write_evidence_archive(data: dict) -> Path:
+    """Compact DURABLE evidence archive (tracked in Git under research_results/):
+    per-seed incumbent histories, final incumbents, references, runtimes,
+    dependency versions and the producing commit id. The full artifacts under
+    results/ are gitignored and regenerable; this archive preserves the
+    essential numerical evidence durably (M6 instruction 3.3/31.16)."""
+    import subprocess
+
+    archive_dir = Path("research_results")
+    archive_dir.mkdir(exist_ok=True)
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    except Exception:
+        commit = "unavailable"
+    from radar_bo.optimization.bo.bo_loop import dependency_versions
+
+    compact = {
+        "result_label": RESULT_LABEL,
+        "git_commit": commit,
+        "dependency_versions": dependency_versions(),
+        "configuration": {
+            "evaluation_budget": EVALUATION_BUDGET,
+            "initial_design_size": INITIAL_DESIGN,
+            "num_acquisition_candidates": NUM_CANDIDATES,
+            "seeds": SEEDS,
+        },
+        "benchmarks": {},
+    }
+    for name, block in data["benchmarks"].items():
+        compact["benchmarks"][name] = {
+            "reference": block["reference"],
+            "runs": [
+                {
+                    "seed": r["seed"],
+                    "best_config": r["bo"]["best_config"],
+                    "best_objective": r["bo"]["best_objective"],
+                    "gap_to_reference": r["bo"]["gap_to_reference"],
+                    "stopping_reason": r["bo"]["stopping_reason"],
+                    "n_failed_attempts": r["bo"]["n_failed_attempts"],
+                    "n_acquisition_scores": r["bo"]["n_acquisition_scores"],
+                    "incumbent_history": [p["best_objective"] for p in r["bo"]["incumbent_curve"]],
+                    "gp_fit_runtime_s": r["bo"]["gp_fit_runtime_s"],
+                    "acquisition_runtime_s": r["bo"]["acquisition_runtime_s"],
+                    "objective_runtime_s": r["bo"]["objective_runtime_s"],
+                    "total_runtime_s": r["bo"]["total_runtime_s"],
+                    "random_search": {
+                        "best_config": r["random_search"]["best_config"],
+                        "best_objective": r["random_search"]["best_objective"],
+                        "gap_to_reference": r["random_search"]["gap_to_reference"],
+                        "runtime_s": r["random_search"]["runtime_s"],
+                    },
+                }
+                for r in block["runs"]
+            ],
+            "aggregate": block["aggregate"],
+        }
+    archive_path = archive_dir / "m5_synthetic_bo_validation.json"
+    archive_path.write_text(json.dumps(compact, indent=1), encoding="utf-8")
+    return archive_path
+
+
 def _summary_md(data: dict) -> str:
     lines = [
         "# M5 generic synthetic BO validation (seeds 0-9)",
@@ -342,6 +403,7 @@ def main(argv: list[str]) -> int:
     (output_dir / "provenance_register.json").write_text(
         build_default_provenance().model_dump_json(indent=2), encoding="utf-8"
     )
+    write_evidence_archive(data)
 
     print(json.dumps({
         name: {
