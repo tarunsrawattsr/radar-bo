@@ -287,17 +287,18 @@ A reproducible research repository exists with validated configuration models, a
 
 This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
 
-### Status: M1–M6 (instruction stream) complete — M7/M8 of the instruction stream NOT started
+### Status: M1–M7 (instruction stream) complete — M8/M9 of the instruction stream NOT started
 
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (71 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (79 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
 | M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
 | M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py` |
 | M5 generic BO engine (incl. README-M6 components) | Done | `radar_bo/optimization/bo/` (problem interface, benchmarks A/B/C, reference solvers, random search, dataset, conversions, GP surrogate, LogEI acquisition, candidate pools, results records, 15-step loop), `radar_bo/experiments/m5_synthetic_bo_validation.py`, `results/m5_synthetic_bo_validation/` (seeds 0-9; durably archived in `research_results/`) |
-| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (230 runs, all validity checks green), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; 554 tests passing |
-| M7+ (instruction stream: unification/analysis extensions), M8 runner package, M9 final docs | Not started | Instruction-stream M7/M8 require explicit approval; the per-experiment figures/statistics exist but no unified runner package |
+| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (230 runs, all validity checks green), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; M7 review corrections in "M7 targeted M6 review" |
+| M7 experimental framework (instruction stream) | Done | `radar_bo/experiments/framework/` (config, benchmark/algorithm registries, matrix, checkpointed runner, metrics, runtime analysis, candidate profiling, archive integrity, sensitivity, reporting, figures, simulator adapter), validation experiment + sensitivity pilot, review corrections + archive validation + paired summaries (derived artifacts in `research_results/`); see "M7 experimental framework" below |
+| M8/M9 (instruction stream) | Not started | Require explicit approval |
 
 ### Installation
 
@@ -312,7 +313,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 554 passed (~17 min): M1-M6 config + estimation + interfaces + generic BO engine + block architectures
+.venv/bin/python -m pytest        # 668 passed (~18 min): M1-M7 config + estimation + interfaces + generic BO engine + block architectures + experimental framework
 ```
 
 ### Experiment execution
@@ -341,6 +342,13 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 .venv/bin/python -m radar_bo.experiments.m6_block_architecture_comparison results/m6_primary --benchmarks=separable_4d,coupled_8d,constrained_mixed_8d,block_stagnation_4d
 .venv/bin/python -m radar_bo.experiments.m6_block_architecture_comparison results/m6_dimension_study --benchmarks=separable_8d,separable_16d --methods=random_search,joint,pairwise
 .venv/bin/python -m radar_bo.experiments.m6_merge_results    # assemble merged results + durable archive
+
+# M7 experimental framework (validation matrix, sensitivity pilot, review + analyses)
+.venv/bin/python -m radar_bo.experiments.m7_validation_experiment    # ~11 min; validates runner/checkpoint/metrics/reporting
+.venv/bin/python -m radar_bo.experiments.m7_sensitivity_pilot       # explicit 3-scenario sensitivity pilot
+.venv/bin/python -m radar_bo.experiments.m7_m6_review               # targeted M6 review + archive validation (derived artifacts)
+.venv/bin/python -m radar_bo.experiments.m7_paired_summary          # paired M5/M6 statistical summaries (derived)
+.venv/bin/python -m radar_bo.experiments.m7_runtime_profiling       # runtime attribution profiling (derived artifact)
 
 # M6 figures (labeled generic synthetic M6 experiment; regenerable from tracked data)
 .venv/bin/python -m radar_bo.experiments.m6_generate_figures results/m6_block_architecture_comparison
@@ -372,9 +380,19 @@ radar_bo/                  package root (editable install; suggested top-level d
 ├── simulation/            authoritative SimulationState + frozen estimator-facing snapshots (M4)
 ├── experiments/           m3_synthetic_validation.py, m4_integration_validation.py,
 │                          m5_synthetic_bo_validation.py, m6_block_architecture_comparison.py,
-│                          m6_generate_figures.py, m6_merge_results.py
+│                          m6_generate_figures.py, m6_merge_results.py,
+│                          m7_runtime_profiling.py, m7_m6_review.py, m7_paired_summary.py,
+│                          m7_sensitivity_pilot.py, m7_validation_experiment.py,
+│                          m7_rebuild_m6_results.py
+│   └── framework/         M7 experimental framework: unified experiment config,
+│                           benchmark/algorithm registries, matrix generation,
+│                           checkpointed runner with resume, gap/closure/threshold
+│                           metrics, paired statistics (bootstrap + Wilcoxon/Holm),
+│                           runtime decomposition, candidate profiling, archive
+│                           integrity + checksums, sensitivity scenarios, report
+│                           + figure generation, simulator-interface adapter
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 554 tests incl. layer-separation and ground-truth-leakage guards
+└── tests/                 668 tests incl. layer-separation and ground-truth-leakage guards
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 research_results/          TRACKED durable evidence archives (per-seed histories, references,
@@ -540,6 +558,93 @@ before any full-matrix comparative result was examined — threshold = fraction 
    counts (e.g. separable_4d: joint better on 10/10) and all per-seed histories are in the
    merged results and the durable archive.
 
+### M7 targeted M6 review (instruction-stream item 3; corrections, sources separated)
+
+All corrections below are stored as DERIVED analysis artifacts
+(`research_results/m7_m6_review_corrections.json`, `m7_m6_review_profiling.json`);
+historical M5/M6 archive values are preserved unchanged.
+
+| Item | Finding and correction |
+|---|---|
+| 3.1 runtime attribution | **RETRACTED:** "GP fitting dominates M5 runtime". Profiling on the current instrumented engine (9 runs, joint mode): GP fit ~13.6–17.0 s of 69.5–74.9 s walls (~20–23%); candidate generation ~54.9–58.5 s (~75–80%) is the largest component; acquisition ~0.7 s; objective ~5 ms. The M5-era report had ~44 s/run UNINSTRUMENTED; the M6 instrumentation plus this profiling pass identified it as candidate generation + nested feasibility. Profiling also EXPOSED a timer defect: the archived generation timer included nested feasibility validation (component sums slightly exceeded wall-clock) — fixed for M7+ records (disjoint boundaries); historical values kept, corrected values only in derived artifacts. No conclusive per-component attribution beyond the instrumented stages is claimed. |
+| 3.2 candidate-generation 251.5 s | Traced: it is the MEAN across the 10 archived seeds (field `benchmarks.constrained_mixed_8d.aggregate.per_method.alternating.candidate_generation_runtime_mean_s` = 251.504). Per-run values 170.8–318.3 s (1.9x spread). Includes nested feasibility 50.9–81.9 s (mean 67.4); corrected derived mean excluding feasibility: 184.1 s. |
+| 3.3 missing combinations | Alternating BO was deliberately OMITTED from the separable 8d/16d dimension study (design decision: the primary set covers alternating on separable_4d; three-method study halved wall-clock on 2 cores). Recorded as an explicit omission; no values substituted. No failed or incomplete runs occurred in the final M6 execution. |
+| 3.4 block stagnation | The LP construction is a PROOF about the mechanism (alternating grouping provably cannot improve from budget-tight configurations); the measured M6 means (alternating worst: 8.249 vs joint 8.670, pairwise 8.984) are consistent empirical observations, NOT proofs. The out-of-block event detector (0 events in 230 runs) counts incumbent-improving observations differing from the previous incumbent OUTSIDE the visited block — because block candidates inherit fixed coordinates from the current configuration, near-zero events are largely a tautology of the block mechanism and must NOT be read as evidence that better joint configurations do not exist. |
+| 3.5 chronology | Pilot (exit 0) → full-matrix first execution, deliberately stopped after ~25 min due to a recording deficiency (missing diagnostics/thresholds/out-of-block evidence) → recording upgrade → final execution (230 runs, exit 0). This was a DETERMINISTIC RE-EXECUTION of the same seeds/configs (identical random-search values verified), NOT an independent replication; no replication-stability claims are made. |
+| 3.6 archive validation | Independent checks (item 4): M5 archive 30 records VALID (budget identity, monotone histories, stops, paired RS rows). M6 archive 220 records VALID (unique combos, budget identity re-derived from recorded config, feasibility recomputed via registry problems, incumbent correspondence, monotone BO histories, references consistent, metadata present) with TWO documented findings: (a) the nested-timer convention (see 3.1); (b) archived RANDOM-SEARCH rows store the full per-evaluation OBJECTIVE SEQUENCE under the key `incumbent_history` (not a best-so-far curve) — data intact (best == max(sequence) verified in all 60 rows), label wrong; corrected semantics live in the M7 runner records. |
+
+### M7 experimental framework (instruction-stream M7)
+
+**Architecture** (`radar_bo/experiments/framework/`, layer separation item 32 — the
+experiment layer imports only config + generic BO interfaces + analysis libraries;
+core layers never import experiment orchestration, guarded by tests):
+
+| Module | Purpose (instruction item) |
+|---|---|
+| `experiment_config.py` | Pydantic `ExperimentConfig`: experiment id/description/labels, benchmarks, algorithms, dimensions, seeds, initial design, budgets, pool, GP, acquisition, stopping, runtime measurement, statistical settings, output dir, checkpoint policy (item 5); fingerprint = sha256 of canonical JSON |
+| `benchmark_registry.py` | Registry: id, versioned implementation reference, math definition, variable names/types/bounds, constraints, direction, noise, independent reference + verification method; runner accesses benchmarks ONLY through the registry (item 6) |
+| `algorithm_registry.py` | random_search / joint_bo / alternating_bo / pairwise_bo / reference — all REUSE the existing M5/M6 engine (no duplication); per-run architecture + version recorded (item 7) |
+| `matrix.py` | Run = (benchmark, dimension, algorithm, seed, hyperparams); stable 16-hex run ids (sha256 over canonical identity); duplicate detection; incompatible combos validated BEFORE execution and listed as skipped with reasons; explicit manifest (item 8) |
+| `checkpointing.py` | Atomic per-run JSON writes (tmp + `os.replace`); manifest statuses pending/running/completed/failed/skipped + reasons; resume with compatibility checks (config fingerprint, benchmark/algorithm versions, dependency versions, seeds, run ids); corrupted/incompatible records REJECTED explicitly (items 11-12) |
+| `runner.py` | Loads config, resolves registries, fresh problem instances per run, executes, collects item-13 record structure (initial design, observations, failures, histories, counts, block/cycle + candidate diagnostics, runtimes, versions, commit, config id), verifies shared initialization FROM STORED RECORDS (item 10), writes summary. NO GP/acquisition logic (item 9) |
+| `metrics.py` | Direction-aware objective gaps (exact → simple_regret; numerical → reference_gap; negatives retained, never clipped); normalized gap closure with explicit zero/negative-denominator handling; threshold analysis (50/90/99% gap closure, frozen pre-run; unreached reported explicitly); descriptive stats (n/mean/median/std/IQR); paired comparisons (per-seed diffs, W/L/T at tol 1e-9, d_z); bootstrap CIs resampling seed-level pairs (B=10000, seed 2026); Wilcoxon (documented H0/zero-handling/ties) + Holm family correction; convergence axes (attempted/successful/wall/cycles — attempted+wall exact for M7 records, unavailable for pre-M7, cycles never a primary cross-architecture axis); runtime decomposition (disjoint timers + explicit unattributed remainder) (items 15-23) |
+| `runtime_analysis.py` | Per-method runtime aggregation with documented timer boundaries and the no-exact-sum disclaimer (item 23) |
+| `candidate_profiling.py` | Pool-report analysis: rejection/duplicate rates, skips, time per delivered candidate; PROVEN finite-space exhaustion vs sampling failure classification; M6 algorithm preserved as versioned baseline (item 24) |
+| `archive_integrity.py` | sha256 checksums (`ARCHIVE_CHECKSUMS.json`), reusable record/store validator (accounting, feasibility, incumbent correspondence, monotone histories, duplicate ids, references, runtimes, metadata, missing/duplicate records), original-vs-derived distinction (item 14) |
+| `sensitivity.py` | Explicit named scenarios (dotted-path overrides), changed-vs-fixed recording, no unrestricted Cartesian product, pilot-first (item 25) |
+| `reporting.py` | Markdown reports regenerated from stored data only (scope, config, benchmarks, algorithms, budgets, references, results, uncertainty, runtime, failures/omissions, limitations, evidence locations) (item 27) |
+| `figures.py` | Standardized figures: convergence vs successful/attempted evals + wall-clock, gap distributions, paired differences, threshold success, runtime decomposition, candidate efficiency, performance vs dimension, sensitivity; units/legends/sample sizes; generic-synthetic labels; approximate references marked (item 28) |
+| `simulator_adapter.py` | Item 29: software-interface validation ONLY — mock providers honoring the M4 contract (structured records, non-mutating snapshots, failure semantics); no physics activated |
+
+**M7 validation experiment (item 26; matrix reported before execution):**
+benchmark_a (2-D) + constrained_mixed_8d × {random_search, joint_bo, alternating_bo,
+pairwise_bo, reference} × seeds 0–2, budget 40 (initial 10). Result: 20 completed,
+2 skipped with recorded reasons (benchmark_a has no recommended block groupings),
+all validity checks green, shared initialization verified, report + figures
+generated, and a re-invocation of the runner performed **0 objective evaluations**
+(resume without repetition). `results/m7_validation_experiment/` (regenerable).
+Purpose: infrastructure validation only — no algorithm conclusions drawn.
+
+**M7 sensitivity pilot (item 25):** explicit 3-scenario design on benchmark_a
+(pool 100 / initial design 4 / budget 15; everything else fixed, seeds 0–1).
+Only infrastructure validated; differences are descriptive
+(`research_results/m7_sensitivity_pilot.json`).
+
+**Statistical methodology (items 19–22)** — full paired summaries in
+`research_results/m7_paired_comparative_summary.json` (derived). Headline
+descriptive results (10 seeds; NOT superiority claims):
+
+| Benchmark | Pair | Mean paired diff | W/L/T | d_z | Bootstrap 95% CI | Wilcoxon p (Holm) |
+|---|---|---|---|---|---|---|
+| separable_16d | pairwise − joint | +59.00 | 10/0/0 | 6.23 | [53.8, 64.8] | 0.0020 (0.0039) |
+| separable_8d | pairwise − joint | +12.85 | 10/0/0 | 3.95 | [10.9, 14.8] | 0.0020 (0.0039) |
+| coupled_8d | pairwise − joint | +22.30 | 10/0/0 | 3.73 | [18.7, 25.8] | 0.0020 (0.0059) |
+| coupled_8d | alternating − joint | +17.54 | 10/0/0 | 2.97 | [14.0, 20.9] | 0.0020 (0.0059) |
+| separable_4d | alternating − joint | +1.16 | 10/0/0 | 1.82 | [0.81, 1.54] | 0.0020 (0.0059) |
+| constrained_mixed_8d | pairwise − joint | +0.21 | 9/1/0 | 0.93 | [0.08, 0.36] | 0.0273 (0.0547) |
+| block_stagnation_4d | pairwise − joint | +0.31 | 8/2/0 | 0.90 | [0.11, 0.51] | 0.0273 (0.0547) |
+| M5 A | BO − random search | +0.76 | 7/1/2 | — | — | — |
+| M5 B | BO − random search | +0.38 | 8/2/0 | — | — | — |
+| M5 C | BO − random search | +0.27 | 8/1/1 | — | — | — |
+
+Limitations: ten seeds, single problem family per comparison; bootstrap
+intervals are descriptive; Wilcoxon assumptions (approximate symmetry of paired
+differences) are not verifiable at n = 10; family-wise control via Holm across
+the presented per-benchmark family; practical significance is judged from effect
+sizes and domain reasoning, never from p-values alone.
+
+**Runtime accounting conventions (item 23):** five disjoint stage timers + explicit
+unattributed overhead; never claimed to sum exactly to wall-clock. M5/M6 archives
+use the NESTED convention (generation included feasibility) — documented; M7+
+records use disjoint boundaries.
+
+**Milestone reconciliation (item 33):** the original implementation guide has
+EIGHT milestones; the instruction stream carries NINE (M9 = final documentation).
+Instruction-stream M7 (experimental framework) maps onto roadmap M8 ("runner
+package") plus parts of roadmap M7 ("analysis extensions"). No historical
+artifacts were renamed; existing archives keep their M5/M6 labels. This is the
+explicitly identified additional milestone.
+
 ### Current limitations
 
 - M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
@@ -550,6 +655,8 @@ before any full-matrix comparative result was examined — threshold = fraction 
 - The `paper_zero_identity` initialization cannot run a full tracking episode from the origin (by design, diagnostic mode).
 - M5 limitations: the generic engine implements the SINGLE-candidate JOINT mode only (no batching, no alternating/coordinate modes); acquisition supports conventional LogEI for low-noise/deterministic objectives (no noisy qLog variant is exercised); the GP likelihood noise is INFERRED (never forced to zero) even for deterministic benchmarks; the M5 validation budgets (100 evaluations, initial design 30) are provisional synthetic settings, not paper-derived; the seed 0-9 comparison is descriptive over 10 seeds and makes no superiority claim; BO results that fail to beat random search on some seeds are reported as measured; termination at a budget is not proof of global convergence; benchmark C's reference is numerical_approximate and may be exceeded legitimately.
 - M6 limitations: the block architectures use ONE deterministic cyclic scheduler (priority/adaptive scheduling is future work); the improvement-only current-configuration acceptance policy can stall block-restricted search (demonstrated on the stagnation LP — this is honest evidence, not a defect); pair-wise and alternating coincide structurally on problems whose recommended groupings are identical (e.g. separable_4d) and their results must then be read as one architecture (identical numbers there); convergence curves use the per-evaluation incumbent history recorded by the full matrix (exact placement); block-restricted search on tightly constrained problems pays a large candidate-GENERATION cost (mostly-infeasible sampling, rejections never repaired) that can exceed the GP cost it was meant to save; the M6 comparison is descriptive over 10 seeds on synthetic problems only; the constrained-mixed reference is numerical_approximate; the discrete 2-variable block exhausts after 16 distinct combinations and then contributes only skips; figures are regenerable artifacts (not tracked) while the underlying per-seed data IS tracked under research_results/.
+- M6 archived-data caveat (M7 review finding): random-search rows in the M6 archive store the per-evaluation objective SEQUENCE under the key `incumbent_history` (label wrong, data intact — best == max verified); the archived candidate-generation timer includes nested feasibility validation (never add the two fields); corrected semantics live in M7 runner records and derived artifacts.
+- M7 limitations: the framework verifies shared initialization post hoc from stored records instead of injecting externally generated designs into the engine (the engine's seeded sampler IS the shared design; injection would require engine API changes and is documented as a deviation); attempted-evaluation and wall-clock convergence axes are exact ONLY for M7 runner records (pre-M7 archives lack per-iteration timestamps — the axes are reported as unavailable there, never interpolated); Wilcoxon/bootstrap uncertainty at n = 10 is descriptive and assumption-limited; the M7 validation matrix (20 runs) validates INFRASTRUCTURE, not algorithms; sensitivity pilots cover three single-factor scenarios on one benchmark only; the simulator-interface validation uses mock providers (no physical sensing model activated, by design); `results/` artifacts from M6 were lost once to a sandbox reset and are regenerable (the durable tracked archives + checksums are the source of truth).
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
 - Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 

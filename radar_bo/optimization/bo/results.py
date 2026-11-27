@@ -48,6 +48,20 @@ class IterationDiagnostics(StrictModel):
     accepted_current_config: bool | None = Field(
         default=None, description="Whether the current configuration was updated (improvement-only acceptance)."
     )
+    # ---- M7 additive fields (None in M5/M6 records; pure bookkeeping) ----
+    attempted_evaluations: int | None = Field(
+        default=None,
+        description=(
+            "Total ATTEMPTED objective evaluations (initial design + BO attempts incl. "
+            "failures) at the time this diagnostic was recorded; enables exact "
+            "convergence curves on the attempted-evaluation axis for runs produced "
+            "after M7. None in archived M5/M6 records."
+        ),
+    )
+    elapsed_runtime_s: float | None = Field(
+        default=None,
+        description="Wall-clock seconds since the start of optimize() at diagnostic time (M7; None in archived records).",
+    )
 
 
 class OptimizationResult(StrictModel):
@@ -121,7 +135,11 @@ class OptimizationResult(StrictModel):
     objective_runtime_s: float
     candidate_generation_runtime_s: float = Field(
         default=0.0,
-        description="Wall-clock time of all candidate-pool generations (M6 instruction 24; includes feasibility validation).",
+        description=(
+            "Wall-clock time of candidate-pool SAMPLING+dedup (M7 item-23 boundary fix: feasibility "
+            "validation EXCLUDED so stage timers are disjoint). ARCHIVED M6 records used the nested "
+            "convention where this field INCLUDED feasibility validation."
+        ),
     )
     constraint_validation_runtime_s: float = Field(
         default=0.0,

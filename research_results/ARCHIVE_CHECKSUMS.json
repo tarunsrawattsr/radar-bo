@@ -1,0 +1,34 @@
+{
+ "purpose": "integrity identifiers for durable evidence archives (M7 item 14)",
+ "note": "original run records only; derived analysis artifacts carry a derived_ name prefix",
+ "entries": {
+  "research_results/m5_synthetic_bo_validation.json": {
+   "sha256": "8710983a689afc30e1954bc020f14324a28fa8b53ea3b7834d755b269fee30b3",
+   "bytes": 82762
+  },
+  "research_results/m6_block_architecture_full_evidence.json": {
+   "sha256": "8c3206b30ddd3e11fdf4121bda9d9050fe6cca9f79f79d62c8b74ade44d93237",
+   "bytes": 9897877
+  },
+  "research_results/m6_block_architecture_pilot_evidence.json": {
+   "sha256": "6789e3bcd2d2b58b6138533431fc9df1a56a4920729a7d0e951872eeba3cdf7c",
+   "bytes": 60583
+  },
+  "research_results/m7_m6_review_corrections.json": {
+   "sha256": "ec5495be09204cf616d31ed8d3ab05d807e403e6177b5d2f73e1882ea06571fd",
+   "bytes": 18351
+  },
+  "research_results/m7_m6_review_profiling.json": {
+   "sha256": "fedc97f6f721a217d6f102256363414be1c7d1257fe57b3946993c8bf7cdb263",
+   "bytes": 13265
+  },
+  "research_results/m7_paired_comparative_summary.json": {
+   "sha256": "46f9555aa80747d502b1120c8a69cb0ce88f4daef50fbdaa17a67d6606b6b679",
+   "bytes": 40338
+  },
+  "research_results/m7_sensitivity_pilot.json": {
+   "sha256": "caab7eb322d01ab8b33a720c5a2f946b7544b0195082e5e2f520143c380d7268",
+   "bytes": 1646
+  }
+ }
+}

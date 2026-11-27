@@ -843,6 +843,129 @@
       "notes": [
         "M3 review (instruction 3.4): 'hard_per_slot' is reserved for the proposed BO configuration profile (M4+); no resource allocation or budget optimization is implemented in M3."
       ]
+    },
+    {
+      "name": "experiment.m7_runner_architecture",
+      "value": {
+        "checkpoint_per_run_files": 1.0,
+        "atomic_write": 1.0,
+        "resume_compatibility_checks": 7.0
+      },
+      "unit": "policy",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M7 experiment runner: per-run atomic JSON records (tmp + os.replace), manifest with explicit statuses (pending/running/completed/failed/skipped + reasons), resume compatibility verified against configuration fingerprint, benchmark/algorithm versions, dependency versions, seeds and run ids; corrupted/incompatible records are REJECTED, never silently combined.",
+      "sensitivity_range": null,
+      "notes": [
+        "Layer separation: the experiment layer never carries radar configuration."
+      ]
+    },
+    {
+      "name": "experiment.m7_shared_initialization_policy",
+      "value": {
+        "policy": 1.0
+      },
+      "unit": "policy",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Fairness (item 10): all methods for one (benchmark, seed) run with the same seed through the same deterministic sampler; the runner then VERIFIES identical initial configurations AND identical observed values directly from the stored records (seeds alone are never trusted). Random search has no initial-design phase by construction and is excluded from the comparison, reported explicitly.",
+      "sensitivity_range": null,
+      "notes": [
+        "Deviation documented: initial designs are NOT injected into the engine; the engine's seeded sampler IS the shared design, verified post hoc from records."
+      ]
+    },
+    {
+      "name": "experiment.m7_statistical_conventions",
+      "value": {
+        "bootstrap_replications": 10000.0,
+        "bootstrap_seed": 2026.0,
+        "paired_tie_tolerance": 1e-9,
+        "confidence_level": 0.95
+      },
+      "unit": "setting",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M7 statistics: paired comparisons preserve seed-level pairing; ties use the engine duplicate tolerance 1e-9; bootstrap resamples COMPLETE seed-level pairs with a documented seed (2026) and B=10000; Wilcoxon two-sided signed-rank on non-zero differences, Holm-corrected when presented as a family; p-values complement effect sizes and CIs and never imply practical significance alone.",
+      "sensitivity_range": null,
+      "notes": [
+        "Descriptive over 10 seeds; a narrow interval is NOT evidence of universal superiority."
+      ]
+    },
+    {
+      "name": "experiment.m7_threshold_definitions",
+      "value": {
+        "gap_closure_fractions": 0.9
+      },
+      "unit": "fraction",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M7 threshold metrics: fractions of the INITIAL REFERENCE GAP (0.5/0.9/0.99 by default), frozen before new comparative experiments; unreached thresholds are reported explicitly (never interpolated); the initial-design-already-meets case is flagged. Distinct from the M6 threshold convention (fraction of f*).",
+      "sensitivity_range": [
+        0.5,
+        0.99
+      ],
+      "notes": []
+    },
+    {
+      "name": "experiment.m7_runtime_accounting",
+      "value": {
+        "stage_timers": 5.0,
+        "unattributed_reported": 1.0
+      },
+      "unit": "policy",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M7 runtime decomposition: five disjoint stage timers (GP fit, candidate generation, feasibility validation, acquisition scoring, objective evaluation) plus explicit unattributed overhead = wall - sum(components). FINDING: the archived M6 generation timer INCLUDED nested feasibility validation; the boundary is fixed for M7+ records (disjoint), historical values are preserved unchanged and corrected only in derived artifacts. The decomposition is never claimed to sum exactly to wall time.",
+      "sensitivity_range": null,
+      "notes": [
+        "Serialization, tensor conversion, dataset insertion, incumbent tracking and GP training-tensor preparation are NOT separately timed."
+      ]
+    },
+    {
+      "name": "experiment.m7_candidate_profiling_baseline",
+      "value": {
+        "algorithm_baseline": 1.0
+      },
+      "unit": "policy",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M6 candidate-generation algorithm is preserved UNCHANGED as the versioned baseline; profiling distinguishes PROVEN finite-space exhaustion (all-discrete blocks with enumerable combinations) from sampling failure (continuous spaces: an empty pool does not prove an empty feasible set). Any future faster generator must be a new explicitly versioned implementation.",
+      "sensitivity_range": null,
+      "notes": [
+        "M6 measured (mean across 10 seeds, constrained_mixed_8d): alternating generation 251.5 s incl. nested feasibility 67.4 s (corrected derived value 184.1 s); joint 77.4 s; pairwise 103.9 s."
+      ]
+    },
+    {
+      "name": "experiment.m7_validation_matrix",
+      "value": {
+        "benchmarks": 2.0,
+        "seeds": 3.0,
+        "evaluation_budget": 40.0,
+        "initial_design": 10.0
+      },
+      "unit": "count",
+      "source": "experimental_setting",
+      "reference": null,
+      "rationale": "M7 limited validation matrix (item 26): benchmark_a (2-D) + constrained_mixed_8d, methods RS/joint/alternating/pairwise/reference, seeds 0-2, budget 40 total (initial 10). Purpose: validate the INFRASTRUCTURE (runner, checkpoint/resume, metrics, reporting), NOT algorithm superiority. The 230 archived M6 runs are NOT repeated.",
+      "sensitivity_range": null,
+      "notes": [
+        "Manifest records 2 incompatible combinations as skipped with reasons (benchmark_a defines no recommended block groupings)."
+      ]
+    },
+    {
+      "name": "experiment.m7_milestone_reconciliation",
+      "value": {
+        "instruction_stream_milestones": 9.0,
+        "original_roadmap_milestones": 8.0
+      },
+      "unit": "count",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "Milestone numbering reconciliation: the original README roadmap has EIGHT milestones (M1 repo/env, M2 config/provenance, M3 estimation, M4 interfaces, M5 generic BO, M6 verification of BO components, M7 architectures validation, M8 runner package + analysis, M9 final docs in the instruction stream). The instruction stream's M7 (experimental framework) maps onto the README roadmap's M8 'runner package' plus parts of M7 'analysis extensions'; the instruction stream carries one additional milestone (M9 final documentation) beyond the roadmap's eight. Every deviation is documented in the README.",
+      "sensitivity_range": null,
+      "notes": [
+        "No milestone renumbering was applied to existing artifacts; existing archives keep their original M5/M6 labels."
+      ]
     }
   ]
 }

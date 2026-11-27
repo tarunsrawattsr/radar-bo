@@ -1,0 +1,59 @@
+{
+ "result_label": "generic synthetic M7 sensitivity pilot; infrastructure validation; no radar claims",
+ "purpose": "validate the sensitivity-analysis interface (apply -> diff -> run -> compare)",
+ "factor_space": "explicit scenario list; every changed field recorded; no unrestricted sweep",
+ "git_commit": "894aad3dee51c8938c6c2059ff375d66e16192e6",
+ "scenarios": [
+  {
+   "scenario_id": "m7_sensitivity_base",
+   "n_bo_runs": 2,
+   "final_objective_mean": 9.925008216205882,
+   "final_objective_stdev": 0.027420225529812783,
+   "wall_mean_s": 12.396053981999785,
+   "changed_fields": [],
+   "wall_total_s": 0.8883736330003558
+  },
+  {
+   "scenario_id": "pool_100",
+   "n_bo_runs": 2,
+   "final_objective_mean": 9.734585169338112,
+   "final_objective_stdev": 0.2967190809986183,
+   "wall_mean_s": 3.3614581075000842,
+   "changed_fields": [
+    "experiment_id",
+    "description",
+    "candidate_pool",
+    "output_dir"
+   ],
+   "wall_total_s": 0.22233106099974975
+  },
+  {
+   "scenario_id": "initial_4",
+   "n_bo_runs": 2,
+   "final_objective_mean": 9.925008216205882,
+   "final_objective_stdev": 0.027420225529812783,
+   "wall_mean_s": 13.56350331249996,
+   "changed_fields": [
+    "experiment_id",
+    "description",
+    "initial_design",
+    "output_dir"
+   ],
+   "wall_total_s": 0.3009111680003116
+  },
+  {
+   "scenario_id": "budget_15",
+   "n_bo_runs": 2,
+   "final_objective_mean": 9.925008216205882,
+   "final_objective_stdev": 0.027420225529812783,
+   "wall_mean_s": 5.584677130999808,
+   "changed_fields": [
+    "experiment_id",
+    "description",
+    "stopping",
+    "output_dir"
+   ],
+   "wall_total_s": 0.20625177300007635
+  }
+ ]
+}

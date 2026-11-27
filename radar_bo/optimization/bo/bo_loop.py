@@ -254,6 +254,7 @@ class BayesianOptimizer:
         surrogate = GPSurrogate(problem.dimension, seed=self.seed)  # SHARED full-dimension GP
         manager: AcquisitionManager | None = None
 
+        run_started_wall = time.perf_counter()  # M7: per-iteration elapsed wall-clock
         n_initial_evaluations = 0
         n_bo_evaluations = 0
         n_failed_attempts = 0
@@ -287,7 +288,13 @@ class BayesianOptimizer:
             "pool_rejected_duplicate_within_pool_total": pool_report.rejected_duplicate_within_pool,
             "pool_rejected_duplicate_evaluated_total": pool_report.rejected_duplicate_evaluated,
         }
-        candidate_generation_runtime += pool_report.generation_duration_s
+        # M7 timer-boundary fix (item 23): generation_duration_s covers sampling
+        # + dedup + feasibility (feasibility nested inside), so the disjoint
+        # component accounting subtracts the nested feasibility time here.
+        # ARCHIVED M5/M6 records used the nested convention
+        # (candidate_generation included feasibility); historical values are
+        # preserved unchanged and corrected only in derived analysis artifacts.
+        candidate_generation_runtime += pool_report.generation_duration_s - pool_report.feasibility_validation_s
         constraint_validation_runtime += pool_report.feasibility_validation_s
         if initial_pool.shape[0] == 0:
             stopping_reason = "no_feasible_initial_design"
@@ -395,7 +402,7 @@ class BayesianOptimizer:
                 pool_stats["pool_rejected_infeasible_total"] += report.rejected_infeasible
                 pool_stats["pool_rejected_duplicate_within_pool_total"] += report.rejected_duplicate_within_pool
                 pool_stats["pool_rejected_duplicate_evaluated_total"] += report.rejected_duplicate_evaluated
-                candidate_generation_runtime += report.generation_duration_s
+                candidate_generation_runtime += report.generation_duration_s - report.feasibility_validation_s
                 constraint_validation_runtime += report.feasibility_validation_s
                 if candidates.shape[0] == 0:
                     if block.covers_all:
@@ -456,6 +463,8 @@ class BayesianOptimizer:
                             n_candidates_scored=int(candidates.shape[0]),
                             block_id=block.block_id, cycle_number=ticket.cycle_number,
                             within_cycle_index=ticket.within_cycle_index, accepted_current_config=False,
+                            attempted_evaluations=n_initial_evaluations + n_bo_evaluations,
+                            elapsed_runtime_s=time.perf_counter() - run_started_wall,
                         )
                     )
                     if consecutive_objective_failures >= MAX_CONSECUTIVE_OBJECTIVE_FAILURES:
@@ -505,6 +514,8 @@ class BayesianOptimizer:
                         n_candidates_scored=int(candidates.shape[0]),
                         block_id=block.block_id, cycle_number=ticket.cycle_number,
                         within_cycle_index=ticket.within_cycle_index, accepted_current_config=bool(accepted),
+                        attempted_evaluations=n_initial_evaluations + n_bo_evaluations,
+                        elapsed_runtime_s=time.perf_counter() - run_started_wall,
                     )
                 )
 

@@ -1,0 +1,1090 @@
+{
+ "result_label": "M7 derived paired comparative summaries over the durable M5/M6 archives; descriptive statistics over 10 seeds; NO superiority claims; seed-level pairing preserved (item 20); bootstrap resamples complete seed pairs (item 21)",
+ "git_commit": "894aad3dee51c8938c6c2059ff375d66e16192e6",
+ "methods": {
+  "tie_tolerance": 1e-09,
+  "bootstrap": "percentile CI on the mean paired difference; B=10000; seed 2026; seed-level pairs resampled as units",
+  "wilcoxon": "two-sided signed-rank on non-zero paired differences (zero_method wilcox); Holm-corrected across the presented family"
+ },
+ "m6_comparisons": {
+  "archive": "research_results/m6_block_architecture_full_evidence.json",
+  "per_benchmark": {
+   "block_stagnation_4d": {
+    "reference": 9.600000000000001,
+    "pairs": {
+     "alternating_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -0.42140647145191085,
+      "median_difference": -0.3575169231081805,
+      "wins": 5,
+      "losses": 5,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -0.4454745459233755,
+      "bootstrap_ci": {
+       "lower": -0.9761530745128891,
+       "upper": 0.12903876196372982,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 17.0,
+       "p_value": 0.322265625,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.322265625
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 1.3513147197839737,
+      "exceeds_reference_runs": 0
+     },
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 0.31425386302576647,
+      "median_difference": 0.40023485538760717,
+      "wins": 8,
+      "losses": 2,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 0.9005950681328558,
+      "bootstrap_ci": {
+       "lower": 0.10696134445492139,
+       "upper": 0.5068840027500555,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 6.0,
+       "p_value": 0.02734375,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.0546875
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 0.6156543853062961,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -0.5499619399008829,
+      "median_difference": -0.5880643458578803,
+      "wins": 1,
+      "losses": 8,
+      "ties": 1,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -1.2175355931590728,
+      "bootstrap_ci": {
+       "lower": -0.8060672055832493,
+       "upper": -0.274580102021467,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 1.0,
+       "p_value": 0.0078125,
+       "n_used": 9,
+       "n_zero_differences": 1,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.0234375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 1.4798701882329457,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "alternating_vs_joint": 0.322265625,
+     "pairwise_vs_joint": 0.0546875,
+     "random_search_vs_joint": 0.0234375
+    }
+   },
+   "constrained_mixed_8d": {
+    "reference": 39.53,
+    "pairs": {
+     "alternating_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -0.03961457368651651,
+      "median_difference": -0.02121549258026434,
+      "wins": 4,
+      "losses": 6,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -0.12967367684406034,
+      "bootstrap_ci": {
+       "lower": -0.2309094322649924,
+       "upper": 0.12745745603674685,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 25.0,
+       "p_value": 0.845703125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.845703125
+      },
+      "gap_label": "reference_gap",
+      "gap_mean": 0.6716584153672954,
+      "exceeds_reference_runs": 0
+     },
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 0.21469465830624443,
+      "median_difference": 0.2006228634752425,
+      "wins": 9,
+      "losses": 1,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 0.9269403840484689,
+      "bootstrap_ci": {
+       "lower": 0.08058276336975183,
+       "upper": 0.3564904480935406,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 6.0,
+       "p_value": 0.02734375,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.0546875
+      },
+      "gap_label": "reference_gap",
+      "gap_mean": 0.4173491833745345,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -0.4120455815257252,
+      "median_difference": -0.23528957164821307,
+      "wins": 0,
+      "losses": 8,
+      "ties": 2,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -1.0046351932461208,
+      "bootstrap_ci": {
+       "lower": -0.6809249961563058,
+       "upper": -0.19827804975476357,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.0078125,
+       "n_used": 8,
+       "n_zero_differences": 2,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.0234375
+      },
+      "gap_label": "reference_gap",
+      "gap_mean": 1.044089423206504,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "alternating_vs_joint": 0.845703125,
+     "pairwise_vs_joint": 0.0546875,
+     "random_search_vs_joint": 0.0234375
+    }
+   },
+   "coupled_8d": {
+    "reference": 20.0,
+    "pairs": {
+     "alternating_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 17.53824515519141,
+      "median_difference": 18.04389622453877,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 2.9656124419559498,
+      "bootstrap_ci": {
+       "lower": 13.960104387076145,
+       "upper": 20.922929414213794,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.005859375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 5.112165482011866,
+      "exceeds_reference_runs": 0
+     },
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 22.298962939369822,
+      "median_difference": 23.813082679079834,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 3.7305397944569374,
+      "bootstrap_ci": {
+       "lower": 18.7261592701705,
+       "upper": 25.75167576162383,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.005859375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 0.35144769783345103,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -8.588923450350684,
+      "median_difference": -10.257396118915281,
+      "wins": 3,
+      "losses": 6,
+      "ties": 1,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -0.6884159223410476,
+      "bootstrap_ci": {
+       "lower": -15.787237339273714,
+       "upper": -1.2225493438251873,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 6.0,
+       "p_value": 0.0546875,
+       "n_used": 9,
+       "n_zero_differences": 1,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.0546875
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 31.23933408755396,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "alternating_vs_joint": 0.005859375,
+     "pairwise_vs_joint": 0.005859375,
+     "random_search_vs_joint": 0.0546875
+    }
+   },
+   "separable_16d": {
+    "reference": 160.0,
+    "pairs": {
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 58.996213651739005,
+      "median_difference": 58.92884230003384,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 6.229579552945009,
+      "bootstrap_ci": {
+       "lower": 53.78557393168407,
+       "upper": 64.845259100337,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.00390625
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 2.203664091875416,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -17.562151494850077,
+      "median_difference": -19.641500553086182,
+      "wins": 1,
+      "losses": 9,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -0.9695181893314612,
+      "bootstrap_ci": {
+       "lower": -27.703256940542847,
+       "upper": -6.480923591252576,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 5.0,
+       "p_value": 0.01953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.01953125
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 78.7620292384645,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "pairwise_vs_joint": 0.00390625,
+     "random_search_vs_joint": 0.01953125
+    }
+   },
+   "separable_4d": {
+    "reference": 40.0,
+    "pairs": {
+     "alternating_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 1.1592562205188734,
+      "median_difference": 1.1573905511039726,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 1.8212512205617502,
+      "bootstrap_ci": {
+       "lower": 0.8066650637181071,
+       "upper": 1.5423313431429515,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.005859375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 0.09372963298597839,
+      "exceeds_reference_runs": 0
+     },
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 1.1592562205188734,
+      "median_difference": 1.1573905511039726,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 1.8212512205617502,
+      "bootstrap_ci": {
+       "lower": 0.8066650637181071,
+       "upper": 1.5423313431429515,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.005859375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 0.09372963298597839,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -3.9404825546003353,
+      "median_difference": -3.6783530242624742,
+      "wins": 0,
+      "losses": 10,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -1.4919699242985303,
+      "bootstrap_ci": {
+       "lower": -5.705944812577174,
+       "upper": -2.6703250105415575,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.005859375
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 5.193468408105187,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "alternating_vs_joint": 0.005859375,
+     "pairwise_vs_joint": 0.005859375,
+     "random_search_vs_joint": 0.005859375
+    }
+   },
+   "separable_8d": {
+    "reference": 80.0,
+    "pairs": {
+     "pairwise_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": 12.846551064917469,
+      "median_difference": 13.189994541647152,
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": 3.948447796302292,
+      "bootstrap_ci": {
+       "lower": 10.91413937023586,
+       "upper": 14.786093186676508,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 0.0,
+       "p_value": 0.001953125,
+       "n_used": 10,
+       "n_zero_differences": 0,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.00390625
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 0.21817994424672663,
+      "exceeds_reference_runs": 0
+     },
+     "random_search_vs_joint": {
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ],
+      "missing_seeds": [],
+      "n_pairs": 10,
+      "mean_difference": -4.642088817277652,
+      "median_difference": -3.136251675314636,
+      "wins": 2,
+      "losses": 7,
+      "ties": 1,
+      "tie_tolerance": 1e-09,
+      "effect_size_dz": -0.7072207813077018,
+      "bootstrap_ci": {
+       "lower": -8.499534556316314,
+       "upper": -0.8351304914873142,
+       "confidence_level": 0.95,
+       "replications": 10000,
+       "bootstrap_seed": 2026,
+       "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+      },
+      "wilcoxon": {
+       "statistic": 7.0,
+       "p_value": 0.07421875,
+       "n_used": 9,
+       "n_zero_differences": 1,
+       "valid": true,
+       "documentation": {
+        "null_hypothesis": "the median of the paired per-seed differences is zero",
+        "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+        "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+        "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+        "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+        "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+       },
+       "p_value_holm_adjusted": 0.07421875
+      },
+      "gap_label": "simple_regret",
+      "gap_mean": 17.706819826441848,
+      "exceeds_reference_runs": 0
+     }
+    },
+    "holm_adjusted": {
+     "pairwise_vs_joint": 0.00390625,
+     "random_search_vs_joint": 0.07421875
+    }
+   }
+  },
+  "family": {
+   "n_tests": 16,
+   "correction": "Holm-Bonferroni across the per-benchmark family of same-seed paired tests",
+   "note": "exploratory descriptive analysis; p-values complement effect sizes and CIs, never replace them"
+  }
+ },
+ "m5_comparisons": {
+  "archive": "research_results/m5_synthetic_bo_validation.json",
+  "per_benchmark": {
+   "A_continuous_quadratic": {
+    "reference": 10.0,
+    "reference_verification_method": "analytic_exact",
+    "bo_vs_random_search": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "missing_seeds": [],
+     "n_pairs": 10,
+     "mean_difference": 0.7607958159295625,
+     "median_difference": 0.5021821762657268,
+     "wins": 7,
+     "losses": 1,
+     "ties": 2,
+     "tie_tolerance": 1e-09,
+     "effect_size_dz": 0.888006194879893,
+     "bootstrap_ci": {
+      "lower": 0.2983529530831677,
+      "upper": 1.3008780822698964,
+      "confidence_level": 0.95,
+      "replications": 10000,
+      "bootstrap_seed": 2026,
+      "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+     },
+     "wilcoxon": {
+      "statistic": 1.0,
+      "p_value": 0.015625,
+      "n_used": 8,
+      "n_zero_differences": 2,
+      "valid": true,
+      "documentation": {
+       "null_hypothesis": "the median of the paired per-seed differences is zero",
+       "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+       "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+       "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+       "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+       "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+      }
+     },
+     "gap_label": "simple_regret"
+    },
+    "bo_final_objective": {
+     "n": 10,
+     "mean": 9.836416642049649,
+     "median": 9.90372234926787,
+     "stdev": 0.14206697477308788,
+     "min": 9.529249451558558,
+     "max": 9.952294760951679,
+     "iqr": 0.20334269928811466
+    },
+    "rs_final_objective": {
+     "n": 10,
+     "mean": 9.075620826120087,
+     "median": 9.428284681414866,
+     "stdev": 0.8460455349301907,
+     "min": 7.400437574319914,
+     "max": 9.952294760951679,
+     "iqr": 1.2037024804655871
+    }
+   },
+   "B_mixed_constrained": {
+    "reference": 11.0,
+    "reference_verification_method": "enumeration_exact",
+    "bo_vs_random_search": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "missing_seeds": [],
+     "n_pairs": 10,
+     "mean_difference": 0.37948254566322925,
+     "median_difference": 0.10990818774852062,
+     "wins": 8,
+     "losses": 2,
+     "ties": 0,
+     "tie_tolerance": 1e-09,
+     "effect_size_dz": 0.6075637006599421,
+     "bootstrap_ci": {
+      "lower": 0.06448664963564403,
+      "upper": 0.7828678139129839,
+      "confidence_level": 0.95,
+      "replications": 10000,
+      "bootstrap_seed": 2026,
+      "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+     },
+     "wilcoxon": {
+      "statistic": 7.0,
+      "p_value": 0.037109375,
+      "n_used": 10,
+      "n_zero_differences": 0,
+      "valid": true,
+      "documentation": {
+       "null_hypothesis": "the median of the paired per-seed differences is zero",
+       "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+       "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+       "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+       "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+       "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+      }
+     },
+     "gap_label": "simple_regret"
+    },
+    "bo_final_objective": {
+     "n": 10,
+     "mean": 10.949929029100511,
+     "median": 10.951557820535918,
+     "stdev": 0.043499517459768246,
+     "min": 10.859269171327721,
+     "max": 10.999055033193676,
+     "iqr": 0.05835728240402993
+    },
+    "rs_final_objective": {
+     "n": 10,
+     "mean": 10.570446483437282,
+     "median": 10.867966259342326,
+     "stdev": 0.6043518925267892,
+     "min": 9.224302569848795,
+     "max": 10.944912953962998,
+     "iqr": 0.2738855281187522
+    }
+   },
+   "C_multimodal": {
+    "reference": 4.5295425139071765,
+    "reference_verification_method": "numerical_approximate",
+    "bo_vs_random_search": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "missing_seeds": [],
+     "n_pairs": 10,
+     "mean_difference": 0.2698185254559641,
+     "median_difference": 0.11561808383552385,
+     "wins": 8,
+     "losses": 1,
+     "ties": 1,
+     "tie_tolerance": 1e-09,
+     "effect_size_dz": 0.7117045453404727,
+     "bootstrap_ci": {
+      "lower": 0.0682421022270007,
+      "upper": 0.5118422088373641,
+      "confidence_level": 0.95,
+      "replications": 10000,
+      "bootstrap_seed": 2026,
+      "note": "uncertainty from ten runs is descriptive only; a narrow interval is NOT evidence of universal superiority (item 21 limitation)"
+     },
+     "wilcoxon": {
+      "statistic": 4.0,
+      "p_value": 0.02734375,
+      "n_used": 9,
+      "n_zero_differences": 1,
+      "valid": true,
+      "documentation": {
+       "null_hypothesis": "the median of the paired per-seed differences is zero",
+       "alternative_hypothesis": "the median of the paired per-seed differences is not zero (two-sided)",
+       "zero_difference_handling": "zero differences are DROPPED (scipy zero_method='wilcox') and reduce the effective sample size",
+       "tie_handling": "equal absolute differences receive averaged ranks (scipy normal-approximation fallback when ties/zeroes are present)",
+       "assumptions": "paired differences are treated as (approximately) symmetrically distributed around the median; n is small (10), so exact-vs-approximate mode follows scipy 'auto'",
+       "policy": "p-values COMPLEMENT effect sizes and bootstrap intervals; no practical significance is inferred from p-values alone (item 22)"
+      }
+     },
+     "gap_label": "reference_gap"
+    },
+    "bo_final_objective": {
+     "n": 10,
+     "mean": 4.4536720491903825,
+     "median": 4.479165098150422,
+     "stdev": 0.07392236596395878,
+     "min": 4.325858509961221,
+     "max": 4.524479048671247,
+     "iqr": 0.1159929888746376
+    },
+    "rs_final_objective": {
+     "n": 10,
+     "mean": 4.1838535237344185,
+     "median": 4.302028200417381,
+     "stdev": 0.3558368133923249,
+     "min": 3.5028552358720484,
+     "max": 4.524479048671247,
+     "iqr": 0.1398961214552772
+    }
+   }
+  },
+  "note": "paired BO-vs-RS differences per seed (the M5 runs share seeds and budgets)"
+ }
+}
