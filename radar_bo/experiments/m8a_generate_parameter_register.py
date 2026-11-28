@@ -177,6 +177,12 @@ CLASSIFICATION: dict[str, tuple[str, str, str]] = {
         "220 archived full-matrix records (the '230' figure was a narrative arithmetic error, corrected)"),
     "experiment.m8a_shared_initial_design_interface": ("Proposed research assumption", "engine + framework",
         "validated immutable initial_design_configs + framework explicit_shared mode (backward compatible)"),
+    "experiment.m8a_r1_source_verification": ("Documentation", "M8A-R1 Phase A",
+        "both source PDFs re-extracted and verified line-by-line (equations, tables, references, DOIs)"),
+    "paper_lu_2024.training_weight_set": ("Paper-reported parameter", "CDRL training (not reproduced here)",
+        "training weights drawn from {1, 3, 5}; recorded fact, NOT adopted as our default"),
+    "paper_lu_2024.testing_weight_rule": ("Paper-reported parameter", "CDRL testing (not reproduced here)",
+        "time-varying test weights via Eqs. (31)-(32) from ESTIMATED distances/velocities, cap 10"),
 }
 
 
@@ -335,10 +341,14 @@ def render() -> str:
                  "the tracking/utility baseline because it is not implemented; `scanning.reference_area` "
                  "is required only when a physical Eq. (21) normalization is activated.")
     lines.append("")
-    lines.append("**Required only for future extensions:** the eleven hardware/scenario parameters "
-                 "of the unimplemented radar-range/detector chain (`scanning.*` except the Boltzmann "
-                 "constant and the metric definition), plus any proposed corridor-specific scanning "
-                 "metric parameters (none defined yet).")
+    lines.append("**Required only for future extensions:** the TWELVE unresolved `scanning.*` "
+                 "parameters of the unimplemented radar-range/detector chain — 7 hardware symbols "
+                 "of ICC Table I (P_t, G_t, G_r, lambda, sigma_RCS, L, T_s), the beam angular "
+                 "spacing phi (Eq. (16)), the reference area S_0 (Eq. (21)), and the detection "
+                 "triple P_d / P_f / SNR_min (Sec. III-B, Shnidman) — plus any proposed "
+                 "corridor-specific scanning metric parameters (none defined yet). The universal "
+                 "Boltzmann constant is resolved and the per-target ranges R_t/R_r are problem "
+                 "inputs, not configuration parameters (M8A-R1 count correction).")
     lines.append("")
     lines.append("## 5. Extended-version cross-reference (added 2026-11-26)")
     lines.append("")
@@ -360,6 +370,22 @@ def render() -> str:
     lines.append("| Scanning physics | Eqs. (16)-(20) symbols, no values | Eq. (18) radar range equation, same symbols, no values; Shnidman SNR->P_d lookup |")
     lines.append("| EKF initialization | zero vector | measurement-driven, empirical P_0 = diag([1e4, 1e4, 1e2, 1e2]) (Eq. (14)) |")
     lines.append("| SNR0 | absent | absent (Table III omits it) |")
+    lines.append("| Solver | DQN (discrete actions) | DDPG (continuous actions) |")
+    lines.append("| Dwell actions | discrete {0.1, ..., 1.0} s (Sec. V-A.2) | continuous tau in [0, T_0] |")
+    lines.append("| Dual-variable step size alpha | 15000 (Table II) | 5000 (Table III) |")
+    lines.append("| Benchmarks | Equal Allocation + Random Allocation (Fig. 5) | EA + DA + OA |")
+    lines.append("| Training weights | drawn from {1, 3, 5} (Sec. VI) | (case-based, Sec. VII) |")
+    lines.append("| Testing weights | time-varying rules Eqs. (31)-(32), cap 10 | case II position/direction weights |")
+    lines.append("| Noise Eq. (6) | PRINTED as sigma^2 = sigma^2_0 * SNR (contradicts own prose) | sigma^2 = sigma^2_0 / SNR (division) |")
+    lines.append("")
+    lines.append("Benzaghta version note (M8A-R1, verified against the GLOBECOM PDF): the "
+                 "GLOBECOM paper optimizes antenna TILTS + TRANSMIT POWERS with a mean-SINR-mix "
+                 "objective (lambda) on STOCHASTIC system-level simulations (noisy f-tilde; GP "
+                 "with sigma^2*I noise), while the extended journal version optimizes tilts + "
+                 "HPBW on deterministic extraction. Matern-5/2, xi = 0.01, N_c = 500 (10 batches "
+                 "x 50), BoTorch and max-a-posteriori hyperparameter fitting are verified in the "
+                 "GLOBECOM paper itself; block-wise BS-by-BS 2-D subproblems are the paper's own "
+                 "structure (one BS at a time, others fixed at their previous values).")
     lines.append("")
     lines.append("Implications: (a) 'paper-reported' parameter values are VERSION-DEPENDENT — "
                  "this repository reproduces the ICC 2024 values and does not switch; (b) SNR0 "
@@ -378,7 +404,7 @@ def render() -> str:
     lines.append("1. `tracking.reference_snr` — supply SNR0 (paper re-verification or an explicitly synthetic scenario value).")
     lines.append("2. `resource.task_utility_weights` — confirm whether the paper reports per-task values; otherwise approve the uniform default as the labeled research assumption.")
     lines.append("3. `tracking.measurement_driven_initial_velocity` + `..._variance` — approve per-scenario synthetic values (or the proposed first-two-observations estimator) for operational synthetic runs.")
-    lines.append("4. The eleven `scanning.*` hardware/scenario parameters — required only if the physical Eqs. (16)-(20) chain is ever approved for implementation (currently out of scope).")
+    lines.append("4. The TWELVE unresolved `scanning.*` parameters (7 Table-I hardware symbols + beam spacing + S_0 + P_d/P_f/SNR_min) — required only if the physical Eqs. (16)-(20) chain is ever approved for implementation (currently out of scope).")
     lines.append("5. `optimization.evaluation_budget` — set per experiment (by design unresolved in the register).")
     lines.append("")
     lines.append("## 7. Policy reminders (unchanged by M8A)")

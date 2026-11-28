@@ -1,0 +1,4294 @@
+{
+ "command": ".venv/bin/python -m pytest -q --junitxml=results/m8a_r1_junit.xml",
+ "wall_runtime_s": 1153.4,
+ "exit_code": 0,
+ "summary_tail": "713 passed, 86 warnings in 1152.51s (0:19:12)",
+ "totals": {
+  "tests": 713,
+  "passed": 713,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0
+ },
+ "failures": [],
+ "tests": [
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_joint_clean_run",
+   "time_s": 20.412,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_block_clean_run",
+   "time_s": 18.491,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_joint_run_with_failures",
+   "time_s": 1.806,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_block_run_with_failures_and_k2",
+   "time_s": 25.77,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_random_search_identities",
+   "time_s": 0.004,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_accounting_identities.TestAccountingIdentities",
+   "name": "test_all_failing_problem",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestStructureAndOrdering",
+   "name": "test_task_ids_fixed_ordering",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestStructureAndOrdering",
+   "name": "test_indices_must_be_in_range",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestStructureAndOrdering",
+   "name": "test_task_count_consistency",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestStructureAndOrdering",
+   "name": "test_dwell_must_match_indexed_value",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestStructureAndOrdering",
+   "name": "test_power_block_length_validated",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_round_trip_dwell_only",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_round_trip_with_power",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_expected_flat_dimension",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_to_flat_vector_returns_fresh_array",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_non_member_value_rejected_not_snapped",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestFlatVectorRoundTrip",
+   "name": "test_invalid_flat_vectors_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestSerializationAndCopying",
+   "name": "test_json_round_trip",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestSerializationAndCopying",
+   "name": "test_plain_json_structure",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestSerializationAndCopying",
+   "name": "test_defensive_copy_independent",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestSerializationAndCopying",
+   "name": "test_content_id_deterministic_and_sensitive",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_allocation.TestSerializationAndCopying",
+   "name": "test_no_torch_dependency",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_clean_record_passes",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_budget_accounting_violation_detected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_infeasible_observation_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_incumbent_not_best_observation_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_incumbent_config_not_in_observations_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_non_monotone_history_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_duplicate_evaluation_ids_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_reference_mismatch_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_double_counted_timers_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_missing_metadata_detected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestRunRecordValidation",
+   "name": "test_minimization_history_supported",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestChecksums",
+   "name": "test_sha256_deterministic",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestChecksums",
+   "name": "test_checksum_manifest_detects_corruption",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestChecksums",
+   "name": "test_checksum_manifest_detects_missing_file",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestChecksums",
+   "name": "test_manifest_distinguishes_derived_artifacts",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestExperimentStoreValidation",
+   "name": "test_valid_store_passes",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestExperimentStoreValidation",
+   "name": "test_missing_expected_combination_reported",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestExperimentStoreValidation",
+   "name": "test_failed_run_without_reason_reported",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_archive_integrity.TestExperimentStoreValidation",
+   "name": "test_corrupted_run_file_reported",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_all_existing_benchmarks_registered",
+   "time_s": 0.199,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_unknown_id_rejected",
+   "time_s": 0.201,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_duplicate_registration_rejected",
+   "time_s": 0.187,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_problem_returns_fresh_independent_instances",
+   "time_s": 0.212,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_unsupported_dimension_rejected",
+   "time_s": 0.246,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_registry_metadata_complete",
+   "time_s": 0.199,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_reference_kinds_distinguished",
+   "time_s": 0.25,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_reference_matches_recorded_values",
+   "time_s": 0.203,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmark_registry.TestRegistry",
+   "name": "test_custom_entry_registration",
+   "time_s": 0.194,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkA",
+   "name": "test_analytic_optimum_exact",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkA",
+   "name": "test_off_optimum_lower_and_quadratic_decay",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkA",
+   "name": "test_synthetic_labeling",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkB",
+   "name": "test_enumeration_with_analytic_inner_optimum",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkB",
+   "name": "test_constraint_binds_at_optimum",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkB",
+   "name": "test_group_interaction",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkB",
+   "name": "test_infeasible_high_interaction_point",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkB",
+   "name": "test_synthetic_labeling",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkC",
+   "name": "test_multimodality_grid_evidence",
+   "time_s": 0.656,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkC",
+   "name": "test_reference_is_numerical_approximate",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkC",
+   "name": "test_finite_on_domain",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkC",
+   "name": "test_synthetic_labeling",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks.TestBenchmarkRegistry",
+   "name": "test_three_benchmarks_available",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestSeparable",
+   "name": "test_analytic_optimum",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestSeparable",
+   "name": "test_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestSeparable",
+   "name": "test_invalid_dimension_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestSeparable",
+   "name": "test_blocks_partition",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestCoupled",
+   "name": "test_analytic_optimum_and_pd_matrix",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestCoupled",
+   "name": "test_coupling_present",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestCoupled",
+   "name": "test_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestConstrainedMixed",
+   "name": "test_structure_and_constraint",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestConstrainedMixed",
+   "name": "test_inner_optimum_kkt_properties",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestConstrainedMixed",
+   "name": "test_reference_numerical_approximate",
+   "time_s": 0.032,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestConstrainedMixed",
+   "name": "test_blocks_partition",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestBlockStagnationLP",
+   "name": "test_analytic_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestBlockStagnationLP",
+   "name": "test_no_single_block_improvement_at_tight_config",
+   "time_s": 0.161,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_benchmarks_highdim.TestBlockStagnationLP",
+   "name": "test_joint_improvement_exists",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestJointRegressionCompatibility",
+   "name": "test_joint_mode_matches_m5_behavior",
+   "time_s": 26.268,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestJointRegressionCompatibility",
+   "name": "test_joint_trajectory_bit_for_bit_m5",
+   "time_s": 10.072,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestJointRegressionCompatibility",
+   "name": "test_joint_single_block_explicitly_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAlternatingRuns",
+   "name": "test_alternating_on_benchmark_a",
+   "time_s": 12.65,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAlternatingRuns",
+   "name": "test_two_single_variable_blocks_declared_alternating",
+   "time_s": 12.526,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAlternatingRuns",
+   "name": "test_two_two_variable_blocks_declared_coordinate",
+   "time_s": 16.162,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAlternatingRuns",
+   "name": "test_search_mode_must_match_blocks",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestSharedDatasetAndGP",
+   "name": "test_dataset_stays_full_dimension_and_shared",
+   "time_s": 13.087,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestSharedDatasetAndGP",
+   "name": "test_fixed_coordinates_traceable_across_block_visits",
+   "time_s": 12.739,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAcceptanceAndIncumbent",
+   "name": "test_current_config_and_incumbent_distinct",
+   "time_s": 18.981,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAcceptanceAndIncumbent",
+   "name": "test_non_improving_observations_retained",
+   "time_s": 12.65,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestAcceptanceAndIncumbent",
+   "name": "test_incumbent_always_evaluated_never_predicted",
+   "time_s": 12.39,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBlockStagnationAndSkips",
+   "name": "test_alternating_stagnation_on_lp_benchmark",
+   "time_s": 31.706,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBlockStagnationAndSkips",
+   "name": "test_empty_block_skipped_not_terminal",
+   "time_s": 49.715,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBlockStagnationAndSkips",
+   "name": "test_all_blocks_skipped_stops_with_exact_reason",
+   "time_s": 2.511,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBudgetAndCycleStopping",
+   "name": "test_budget_enforced_exactly",
+   "time_s": 9.479,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBudgetAndCycleStopping",
+   "name": "test_partial_cycle_termination",
+   "time_s": 7.71,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBudgetAndCycleStopping",
+   "name": "test_cycle_patience_stops",
+   "time_s": 8.82,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBudgetAndCycleStopping",
+   "name": "test_max_iterations_still_applies",
+   "time_s": 2.432,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestBudgetAndCycleStopping",
+   "name": "test_evaluations_per_block_visit_two",
+   "time_s": 12.481,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestFailuresAndReproducibility",
+   "name": "test_failures_consume_budget_and_carry_block_metadata",
+   "time_s": 11.756,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestFailuresAndReproducibility",
+   "name": "test_reproducible_same_seed",
+   "time_s": 24.775,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_bo.TestFailuresAndReproducibility",
+   "name": "test_serialization_round_trip_with_block_fields",
+   "time_s": 9.85,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_fixed_coordinates_preserved_exactly",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_shared_constraint_validated_on_complete_vectors",
+   "time_s": 0.025,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_all_rejected_returns_empty_pool_with_report",
+   "time_s": 0.061,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_current_config_excluded_as_duplicate",
+   "time_s": 0.083,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_evaluated_configs_excluded",
+   "time_s": 0.193,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_discrete_block_sampling",
+   "time_s": 0.138,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_reproducible_pool_for_same_seed",
+   "time_s": 0.006,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_invalid_current_config_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_block_candidates.TestBlockPoolGeneration",
+   "name": "test_pool_size_is_not_evaluation_count",
+   "time_s": 0.464,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_valid_block_resolves",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_index_outside_dimension_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_duplicate_indices_within_block_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_empty_block_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_embed_preserves_fixed_coordinates_exactly",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_embed_rejects_wrong_active_shape",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestVariableBlockValidation",
+   "name": "test_extract_round_trip",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_overlap_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_duplicate_block_ids_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_full_coverage_requirement",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_uncovered_indices_reported",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_intended_coverage_enforced",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_intended_coverage_satisfied",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestBlockCollectionValidation",
+   "name": "test_resolve_blocks_defaults_to_joint",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_cyclic_order_and_ticket_fields",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_strategy_constructors",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_pairwise_requires_two_variables_per_block",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_pairwise_requires_at_least_two_blocks",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_alternating_requires_nonempty_groups",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestScheduling",
+   "name": "test_empty_scheduler_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_blocks.TestMixedProblemBlocks",
+   "name": "test_blocks_on_mixed_variable_problem",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestFullRuns",
+   "name": "test_run_on_benchmark_a",
+   "time_s": 20.408,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestFullRuns",
+   "name": "test_run_on_mixed_benchmark_b",
+   "time_s": 36.442,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestFullRuns",
+   "name": "test_run_on_multimodal_benchmark_c",
+   "time_s": 26.773,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestBudgetAndScoring",
+   "name": "test_acquisition_scoring_does_not_evaluate_objective",
+   "time_s": 20.271,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestBudgetAndScoring",
+   "name": "test_failures_consume_budget_and_are_logged",
+   "time_s": 1.535,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestBudgetAndScoring",
+   "name": "test_all_failing_problem_stops_without_observations",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestStoppingConditions",
+   "name": "test_max_iterations",
+   "time_s": 1.712,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestStoppingConditions",
+   "name": "test_runtime_limit",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestStoppingConditions",
+   "name": "test_patience_without_improvement",
+   "time_s": 2.358,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestStoppingConditions",
+   "name": "test_candidate_pool_exhausted",
+   "time_s": 0.991,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestStoppingConditions",
+   "name": "test_config_validation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestResultRecords",
+   "name": "test_serialization_round_trip",
+   "time_s": 10.169,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestResultRecords",
+   "name": "test_dependency_versions_recorded",
+   "time_s": 10.021,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestResultRecords",
+   "name": "test_reference_recorded",
+   "time_s": 9.834,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestResultRecords",
+   "name": "test_result_metadata_separate_from_tensors",
+   "time_s": 10.315,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestReproducibility",
+   "name": "test_same_seed_same_result",
+   "time_s": 26.498,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_bo_loop.TestReproducibility",
+   "name": "test_different_seeds_differ",
+   "time_s": 26.195,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_requested_size_respected",
+   "time_s": 0.495,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_all_candidates_feasible",
+   "time_s": 0.203,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_mixed_variable_support",
+   "time_s": 0.091,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_within_bounds",
+   "time_s": 0.081,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_seed_reproducibility",
+   "time_s": 0.042,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_duplicate_detection_within_pool",
+   "time_s": 0.911,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_exclusion_of_evaluated_configs",
+   "time_s": 0.018,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_empty_pool_reported_not_hidden",
+   "time_s": 0.019,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_invalid_configuration_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_candidates.TestPoolGeneration",
+   "name": "test_pool_size_distinct_from_objective_evaluations",
+   "time_s": 0.497,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestAtomicPersistence",
+   "name": "test_atomic_write_leaves_valid_json",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestAtomicPersistence",
+   "name": "test_initialize_writes_config_and_manifest",
+   "time_s": 0.37,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestAtomicPersistence",
+   "name": "test_resume_with_same_config_is_compatible",
+   "time_s": 0.57,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestAtomicPersistence",
+   "name": "test_resume_with_different_config_rejected",
+   "time_s": 0.561,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestStatuses",
+   "name": "test_status_transitions_and_reasons",
+   "time_s": 0.425,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestStatuses",
+   "name": "test_completed_requires_and_loads_record",
+   "time_s": 0.389,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestStatuses",
+   "name": "test_missing_record_for_completed_run_repaired_on_resume",
+   "time_s": 0.393,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestStatuses",
+   "name": "test_interrupted_running_run_detected",
+   "time_s": 0.374,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestResumeCompatibility",
+   "name": "test_corrupted_json_record_rejected",
+   "time_s": 0.406,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestResumeCompatibility",
+   "name": "test_fingerprint_mismatch_rejected",
+   "time_s": 0.392,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_checkpointing.TestResumeCompatibility",
+   "name": "test_compatibility_metadata_captures_required_fields",
+   "time_s": 0.217,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestConfigurationChecks",
+   "name": "test_valid_configuration_has_no_problems",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestConfigurationChecks",
+   "name": "test_invalid_configuration_reported_as_category",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestConfigurationChecks",
+   "name": "test_bad_manager_arguments_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_task_count_mismatch_detected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_bounds_violation_detected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_membership_violation_detected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_power_bounds_checked_when_resolved",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_power_bounds_unresolved_is_a_parameter_error_not_infeasible",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestDimensionAndBounds",
+   "name": "test_power_free_allocation_unaffected_by_unresolved_bounds",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_zero_consumption_feasible_and_remaining_full",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_partial_consumption_feasible",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_exact_budget_usage_is_feasible",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_budget_exceedance_infeasible_under_hard_semantics",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_float_boundary_absorbed_by_tolerance",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_budget_exceeded_by_member_combination_is_violated",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_budget_just_below_by_member_combination_is_feasible",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_paper_semantics_records_slot_term_without_hard_infeasibility",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_within_budget_under_paper_semantics_also_recorded",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestBudgetSemantics",
+   "name": "test_semantics_are_not_treated_as_equivalent",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestReportStructure",
+   "name": "test_report_lists_specific_violations",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestReportStructure",
+   "name": "test_report_carries_usage_quantities",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestReportStructure",
+   "name": "test_no_mutation_of_candidate",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestPolicyLevelFeasibility",
+   "name": "test_hard_semantics_determines_feasibility_locally",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestPolicyLevelFeasibility",
+   "name": "test_paper_semantics_requires_horizon_for_policy_level",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_constraints.TestPolicyLevelFeasibility",
+   "name": "test_within_budget_action_does_not_prove_discounted_feasibility",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetInsertion",
+   "name": "test_insert_and_shapes",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetInsertion",
+   "name": "test_record_fields",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetInsertion",
+   "name": "test_invalid_insertions_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetInsertion",
+   "name": "test_failed_observations_never_enter_dataset",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDuplicatePolicy",
+   "name": "test_exact_duplicate_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDuplicatePolicy",
+   "name": "test_near_duplicate_within_tolerance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDuplicatePolicy",
+   "name": "test_distinct_configurations_not_merged",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDuplicatePolicy",
+   "name": "test_intentional_repeat_allowed_with_flag",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDuplicatePolicy",
+   "name": "test_has_config",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetQueriesAndSerialization",
+   "name": "test_best_respects_direction",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetQueriesAndSerialization",
+   "name": "test_best_on_empty_raises",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetQueriesAndSerialization",
+   "name": "test_training_arrays_are_fresh_copies",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetQueriesAndSerialization",
+   "name": "test_json_round_trip",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestDatasetQueriesAndSerialization",
+   "name": "test_inconsistent_record_dimension_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_numpy_to_torch_dtype_device_shape",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_non_float64_input_coerced",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_non_finite_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_1d_rejected_when_2d_required",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_no_shared_memory_numpy_side",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_no_shared_memory_torch_side",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_torch_to_numpy_copies",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_dataset_conversions.TestConversions",
+   "name": "test_round_trip_preserves_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestPredict",
+   "name": "test_matches_equations_9_and_10",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestPredict",
+   "name": "test_prior_does_not_mutate_input",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestPredict",
+   "name": "test_invalid_process_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestPredict",
+   "name": "test_negative_dt_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_matches_equations_11_to_13",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_angular_residual_wrapping",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_posterior_covariance_stays_valid_across_cycles",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_prior_at_origin_raises_geometry_error",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_non_finite_observation_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestUpdate",
+   "name": "test_update_does_not_mutate_prior",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestJosephEquivalence",
+   "name": "test_mathematically_equivalent_under_valid_conditions",
+   "time_s": 0.01,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestJosephEquivalence",
+   "name": "test_invalid_method_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestInputValidation",
+   "name": "test_nan_prior_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_ekf.TestInputValidation",
+   "name": "test_wrong_type_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_valid_config_builds",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_experiment_id_pattern_enforced",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_duplicate_benchmark_ids_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_duplicate_seeds_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_budget_required",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestExperimentConfigValidation",
+   "name": "test_distinct_from_radar_config",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestFingerprint",
+   "name": "test_fingerprint_stable_across_instances",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestFingerprint",
+   "name": "test_fingerprint_changes_with_any_setting",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_config.TestFingerprint",
+   "name": "test_config_fingerprint_function_canonical_ordering",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestAlgorithmRegistry",
+   "name": "test_all_methods_registered",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestAlgorithmRegistry",
+   "name": "test_architectures",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestAlgorithmRegistry",
+   "name": "test_unknown_algorithm_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestAlgorithmRegistry",
+   "name": "test_duplicate_registration_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestStableRunIds",
+   "name": "test_run_id_deterministic",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestStableRunIds",
+   "name": "test_run_id_changes_with_each_identity_component",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_manifest_covers_full_matrix",
+   "time_s": 0.235,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_reference_run_has_no_seed_and_is_pending",
+   "time_s": 0.18,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_incompatible_combinations_skipped_with_reason",
+   "time_s": 0.184,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_unsupported_dimension_recorded_as_skipped",
+   "time_s": 0.181,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_duplicate_configuration_detected",
+   "time_s": 0.184,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_experiment_matrix.TestManifestGeneration",
+   "name": "test_hyperparameters_recorded_per_run",
+   "time_s": 0.192,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestPaperZeroIdentity",
+   "name": "test_reproduces_paper_initialization",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestPaperZeroIdentity",
+   "name": "test_update_from_origin_fails_loudly",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_position_from_observation_only",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_position_covariance_from_observation_covariance",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_velocity_from_configured_prior_only",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_position_and_velocity_uncertainty_separate",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_unresolved_velocity_assumptions_raise_informatively",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_partially_unresolved_assumptions_raise",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestMeasurementDriven",
+   "name": "test_missing_observation_raises",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestExperimentalCustom",
+   "name": "test_supplied_values_pass_through",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestNoGroundTruthAccess",
+   "name": "test_initializer_signature_has_no_truth_input",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_initialization.TestNoGroundTruthAccess",
+   "name": "test_unknown_policy_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/base.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/environment_config.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/experiment_config.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/optimization_config.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/provenance.py]",
+   "time_s": 0.006,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/resource_config.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/scanning_config.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/simulation_config.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[config/tracking_config.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[environment/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[environment/motion_model.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[environment/target_state.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/allocation.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/acquisition.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/benchmarks.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/benchmarks_highdim.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/block_candidates.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/blocks.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/bo_loop.py]",
+   "time_s": 0.008,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/candidates.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/conversions.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/dataset.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/problem.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/random_search.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/reference_solvers.py]",
+   "time_s": 0.004,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/results.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/scheduling.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/bo/surrogate.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/constraints.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/objective.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[optimization/resource_accounting.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/extended_kalman_filter.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/initialization.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/measurement_model.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/measurement_noise.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/scanning_model.py]",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[radar/tracking_cost.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[simulation/__init__.py]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_optimizer_or_torch_imports[simulation/simulation_state.py]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_estimation_core_is_numpy_only[environment]",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_estimation_core_is_numpy_only[radar]",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_ground_truth_parameters[environment]",
+   "time_s": 0.005,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_ground_truth_parameters[radar]",
+   "time_s": 0.006,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_config_layer_guard_still_in_place",
+   "time_s": 0.011,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_problem_interface_is_radar_free",
+   "time_s": 0.027,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_core_layers_do_not_import_experiment_framework",
+   "time_s": 0.022,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_experiment_framework_does_not_import_simulator_layers",
+   "time_s": 0.042,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_layer_separation",
+   "name": "test_no_circular_imports_in_experiment_layer",
+   "time_s": 0.234,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestInitializationSequencing",
+   "name": "test_init_observation_not_reused_and_first_update_uses_step1",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestInitializationSequencing",
+   "name": "test_pipeline_consumes_one_init_observation_plus_one_per_step",
+   "time_s": 0.014,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestInitializationSequencing",
+   "name": "test_pipeline_estimates_length_matches_convention",
+   "time_s": 0.008,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_finite_estimates_and_valid_covariances",
+   "time_s": 0.008,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_tracking_cost_finite_and_positive",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_reproducibility_with_same_seed",
+   "time_s": 0.014,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_estimates_differ_from_truth",
+   "time_s": 0.008,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_both_maneuverability_interpretations_run_and_differ",
+   "time_s": 0.015,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m3_integration.TestSyntheticPipeline",
+   "name": "test_joseph_method_pipeline",
+   "time_s": 0.009,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestFullWorkflow",
+   "name": "test_valid_allocations_produce_finite_results",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestFullWorkflow",
+   "name": "test_invalid_allocation_rejected_as_infeasible",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestFullWorkflow",
+   "name": "test_unresolved_configuration_not_silently_replaced",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestFullWorkflow",
+   "name": "test_result_corresponds_to_correct_allocation",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestFullWorkflow",
+   "name": "test_hand_checked_utility_for_exact_budget_candidate",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestIsolationAndTime",
+   "name": "test_candidate_evaluation_does_not_affect_other_candidates_starting_state",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestIsolationAndTime",
+   "name": "test_candidate_evaluation_does_not_advance_simulation_time",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestIsolationAndTime",
+   "name": "test_authoritative_state_not_mutated_by_evaluation",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestOrderInvarianceAndReproducibility",
+   "name": "test_evaluation_order_does_not_change_results",
+   "time_s": 0.005,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m4_integration.TestOrderInvarianceAndReproducibility",
+   "name": "test_repeat_evaluations_reproducible",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCompleteWorkflow",
+   "name": "test_chain_produces_valid_result",
+   "time_s": 13.96,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCompleteWorkflow",
+   "name": "test_failure_records_cannot_enter_training_data",
+   "time_s": 2.903,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCompleteWorkflow",
+   "name": "test_optimizer_operates_independently_of_radar_simulator",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestStepwiseWorkflow",
+   "name": "test_manual_chain",
+   "time_s": 0.644,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestStepwiseWorkflow",
+   "name": "test_every_score_maps_to_its_candidate",
+   "time_s": 0.202,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCrossMethodComparison",
+   "name": "test_bo_and_random_search_valid_on_same_budget[0]",
+   "time_s": 6.905,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCrossMethodComparison",
+   "name": "test_bo_and_random_search_valid_on_same_budget[1]",
+   "time_s": 7.421,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m5_integration.TestCrossMethodComparison",
+   "name": "test_mixed_benchmark_comparison_valid",
+   "time_s": 23.681,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestAlternatingWorkflow",
+   "name": "test_complete_workflow_on_mixed_problem",
+   "time_s": 96.468,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestAlternatingWorkflow",
+   "name": "test_empty_blocks_never_create_infinite_loops",
+   "time_s": 0.01,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestAlternatingWorkflow",
+   "name": "test_failures_never_enter_gp_training",
+   "time_s": 18.658,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestPairwiseWorkflow",
+   "name": "test_pairwise_on_stagnation_lp",
+   "time_s": 24.493,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestPairwiseWorkflow",
+   "name": "test_pairwise_on_constrained_mixed_8d",
+   "time_s": 66.701,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestPairwiseWorkflow",
+   "name": "test_partial_coverage_reported",
+   "time_s": 28.915,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestFairnessAndCrossArchitecture",
+   "name": "test_identical_initial_design_across_architectures",
+   "time_s": 57.81,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m6_integration.TestFairnessAndCrossArchitecture",
+   "name": "test_unfavorable_comparison_is_valid_output",
+   "time_s": 44.895,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestFullWorkflow",
+   "name": "test_config_to_report",
+   "time_s": 5.351,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestFullWorkflow",
+   "name": "test_evaluations_per_run_match_budget",
+   "time_s": 2.639,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestInterruptionAndResume",
+   "name": "test_interrupted_run_detected_and_redone_once",
+   "time_s": 5.754,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestInterruptionAndResume",
+   "name": "test_resume_does_not_repeat_completed_runs",
+   "time_s": 2.929,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestInterruptionAndResume",
+   "name": "test_corrupted_record_rejected_explicitly",
+   "time_s": 2.85,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestInterruptionAndResume",
+   "name": "test_incompatible_stored_record_rejected_on_resume",
+   "time_s": 2.946,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m7_integration.TestOmittedRunsReportedHonestly",
+   "name": "test_skipped_combinations_listed_never_completed",
+   "time_s": 0.207,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignFingerprint",
+   "name": "test_fingerprint_is_genuine_sha256",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignFingerprint",
+   "name": "test_fingerprint_changes_with_content",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignFingerprint",
+   "name": "test_float_reordering_stability",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_incomplete_design_detected",
+   "time_s": 0.189,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_non_finite_detected",
+   "time_s": 0.187,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_infeasible_detected",
+   "time_s": 0.184,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_duplicate_rows_detected",
+   "time_s": 0.186,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_wrong_dimension_detected",
+   "time_s": 0.184,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_malformed_non_numeric_detected",
+   "time_s": 0.207,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignValidation",
+   "name": "test_valid_design_has_no_issues",
+   "time_s": 0.229,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignStorePersistence",
+   "name": "test_create_persists_and_reload_matches",
+   "time_s": 0.199,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignStorePersistence",
+   "name": "test_tampered_rows_rejected_on_load",
+   "time_s": 0.192,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignStorePersistence",
+   "name": "test_tampered_digest_rejected_on_load",
+   "time_s": 0.208,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignStorePersistence",
+   "name": "test_stored_rows_edited_consistently_still_validated_for_feasibility",
+   "time_s": 0.193,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestDesignStorePersistence",
+   "name": "test_insufficient_feasible_design_raises_runtime_error",
+   "time_s": 0.189,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestSharedStartRandomSearch",
+   "name": "test_framework_run_shared_start_matches_bo_initial_phase",
+   "time_s": 2.727,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestSharedStartRandomSearch",
+   "name": "test_plain_random_search_ignores_design_trajectorily",
+   "time_s": 0.435,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestSharedStartRandomSearch",
+   "name": "test_shared_start_evaluates_authoritative_phase_then_random",
+   "time_s": 0.186,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestSharedStartRandomSearch",
+   "name": "test_shared_start_rejects_bad_designs",
+   "time_s": 0.183,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_full_budget_is_full",
+   "time_s": 0.185,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_patience_is_early_not_failure",
+   "time_s": 0.186,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_runtime_limit_is_early",
+   "time_s": 0.19,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_engine_failure_reasons_classified",
+   "time_s": 0.209,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_over_budget_is_violation",
+   "time_s": 0.199,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCompletionClassification",
+   "name": "test_unknown_under_budget_reason_is_early",
+   "time_s": 0.185,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestEarlyStoppingEndToEnd",
+   "name": "test_patience_run_completes_early_not_failed",
+   "time_s": 1.596,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestResumeAdoption",
+   "name": "test_persisted_record_adopted_not_reexecuted",
+   "time_s": 2.794,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestResumeAdoption",
+   "name": "test_identity_mismatch_rejected",
+   "time_s": 2.804,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestResumeAdoption",
+   "name": "test_failure_history_preserved_across_retry",
+   "time_s": 5.285,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCheckpointCompatibility",
+   "name": "test_config_drift_rejected",
+   "time_s": 2.817,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestCheckpointCompatibility",
+   "name": "test_compatibility_component_reported",
+   "time_s": 2.763,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestVerificationAgainstPersistedDesign",
+   "name": "test_tampered_initial_phase_detected",
+   "time_s": 2.623,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_m8a_r1_corrections.TestVerificationAgainstPersistedDesign",
+   "name": "test_missing_fingerprint_detected",
+   "time_s": 2.684,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestMeasurementFunction",
+   "name": "test_on_positive_x_axis",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestMeasurementFunction",
+   "name": "test_quadrant_awareness",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestMeasurementFunction",
+   "name": "test_measure_from_state_ignores_velocity",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestMeasurementFunction",
+   "name": "test_non_finite_position_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestSingularGeometry",
+   "name": "test_origin_raises_on_measure",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestSingularGeometry",
+   "name": "test_origin_raises_on_jacobian",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestSingularGeometry",
+   "name": "test_error_is_domain_specific_not_value_error",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position1]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position2]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position3]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position4]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_analytical_matches_numerical_differentiation[position5]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_jacobian_shape_and_velocity_columns",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_model.TestJacobian",
+   "name": "test_jacobian_row1_matches_closed_form",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestSNRModel",
+   "name": "test_eq5_formula",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestSNRModel",
+   "name": "test_snr_increases_with_dwell_and_proximity",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestSNRModel",
+   "name": "test_invalid_dwell_or_range_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestEq6DivisionSemantics",
+   "name": "test_variance_decreases_with_snr",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestEq6DivisionSemantics",
+   "name": "test_covariance_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestEq6DivisionSemantics",
+   "name": "test_combined_observation_covariance",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestEq6DivisionSemantics",
+   "name": "test_invalid_snr_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestUnresolvedReferenceSNR",
+   "name": "test_paper_default_config_has_no_snr0",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestUnresolvedReferenceSNR",
+   "name": "test_unresolved_snr_fails_clearly",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestUnresolvedReferenceSNR",
+   "name": "test_from_config_copies_paper_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_measurement_noise.TestUnresolvedReferenceSNR",
+   "name": "test_invalid_supplied_snr_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestObjectiveGap",
+   "name": "test_maximization_simple_regret",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestObjectiveGap",
+   "name": "test_minimization_reversed",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestObjectiveGap",
+   "name": "test_numerical_reference_labeled_reference_gap",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestObjectiveGap",
+   "name": "test_negative_gap_retained_never_clipped",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_standard_maximization",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_minimization",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_zero_denominator_explicit",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_near_zero_denominator_explicit",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_negative_denominator_initial_better_than_reference",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestNormalizedGapClosure",
+   "name": "test_closure_above_one_when_reference_exceeded",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestThresholds",
+   "name": "test_threshold_level_independent_calculation",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestThresholds",
+   "name": "test_evaluations_to_level",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestThresholds",
+   "name": "test_initial_design_already_meets_threshold",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestThresholds",
+   "name": "test_unreached_threshold_not_artificial",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestThresholds",
+   "name": "test_attempted_and_wall_axes",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestDescriptiveStatistics",
+   "name": "test_independently_calculated",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestDescriptiveStatistics",
+   "name": "test_empty_input",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_paired_diffs_wins_losses_ties",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_missing_seeds_reported",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_tie_tolerance_documented",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_effect_size_dz",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_bootstrap_reproducible_with_documented_seed",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestPairedComparisons",
+   "name": "test_bootstrap_resamples_seed_level_pairs",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_wilcoxon_basic",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_zero_differences_dropped_and_counted",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_all_zero_differences",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_documentation_present",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_holm_correction_independently_calculated",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestWilcoxonAndCorrection",
+   "name": "test_holm_bounds_at_one",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestRuntimeDecomposition",
+   "name": "test_unattributed_computed_never_assumed",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestRuntimeDecomposition",
+   "name": "test_documentation_fields",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestConvergenceAxes",
+   "name": "test_attempted_axis_exact_for_m7_records",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_metrics.TestConvergenceAxes",
+   "name": "test_pre_m7_records_report_unavailable_axis",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStateTransitionMatrix",
+   "name": "test_paper_structure",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStateTransitionMatrix",
+   "name": "test_invalid_dt_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestDeterministicPropagation",
+   "name": "test_matches_independently_calculated_expected_state",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestDeterministicPropagation",
+   "name": "test_metadata_preserved",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestDeterministicPropagation",
+   "name": "test_rejects_non_target_state",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_matches_closed_form[25.0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_matches_closed_form[625.0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_matches_closed_form[1.0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_symmetry_and_positive_semidefiniteness_both_interpretations",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_low_rank_factor_identity",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_both_maneuverability_interpretations[table_variance-25.0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_both_maneuverability_interpretations[equation_literal-625.0]",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestProcessNoiseCovariance",
+   "name": "test_interpretation_ratio_is_sigma_w_squared",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStochasticPropagation",
+   "name": "test_explicit_generator_required",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStochasticPropagation",
+   "name": "test_seeded_reproducibility",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStochasticPropagation",
+   "name": "test_different_seeds_differ",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_motion_model.TestStochasticPropagation",
+   "name": "test_sample_covariance_matches_q",
+   "time_s": 0.007,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestAggregationHandChecks",
+   "name": "test_utility_equals_neg_weighted_cost_plus_beta_gamma",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestAggregationHandChecks",
+   "name": "test_weighted_aggregation_with_configured_weights",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestAggregationHandChecks",
+   "name": "test_uniform_weights_are_the_documented_proposed_default",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestAggregationHandChecks",
+   "name": "test_invalid_weights_surface_as_failed_evaluation",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestAggregationHandChecks",
+   "name": "test_paper_semantics_evaluator_treats_over_budget_as_feasible_with_note",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestDiagnosticProvider",
+   "name": "test_eq14_costs_from_snapshot_covariances",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestDiagnosticProvider",
+   "name": "test_diagnostic_provider_is_allocation_independent",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestFailureRepresentation",
+   "name": "test_infeasible_candidate_gets_infeasible_status_and_no_utility",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestFailureRepresentation",
+   "name": "test_failing_provider_gives_failed_status_not_zero_utility",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestFailureRepresentation",
+   "name": "test_failing_scanning_model_gives_failed_status",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestFailureRepresentation",
+   "name": "test_result_model_validators",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestTraceabilityAndTiming",
+   "name": "test_result_traceable_to_snapshot_and_allocation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestTraceabilityAndTiming",
+   "name": "test_duration_recorded_nonnegative",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestTraceabilityAndTiming",
+   "name": "test_randomness_policy_recorded",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestExceptionPolicy",
+   "name": "test_expected_failure_record_preserves_traceback",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestExceptionPolicy",
+   "name": "test_unexpected_error_re_raised_in_strict_mode",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_objective_evaluator.TestExceptionPolicy",
+   "name": "test_unexpected_error_flagged_in_lenient_mode",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_experimental_defaults",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_acquisition_xi_removed_no_effect_parameter",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_no_budgets_by_default",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_ensure_ready_fails_without_budget",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_ensure_ready_passes_with_budget",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_search_mode_switch",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_acquisition_switch",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestOptimizationConfig",
+   "name": "test_max_iterations_and_refit_fields",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestExperimentConfig",
+   "name": "test_defaults",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestExperimentConfig",
+   "name": "test_repetitions_positive",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_experiment_config.TestExperimentConfig",
+   "name": "test_experiment_type_literal",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_valid_problem_constructs",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_dimension_mismatch_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_inverted_bounds_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_nonfinite_bounds_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_invalid_variable_type_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_discrete_values_outside_bounds_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_discrete_type_requires_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_continuous_with_discrete_values_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestDefinitionValidation",
+   "name": "test_invalid_noise_std_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestFeasibility",
+   "name": "test_bounds_check",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestFeasibility",
+   "name": "test_discrete_membership_check",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestFeasibility",
+   "name": "test_instantaneous_constraint_check",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestFeasibility",
+   "name": "test_nonfinite_vector_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestFeasibility",
+   "name": "test_wrong_shape_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestEvaluation",
+   "name": "test_evaluate_validates_and_returns_scalar",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestEvaluation",
+   "name": "test_evaluate_rejects_infeasible_vector",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestEvaluation",
+   "name": "test_evaluation_ids_and_counter",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_optimization_problem.TestEvaluation",
+   "name": "test_objective_direction_recorded",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_table_ii_values_recorded",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_snr0_recorded_as_unresolved",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_all_scanning_parameters_unresolved_with_units",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_standard_constant_separated",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_ambiguities_are_flagged_in_notes_or_rationale",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_m3_review_entries",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_benzaghta_entries_separated",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestPaperEntries",
+   "name": "test_evaluation_budget_unresolved_by_design",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_duplicate_names_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_unknown_name_raises_keyerror",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_require_resolved_returns_values",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_require_resolved_fails_clearly_on_unresolved",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_require_resolved_unknown_name_fails",
+   "time_s": 0.127,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_unresolved_names_listing",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestRegisterBehaviour",
+   "name": "test_register_reflects_config_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestSerialization",
+   "name": "test_json_round_trip",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_provenance.TestLayerSeparation",
+   "name": "test_config_package_never_imports_optimizer_or_torch",
+   "time_s": 0.012,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestReferenceSolvers",
+   "name": "test_benchmark_a_analytic_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestReferenceSolvers",
+   "name": "test_benchmark_b_enumeration_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestReferenceSolvers",
+   "name": "test_benchmark_c_numerical_reference_approximate",
+   "time_s": 0.263,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestReferenceSolvers",
+   "name": "test_solvers_have_no_gp_or_botorch_imports",
+   "time_s": 0.006,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestReferenceSolvers",
+   "name": "test_reference_solution_serializable",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_respects_evaluation_budget_exactly",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_seed_reproducibility",
+   "time_s": 0.008,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_all_evaluated_configs_feasible",
+   "time_s": 0.013,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_best_is_max_of_history",
+   "time_s": 0.004,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_initial_cost_counted_in_budget",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_mixed_problem_sampling",
+   "time_s": 0.018,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_budget_of_one",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reference_solvers_random_search.TestRandomSearch",
+   "name": "test_invalid_budget_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestReportGeneration",
+   "name": "test_report_generated_from_stored_data_only",
+   "time_s": 0.62,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestReportGeneration",
+   "name": "test_report_regeneration_does_not_evaluate_objectives",
+   "time_s": 0.568,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestReportGeneration",
+   "name": "test_report_lists_skipped_runs_with_reasons",
+   "time_s": 0.553,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSensitivity",
+   "name": "test_scenario_overrides_recorded",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSensitivity",
+   "name": "test_unknown_path_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSensitivity",
+   "name": "test_no_change_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSensitivity",
+   "name": "test_matrix_is_explicit_not_cartesian",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSimulatorInterfaceAdapter",
+   "name": "test_structured_result_conversion_success",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSimulatorInterfaceAdapter",
+   "name": "test_snapshot_isolation_no_mutation",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSimulatorInterfaceAdapter",
+   "name": "test_failure_propagation_as_failure_record",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_reporting_sensitivity_simulator.TestSimulatorInterfaceAdapter",
+   "name": "test_adapter_is_synthetic_only",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_zero_consumption",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_partial_consumption_hand_computed",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_exact_budget_usage",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_budget_exceedance_records_both_eq24_and_raw_deficit",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_invalid_negative_quantity_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestTimeAccounting",
+   "name": "test_invalid_accountant_arguments_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_energy_computed_under_average_convention",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_energy_not_computed_under_peak_convention",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_duty_cycle_convention_recorded",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_energy_budget_unresolved_fails_clearly",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_energy_budget_check_with_synthetic_budget",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_energy_check_requires_energy_in_usage",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_resource_accounting.TestEnergyAndPowerConventions",
+   "name": "test_no_power_block_leaves_power_fields_none",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_hand_computed_ratios",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_not_capped_at_one",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_invalid_inputs_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_metric_with_configured_reference",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_metric_with_unresolved_reference_raises",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_paper_scanning_config_s0_remains_none",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestEq21AreaRatio",
+   "name": "test_invalid_configured_reference_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_implements_interface",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_deterministic_and_hand_verifiable",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_gamma_uncapped_for_long_times",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_invalid_time_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_invalid_constants_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_outputs_finite_across_domain",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_interface.TestSyntheticScanningModel",
+   "name": "test_result_carries_synthetic_marker",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_all_paper_parameters_unresolved_by_default",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_boltzmann_constant_is_standard_and_frozen",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_partially_populated_config_is_valid",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_negative_power_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_probability_bounds_strict",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_loss_factor_at_least_one",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_beam_spacing_within_full_circle",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_reference_area_must_be_positive",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_ensure_resolved_fails_clearly_with_units",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_ensure_resolved_passes_when_supplied",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestScanningConfig",
+   "name": "test_ensure_resolved_unknown_field_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_paper_action_set",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_paper_scalar_defaults",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_power_fields_proposed_and_none",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_budget_semantics_switch",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_non_increasing_action_set_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_non_uniform_grid_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_nonpositive_dwell_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_discount_factor_bounds",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_inverted_power_bounds_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_scanning_resource_config.TestResourceConfig",
+   "name": "test_equal_power_bounds_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_backward_compat_none_reproduces_frozen_m5_trajectory",
+   "time_s": 10.038,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_explicit_design_evaluated_exactly_in_order",
+   "time_s": 13.802,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_identical_initial_phase_across_engines_sharing_the_design",
+   "time_s": 34.186,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_count_mismatch_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_wrong_dimension_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_non_finite_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_infeasible_point_rejected_fail_fast",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_budget_accounting_unchanged",
+   "time_s": 10.956,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestEngineExplicitInitialDesign",
+   "name": "test_pool_report_records_explicit_mode",
+   "time_s": 4.166,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestFrameworkExplicitSharedMode",
+   "name": "test_shared_design_identical_across_methods_per_seed",
+   "time_s": 25.687,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestFrameworkExplicitSharedMode",
+   "name": "test_seeded_mode_still_default",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_shared_initial_design.TestFrameworkExplicitSharedMode",
+   "name": "test_random_search_accepts_and_ignores_explicit_design",
+   "time_s": 0.184,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestNesting",
+   "name": "test_all_sections_composed",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestNesting",
+   "name": "test_revisit_interval_single_source",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestNesting",
+   "name": "test_extra_section_forbidden",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestCrossValidation",
+   "name": "test_dwell_actions_within_revisit",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestCrossValidation",
+   "name": "test_revisit_below_max_dwell_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestCrossValidation",
+   "name": "test_reference_dwell_must_be_in_action_set",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestCrossValidation",
+   "name": "test_mismatched_transmit_power_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestCrossValidation",
+   "name": "test_matching_transmit_power_accepted",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestEnvironmentPopulation",
+   "name": "test_initial_conditions_length_must_match",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestEnvironmentPopulation",
+   "name": "test_matching_population_accepted",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestSerialization",
+   "name": "test_json_round_trip_preserves_everything",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestSerialization",
+   "name": "test_saved_json_is_plain_json",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestSerialization",
+   "name": "test_save_and_load_file",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_config.TestSerialization",
+   "name": "test_load_revalidates",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotConstruction",
+   "name": "test_snapshot_fields",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotConstruction",
+   "name": "test_snapshot_excludes_truth_by_design",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotConstruction",
+   "name": "test_accessors_return_fresh_copies",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotConstruction",
+   "name": "test_out_of_range_task_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotIntegrity",
+   "name": "test_verify_integrity_true_when_untouched",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotIntegrity",
+   "name": "test_detects_internal_array_mutation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotIntegrity",
+   "name": "test_two_snapshots_same_content_same_id",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestSnapshotIntegrity",
+   "name": "test_different_content_different_id",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestRngCaptureAndCRN",
+   "name": "test_rebuild_rng_reproduces_captured_stream",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestRngCaptureAndCRN",
+   "name": "test_rebuild_does_not_advance_capture",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestRngCaptureAndCRN",
+   "name": "test_original_state_rng_untouched_by_snapshot",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestAuthoritativeStatePreservation",
+   "name": "test_fingerprint_stable_and_sensitive",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestAuthoritativeStatePreservation",
+   "name": "test_advance_requires_positive_dt",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestAuthoritativeStatePreservation",
+   "name": "test_state_validation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_simulation_state.TestArrayMutationProtection",
+   "name": "test_snapshot_arrays_isolated_from_state",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestStateOrdering",
+   "name": "test_project_wide_ordering",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestStateOrdering",
+   "name": "test_position_velocity_properties_follow_ordering",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestStateOrdering",
+   "name": "test_metadata_separate_from_numerics",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestTargetStateValidation",
+   "name": "test_float64_coercion",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestTargetStateValidation",
+   "name": "test_wrong_shape_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestTargetStateValidation",
+   "name": "test_non_finite_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestGaussianStateValidation",
+   "name": "test_prior_and_posterior_are_distinct_instances",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestGaussianStateValidation",
+   "name": "test_non_psd_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestGaussianStateValidation",
+   "name": "test_asymmetric_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestGaussianStateValidation",
+   "name": "test_wrong_dimensions_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestObservationValidation",
+   "name": "test_valid_observation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestObservationValidation",
+   "name": "test_azimuth_wrapped_to_half_open_interval",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestObservationValidation",
+   "name": "test_negative_range_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestObservationValidation",
+   "name": "test_non_psd_measurement_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_state_representation.TestObservationValidation",
+   "name": "test_measurement_covariance_standalone",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateConfiguration",
+   "name": "test_kernel_is_explicit_matern_5_2",
+   "time_s": 0.229,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateConfiguration",
+   "name": "test_default_kernel_would_have_been_rbf",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateConfiguration",
+   "name": "test_input_and_outcome_transforms",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateConfiguration",
+   "name": "test_float64_cpu",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateConfiguration",
+   "name": "test_installed_log_ei_signature_has_no_xi",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_output_dimensions",
+   "time_s": 0.004,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_finite_means_and_nonnegative_variance",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_latent_variance_distinct_from_observation_noise",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_original_unit_predictions",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_predictions_at_training_points_reasonable",
+   "time_s": 0.002,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogatePosterior",
+   "name": "test_shape_and_finiteness_violations_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_fit_diagnostics_recorded",
+   "time_s": 0.148,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_fit_failure_raises_with_details",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_nonfinite_training_data_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_too_few_observations_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_reproducible_construction_and_fitting",
+   "time_s": 0.197,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestSurrogateFitting",
+   "name": "test_refit_updates_diagnostics",
+   "time_s": 0.285,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_build_requires_fitted_surrogate",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_build_with_incumbent_reference",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_score_shapes_and_correspondence",
+   "time_s": 0.003,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_scores_are_log_domain",
+   "time_s": 0.004,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_selection_tie_break_first_index",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_nonfinite_scores_masked",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_all_nonfinite_raises_selection_failure",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_surrogate_acquisition.TestAcquisitionManager",
+   "name": "test_invalid_inputs_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestPaperDefaults",
+   "name": "test_table_ii_values",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestPaperDefaults",
+   "name": "test_unresolved_values_are_none",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestPaperDefaults",
+   "name": "test_structural_dimensions",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestPaperDefaults",
+   "name": "test_paper_initialization",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestPaperDefaults",
+   "name": "test_dimensions_are_frozen",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_maneuverability_interpretation_default_and_alternative",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_invalid_maneuverability_interpretation_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_measurement_variance_scaling_consolidated",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_initialization_policy_switch",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_covariance_update_method_default_and_alternative",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_measurement_driven_init_assumptions_unresolved_by_default",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestAmbiguitySwitches",
+   "name": "test_measurement_driven_init_assumptions_validation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_negative_variance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_zero_angle_variance_rejected",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_dwell_exceeding_revisit_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_extra_field_forbidden",
+   "time_s": 0.0,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_paper_policy_rejects_custom_initial_state",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_paper_policy_rejects_custom_covariance",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_experimental_custom_allows_overrides",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_nonsymmetric_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_non_psd_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_wrong_shape_covariance_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_config.TestValidation",
+   "name": "test_assignment_revalidation",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestEquation14",
+   "name": "test_identity_covariance",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestEquation14",
+   "name": "test_equals_sum_of_position_variances",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestEquation14",
+   "name": "test_selector_matrix_matches_eq15",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestEquation14",
+   "name": "test_velocity_block_does_not_enter_cost",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestRejections",
+   "name": "test_incompatible_dimensions_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestRejections",
+   "name": "test_non_finite_result_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestRejections",
+   "name": "test_asymmetric_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestRejections",
+   "name": "test_negative_definite_rejected",
+   "time_s": 0.001,
+   "outcome": "passed"
+  },
+  {
+   "classname": "radar_bo.tests.test_tracking_cost.TestIndependence",
+   "name": "test_module_has_no_optimizer_or_scanning_imports",
+   "time_s": 0.002,
+   "outcome": "passed"
+  }
+ ]
+}

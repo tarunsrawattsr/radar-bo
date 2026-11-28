@@ -1,17 +1,23 @@
-# Literature and Source Register (M8A item 7)
+# Literature and Source Register (M8A item 7; revised in M8A-R1)
 
-_Every citation in this document was verified against a source actually fetched during
-this review (access method and date recorded per entry). No citation is fabricated;
-where a source could NOT be accessed, it is explicitly marked **UNAVAILABLE** and no
-content is inferred beyond what the citing source itself attributes to it._
+_Every citation in this document is verified against a source that exists either IN
+this repository (the two original research PDFs uploaded by the user at commit
+`321e167` and re-extracted during M8A-R1) or was fetched from arXiv during this
+review. No citation is fabricated; where a source could NOT be accessed, it is
+explicitly marked **UNAVAILABLE** and no content is inferred beyond what the citing
+source itself attributes to it._
 
-**Access context.** The original M2/M3 paper extracts (plain-text, under
-`notes/paper_extracts/`) were lost in a sandbox reset; they were gitignored and are
-not recoverable from git history. This review therefore re-established source access
-via the platform web tools on 2026-11-26. IEEE Xplore full texts remain inaccessible
-from this environment (paywalled); both primary works have arXiv versions that WERE
-accessible and were fetched. Equation numbering below follows the ICC paper
-conventions used throughout this repository's documentation.
+**Access context (M8A-R1, 2026-11-28).** The original M2/M3 paper extracts were lost
+in a sandbox reset. Both ORIGINAL research PDFs are now available in the repository
+root (uploaded by the user, tracked since the branch-point commit) and were
+re-extracted to `notes/paper_extracts/` with pypdf 7.2.0 (installed to a scratch
+directory OUTSIDE the project venv and lock — documented requirement: no PDF tool
+existed in the environment; the lock is unchanged). Both PDFs were verified
+line-by-line: equations, parameter tables, reference lists, author names, venues,
+pages and DOIs. The PDF footers carry the IEEE Xplore download stamps
+("Authorized licensed use limited to: Indian Institute of Technology - Jodhpur";
+ICC downloaded 2026-10-10, GLOBECOM 2023 downloaded 2026-05-26). Equation numbering
+below follows the ICC paper.
 
 ---
 
@@ -19,214 +25,237 @@ conventions used throughout this repository's documentation.
 
 ### 1.1 [Lu2024] — radar tracking/scanning model and time-allocation problem
 
-- **Citation (verified):** Z. Lu, M. Cenk Gursoy, Chilukuri K. Mohan, Pramod K. Varshney,
-  *Learning-based cognitive radar resource management for scanning and multi-target tracking*,
-  ICC 2024 — IEEE International Conference on Communications, 2024, pp. 2785–2790.
-- **DOI:** 10.1109/ICC51166.2024.10622225 — verified 2026-11-26 from entry [25] of the
-  authors' own bibliography in their extended journal version (arXiv 2606.05526,
-  `https://arxiv.org/html/2606.05526v1`, References section).
-- **Full text access:** ICC version **UNAVAILABLE** in this environment (IEEE paywall);
-  previously accessed early in the project (extracts lost — see access context). Model
-  content used in this repository was re-confirmed against the authors' extended version
-  (§1.3), whose Eqs. (2)–(13) match the ICC numbering for motion, measurement, and EKF.
-- **What this repository reproduces:** state/motion/process-noise (Eqs. (2)–(3)),
-  planar range–azimuth measurement model (Eq. (4) geometry), SNR-dependent noise
-  (Eqs. (5)/(6)/(8)), EKF (Eqs. (9)–(13)), tracking cost (Eqs. (14)–(15)), scanning
-  metric Γ (Eq. (21)), budget constraint (Eq. (22)), utility (Eq. (23)), remaining-time
-  accounting (Eq. (24)), Table II parameter values.
-- **Reproduction status:** reproduction of the ICC model with documented extensions
-  (three proposed BO architectures replace the paper's CDRL solver; synthetic scanning
-  provider replaces the unimplemented physical chain). Our extensions are attributed to
-  neither [Lu2024] nor [Benz2023].
-- **Limitations of our extraction:** Table II values are from the lost M2/M3 extracts
-  (recorded in `provenance_register.json`); per-task utility weights w_n were not
-  preserved — `resource.task_utility_weights` stays unresolved.
+- **Citation (PDF-verified, M8A-R1):** Ziyang Lu, M. Cenk Gursoy, Chilukuri K. Mohan,
+  Pramod K. Varshney, *Learning-Based Cognitive Radar Resource Management for Scanning
+  and Multi-target Tracking*, 2024 IEEE International Conference on Communications
+  (ICC): Cognitive Radio and AI-Enabled Networks, pp. 2785–2790 (6 pages).
+- **DOI (footer-verified):** 10.1109/ICC51166.2024.10622225. ISBN 978-1-7281-9054-9/24.
+- **Full text:** AVAILABLE — in-repo PDF, re-extracted 2026-11-28 (`notes/paper_extracts/lu2024_icc_fulltext.txt`).
+- **What this repository reproduces:** state/motion/process-noise (Eqs. (1)–(3)),
+  planar range–azimuth measurement model (Eq. (4)), SNR-dependent noise (Eqs. (5)/(6)/(8)),
+  EKF (Eqs. (9)–(13)), tracking cost (Eqs. (14)–(15)), scanning time/power/noise/SNR/range
+  chain and metric Γ (Eqs. (16)–(21), Table I), budget constraint (Eq. (22)), utility
+  (Eq. (23)), remaining-time accounting (Eq. (24)), Table II parameter values.
+  **Equation-level reproduction only** — the paper's CDRL/DQN solver (Eqs. (25)–(30)),
+  its training/testing weight apparatus, and its experimental scenarios/figures are NOT
+  reproduced (see `ASSUMPTIONS_AND_LIMITATIONS.md` §6).
+- **Table II (PDF-verified):** σ²_{r,0}=100 m²; σ²_{θ,0}=4e-4 rad²; σ_w ((m/s²)²)=25
+  (the unit annotation itself declares the tabulated quantity a variance — evidence
+  supporting the accepted `table_variance` resolution, which is PRESERVED);
+  r₀=3000 m; τ₀=1 s; T₀=2.5 s; β=1e6; Θ_max=1; γ=0.9; DQN: mini-batch 32, replay
+  buffer 1e6, ε=0.1, λ₀=5000, α=15000. The dwell action set is defined in the text
+  (Section V-A.2): τ ∈ {0.1, 0.2, …, 1.0} s (ten levels).
+- **Weights:** symbolic w_n in the model (Eq. (23)); TRAINING weights drawn from
+  {1, 3, 5} (Section VI); TESTING weights time-varying per Eqs. (31)–(32)
+  (min{10, 4+10000/d₀} distance rule with d₀ = min(dⁿ_r, dⁿ_a), then +5 if
+  Aⁿ = xⁿ·ẋⁿ < 0, cap 10; computed from ESTIMATED quantities). Recorded as register
+  facts (`paper_lu_2024.training_weight_set`, `paper_lu_2024.testing_weight_rule`);
+  NOT adopted as our operational default (`resource.task_utility_weights` stays None
+  with the labeled uniform default).
+- **Internal inconsistency found (M8A-R1):** ICC Eq. (6) is PRINTED as
+  σ²_{·,t} = σ²_{·,0}·SNR_t (multiplication) while the paper's own prose states the
+  variance DECREASES with longer dwell time; the extended version prints the division
+  form. The accepted `inverse_snr` resolution (division) is preserved unchanged; the
+  printed-form discrepancy is documented, not silently reconciled.
+- **Reference list:** 14 entries (verified; item-7 review in §2 below).
 
 ### 1.2 [Benz2023] — BO methodology (kernel, acquisition, candidate pools)
 
-- **Citation (verified):** M. Benzaghta, G. Geraci, D. López-Pérez, A. Valcarce,
-  *Designing cellular networks for UAV corridors via Bayesian optimization*,
-  Proc. IEEE GLOBECOM, 2023, pp. 4552–4557.
-- **DOI:** **UNAVAILABLE / not verified** — no DOI was present in any accessible source;
-  the page numbers and venue were verified 2026-11-26 from the bibliography of the
-  authors' extended journal version (arXiv 2504.05176) and its ResearchGate record.
-- **Full text access:** GLOBECOM version **UNAVAILABLE** (paywall). Extended journal
-  version: arXiv 2504.05176, *Cellular Network Design for UAV Corridors via Data-driven
-  High-dimensional Bayesian Optimization* (April 2025) — citation entry and abstract
-  verified; full text not fetched in this review session (M2-era extraction facts for
-  Matérn-5/2 kernel, N_c = 500 candidate pool, ξ = 0.01 are preserved in
-  `provenance_register.json` as register-only values).
-- **What this repository adapts:** BO methodology only — Gaussian-process surrogate
-  with Matérn-5/2 ARD kernel, EI-type acquisition, candidate-pool-based optimization
-  (pool size 500). The application domain (cellular antennas / UAV corridors) is
-  **not** reproduced; no corridor optimization is implemented or claimed.
+- **Citation (PDF-verified, M8A-R1):** Mohamed Benzaghta (Univ. Pompeu Fabra),
+  Giovanni Geraci (UPF), David López-Pérez (Univ. Politècnica de València),
+  Alvaro Valcarce (Nokia Bell Labs), *Designing Cellular Networks for UAV Corridors
+  via Bayesian Optimization*, 2023 IEEE Global Communications Conference: Selected
+  Areas in Communications: Aerial Communications, pp. 4552–4557 (6 pages).
+- **DOI (footer-verified):** 10.1109/GLOBECOM54140.2023.10437768.
+  ISBN 979-8-3503-1090-0/23. (The M8A draft marked this DOI "unavailable";
+  corrected — it is printed in the PDF footer.)
+- **Full text:** AVAILABLE — in-repo PDF, re-extracted 2026-11-28
+  (`notes/paper_extracts/benzaghta2023_globecom_fulltext.txt`).
+- **What this repository adapts:** BO methodology only — GP surrogate with Matérn-5/2
+  kernel (PDF-verified: "We use the Matern-5/2 kernel for K(X) and fit the GP
+  hyperparameters using maximum posterior estimation", on BoTorch), EI-type
+  acquisition with ξ = 0.01 (PDF-verified "we set ξ = 0.01"), candidate pools
+  N_c = 500 (PDF-verified, "10 batches each consisting of 50 points"), and the
+  paper's own block-wise structure (optimization one base station at a time, each a
+  2-D tilt+power subproblem, other blocks fixed — the direct analogue of our
+  variable-block architectures). The application domain (cellular antennas / UAV
+  corridors) is NOT reproduced; no corridor optimization is implemented or claimed.
+- **Regime (M8A-R1 correction):** the paper's objective evaluations are STOCHASTIC
+  system-level simulations ("a noisy sample f̃(x)", GP noise σ²I) and the paper
+  motivates BO for "non-convex, non-linear, stochastic, high-dimensional and/or
+  computationally expensive" black-boxes. Our synthetic benchmarks are cheap and
+  deterministic — a different regime; see `ASSUMPTIONS_AND_LIMITATIONS.md` §14.
+- **Version differences:** the GLOBECOM paper optimizes antenna TILTS + TRANSMIT
+  POWERS with a mean-SINR-mix objective (λ ∈ [0,1], dB); the extended journal version
+  (arXiv 2504.05176) optimizes tilts + HPBW. Initial design N₀ random; initial
+  current point tilts 0°/powers 46 dBm; convergence < 170 iterations.
 - **Limitations of our extraction:** ξ = 0.01 is preserved as a provenance value only;
   the installed BoTorch 0.18.1 `LogExpectedImprovement` has no ξ parameter, so the
   implemented acquisition is the library default.
 
-### 1.3 [Lu2024-ext] — extended journal version of [Lu2024] (fetched in full during this review)
+### 1.3 [Lu2024-ext] — extended journal version of [Lu2024] (fetched 2026-11-26)
 
 - **Citation (verified):** Z. Lu, M. C. Gursoy, C. K. Mohan, P. K. Varshney,
   *Constrained Deep Reinforcement Learning for Cognitive Radar Resource Management*,
-  arXiv:2606.05526 [eess.SY], submitted 2026-06-04.
-  DOI: 10.48550/arXiv.2606.05526 (arXiv-issued).
-- **Access:** `https://arxiv.org/html/2606.05526v1` fetched 2026-11-26 (16 chunks;
-  Sections II–VII and the complete bibliography reviewed).
-- **Role:** independent re-verification of the model equations and the source of the
-  item-7 literature review below (the ICC reference list itself is unavailable).
-- **Version differences that matter (full table in
-  `PARAMETER_RESOLUTION_REGISTER.md` §5):** extended Table III uses σ²_{r,0} = 16 m²,
-  σ²_{θ,0} = 1e-6 rad², σ²_w = 16 (m/s²)², β = 3e4, Θ_max = 0.9 — **different from the
-  ICC Table II values (100, 4e-4, 25, 1e6, 1) reproduced here**; the scanning metric is
-  changed from Γ = S_det/S_0 (ICC Eq. (21), utility +β·Γ) to the missed-target count
-  N_miss (extended Eq. (19), utility −β·N_miss); EKF initialization is changed from the
-  zero vector to measurement-driven initialization with an empirical
-  P₀ = diag([10000, 10000, 100, 100]) (extended Eq. (14)); the physical scanning chain
-  (extended Eq. (18) radar range equation) still reports symbols without values; SNR₀
-  is absent from extended Table III as well — `tracking.reference_snr` therefore stays
-  unresolved. **This repository reproduces the ICC version and does not silently
-  switch values.** The extended version's P_f = 1e-3 and P₀ diagonal are recorded as
-  candidate values requiring separate review and approval (never adopted into code).
+  arXiv:2606.05526 [eess.SY], submitted 2026-06-04. DOI: 10.48550/arXiv.2606.05526.
+- **Access:** `https://arxiv.org/html/2606.05526v1` fetched 2026-11-26 (Sections
+  II–VII and the complete 32-entry bibliography reviewed).
+- **Version differences that matter (kept SEPARATE from the ICC configuration; full
+  table in `PARAMETER_RESOLUTION_REGISTER.md` §5):** extended Table III uses
+  σ²_{r,0} = 16 m², σ²_{θ,0} = 1e-6 rad², σ²_w = 16 (m/s²)², β = 3e4, Θ_max = 0.9 —
+  different from the ICC Table II values reproduced here; the scanning metric is
+  changed from Γ (ICC Eq. (21), utility +β·Γ) to the missed-target count N_miss
+  (extended Eq. (19), utility −β·N_miss); the solver moves from DQN to DDPG
+  (continuous actions τ ∈ [0, T₀]); the dual-variable step size changes (α = 5000
+  extended vs 15000 ICC); EKF initialization is measurement-driven with empirical
+  P₀ = diag([10000, 10000, 100, 100]) (extended Eq. (14)) vs the ICC's zero vector +
+  identity covariance; SNR₀ is absent from BOTH versions — `tracking.reference_snr`
+  stays unresolved. **This repository reproduces the ICC version and does not
+  silently switch values.** The extended version's P_f = 1e-3 and P₀ diagonal are
+  recorded as candidate values requiring separate review and approval (never adopted).
 
 ---
 
-## 2. References cited BY the radar paper — tracking / measurement-noise / detector support (item 7)
+## 2. References cited BY the two papers — item-7 review (M8A-R1: from the verified ICC list)
 
-Source of this review: the complete bibliography of [Lu2024-ext] (fetched above), with
-the paper's own "Cited by" section/equation annotations. The ICC paper's own reference
-list is **UNAVAILABLE** (paywall); where the ICC and extended bibliographies could
-differ, entries below are stated as "cited by the extended version". None of these
-full texts was accessible from this environment; for each we record what the citing
-paper attributes to it — nothing beyond that is claimed.
+The ICC paper's own reference list (14 entries) is now verified against the source
+PDF. Full texts of the cited works remain **UNAVAILABLE** in this environment (not
+fetched); for each entry we record what the citing paper attributes to it — with the
+ICC paper's own citation-context mapping — and nothing beyond that. (The earlier
+M8A draft reconstructed this review from the EXTENDED version's bibliography; the
+attribution chain is now the ICC list itself, with extended-version supplements
+marked.)
 
 ### 2.1 Tracking and measurement-noise support
 
-**[Schöpe2021]** M. Schöpe, H. Driessen, A. Yarovoy, *A constrained POMDP formulation and
-algorithmic solution for radar resource management in multi-target tracking*, ISIF Journal
-of Advances in Information Fusion, 16(1), p. 31, 2021.
+**[8] [Schöpe2021]** M. Schöpe, H. Driessen, A. Yarovoy, *A constrained POMDP
+formulation and algorithmic solution for radar resource management in multi-target
+tracking*, ISIF Journal of Advances in Information Fusion, 16(1), p. 31, 2021.
 
-- **DOI:** not provided in the accessed bibliography — **unavailable**.
-- **Full text:** **UNAVAILABLE** (not accessible from this environment).
-- **Cited by [Lu2024-ext] for:** the target motion model — revisit interval determination
-  (§II-A, after Eqs. (1)–(2)); the maneuverability-noise covariance σ_w² (§II-A, Eq. (3));
-  the SNR model Eq. (5) (§II-B, jointly with [Koch1999]); and the tracking cost function
-  (§II-D: "a cost function similar to the one defined in [Schöpe2021]").
-- **Attributed role in our reproduction:** this is the paper's own source for the CV
-  motion model, Q structure, SNR model, and the trace-of-position-covariance cost that
-  our `environment/`, `radar/measurement_noise.py`, and `radar/tracking_cost.py`
-  implement as [Lu2024] equations. Our repository does not cite or depend on
-  [Schöpe2021] directly; the attribution chain is Lu → Schöpe.
-- **Assumptions (as characterized by the citing paper):** constrained-POMDP view of
-  multi-target radar resource allocation.
-- **Applicability:** supports the mathematical validity of the equations we reproduce.
-- **Limitations:** content beyond the citing paper's attributions is unknown here; the
-  "similar to" phrasing in §II-D means our Eq. (14)–(15) reproduction is faithful to
-  [Lu2024], not necessarily to [Schöpe2021]'s original cost definition.
+- **DOI:** not printed in the ICC reference list — **unavailable**. **Full text: UNAVAILABLE.**
+- **Cited by [Lu2024] for:** the revisit-interval determination (§II-A, after Eq. (2));
+  the maneuverability-noise covariance σ_w² (§II-A, Eq. (3)); the SNR model Eq. (5)
+  (§II-B, jointly with [9]); the tracking cost ("a similar cost function as defined
+  in [8]", §II-D, Eq. (14)).
+- **Attributed role in our reproduction:** the ICC paper's own source for the CV
+  motion model, Q structure, SNR model, and the position-covariance-trace cost that
+  `environment/`, `radar/measurement_noise.py`, and `radar/tracking_cost.py`
+  implement as [Lu2024] equations. Our repository does not cite [Schöpe2021]
+  directly; the attribution chain is Lu → Schöpe.
+- **Limitations:** the "similar to" phrasing means our Eqs. (14)–(15) reproduction is
+  faithful to [Lu2024], not necessarily to [Schöpe2021]'s original definition.
 
-**[Koch1999]** W. Koch, *Adaptive parameter control for phased-array tracking*, Signal and
-Data Processing of Small Targets 1999, SPIE Vol. 3809, pp. 444–455, 1999.
+**[9] [Koch1999]** W. Koch, *Adaptive parameter control for phased-array tracking*,
+Signal and Data Processing of Small Targets 1999, SPIE Vol. 3809, pp. 444–455, 1999.
 
-- **DOI:** not provided in the accessed bibliography — **unavailable**.
-- **Full text:** **UNAVAILABLE**.
-- **Cited by [Lu2024-ext] for:** the SNR model Eq. (5) (§II-B, jointly with [Schöpe2021]).
-- **Attributed role:** co-support for the dwell-time/range dependence of echo SNR — the
-  (τ/τ₀)·(r/r₀)⁻⁴ structure our `PlanarSNRMeasurementNoiseModel` implements.
-- **Applicability:** classic phased-array tracking literature; consistent with the
-  dwell-time-driven SNR semantics we use.
-- **Limitations:** not accessed; only the citation context is recorded.
+- **DOI:** not printed in the ICC list — **unavailable**. **Full text: UNAVAILABLE.**
+- **Cited by [Lu2024] for:** the SNR model Eq. (5) (§II-B, jointly with [8]).
+- **Attributed role:** co-support for the (τ/τ₀)·(r/r₀)⁻⁴ SNR structure implemented
+  in `PlanarSNRMeasurementNoiseModel`.
 
-**[Meikle2008]** H. Meikle, *Modern Radar Systems*, Artech House, 2008 (book).
+**[10] [Meikle2008]** H. Meikle, *Modern Radar Systems*, Artech House, 2008 (book).
 
-- **DOI/ISBN:** not provided in the accessed bibliography — **unavailable**.
-- **Full text:** **UNAVAILABLE**.
-- **Cited by [Lu2024-ext] for:** the measurement-variance-from-SNR relation Eq. (6)
-  (§II-B): σ²_{·,t} = σ²_{·,0}/SNR_t — exactly the `inverse_snr` semantics that is this
-  repository's accepted operational resolution (preserved; not reopened).
-- **Applicability:** textbook-level support for inverse-SNR measurement variance.
-- **Limitations:** not accessed; the relation is reproduced from [Lu2024], and its
-  being textbook-supported is recorded on the citing paper's authority alone.
+- **ISBN/DOI:** not printed in the ICC list — **unavailable**. **Full text: UNAVAILABLE.**
+- **Cited by [Lu2024] for:** the measurement-variance-from-SNR relation Eq. (6)
+  (§II-B) — the `inverse_snr` semantics that is this repository's accepted
+  operational resolution (preserved; not reopened). Note the ICC printed-form
+  discrepancy documented in §1.1.
 
-**[WelchBishop1995]** G. Welch, G. Bishop et al., *An Introduction to the Kalman Filter*,
-1995 (technical report; no venue/DOI given in the accessed bibliography — **unavailable**).
+**[11] [WelchBishop1995]** G. Welch, G. Bishop et al., *An Introduction to the Kalman
+Filter*, 1995 (technical report; no venue in the ICC list — **unavailable**).
 
-- **Full text:** **UNAVAILABLE** (not re-fetched; well-known but not independently
-  verified here).
-- **Cited by [Lu2024-ext] for:** Kalman-filter background (§II-C, before Eqs. (9)–(13)).
-- **Attributed role:** general KF/EKF foundation for the filter equations we implement
-  literally, including the Joseph-form alternative (our proposed numerical variant).
+- **Full text:** UNAVAILABLE (not re-fetched).
+- **Cited by [Lu2024] for:** Kalman-filter background (§II-C, Eqs. (9)–(13)) — the
+  filter equations we implement literally, plus our Joseph-form variant (proposed).
 
 ### 2.2 Detector support (scanning phase)
 
-**[Shnidman2002]** D. Shnidman, *Determination of required SNR values [radar detection]*,
-IEEE Transactions on Aerospace and Electronic Systems, 38(3), pp. 1059–1064, 2002.
+**[12] [Shnidman2002]** D. Shnidman, *Determination of required SNR values [radar
+detection]*, IEEE Transactions on Aerospace and Electronic Systems, 38(3),
+pp. 1059–1064, 2002.
 
-- **DOI:** not provided in the accessed bibliography — **unavailable**.
-- **Full text:** **UNAVAILABLE**.
-- **Cited by [Lu2024-ext] for:** §III-B (measurement acquisition model during scanning):
-  computing detection probability P_d from received SNR and fixed false-alarm probability
-  P_f via "Shnidman's equation", implemented there as a precomputed SNR→P_d lookup table
-  (P_d ∈ [0.01, 0.99], step 0.01, nearest-neighbor lookup).
+- **DOI:** not printed in the ICC list — **unavailable**. **Full text: UNAVAILABLE.**
+- **Cited by [Lu2024] for:** §III-B — determining the minimum required SNR_scan for
+  given detection probability P_d and false-alarm probability P_f ("according to
+  Shnidman's equation"), which feeds the maximum-detectable-range Eq. (20) and the
+  Γ metric Eq. (21).
 - **Attributed role:** the detector mapping that would connect the (unimplemented)
   physical scanning chain to detection probabilities. This repository implements NO
   detector; `scanning.detection_probability`, `scanning.false_alarm_probability`, and
-  `scanning.required_detection_snr` remain unresolved, and the extended version's
-  concrete choices (P_f = 1e-3; lookup-table detector) are recorded as candidates only.
-- **Applicability:** defines a concrete, implementable detection path should a future
-  milestone approve the physical scanning chain.
-- **Limitations:** not accessed; applicability of Shnidman's equation to specific
+  `scanning.required_detection_snr` remain unresolved.
+- **Applicability:** defines a concrete path should a future milestone approve the
+  physical scanning chain. **Limitations:** not accessed; applicability to specific
   waveform/integration regimes cannot be assessed from here.
 
-### 2.3 Resource-management context (survey and precursors)
+### 2.3 Problem-formulation and context references (ICC list, verified)
 
-**[Charlish2020]** A. Charlish, F. Hoffmann, C. Degen, I. Schlangen, *The development from
-adaptive to cognitive radar resource management*, IEEE Aerospace and Electronic Systems
-Magazine, 35(6), pp. 8–19, 2020.
+- **[1] [Charlish2020]** A. Charlish et al., *The development from adaptive to
+  cognitive radar resource management*, IEEE AESM 35(6), pp. 8–19, 2020 — §I
+  cognitive-RRM overview. Full text UNAVAILABLE.
+- **[2] [JiLiu2007]** Z. Ji, K. R. Liu, *Cognitive radios for dynamic spectrum
+  access…*, IEEE Communications Magazine 45(5), pp. 88–94, 2007 — related work.
+- **[3] [Haykin2006]** S. Haykin, *Cognitive radar: a way of the future*, IEEE Signal
+  Processing Magazine 23(1), pp. 30–40, 2006 — cognitive-radar overview.
+- **[4] [Mnih2015]** V. Mnih et al., *Human-level control through deep reinforcement
+  learning*, Nature 518(7540), pp. 529–533, 2015 — DRL background.
+- **[5] [Thornton2020]** C. E. Thornton et al., *Deep reinforcement learning control
+  for radar detection and tracking in congested spectral environments*, IEEE TCCN
+  6(4), pp. 1335–1349, 2020 — DRL-for-radar related work.
+- **[6] [Selvi2020]** E. Selvi et al., *Reinforcement learning for adaptable bandwidth
+  tracking radars*, IEEE TAES 56(5), pp. 3904–3921, 2020.
+- **[7] [Meng2021]** F. Meng, K. Tian, C. Wu, *Deep reinforcement learning-based radar
+  network target assignment*, IEEE Sensors Journal 21(14), pp. 16315–16327, 2021.
+- **[13] [Altman1999]** E. Altman, *Constrained Markov decision processes*, CRC Press,
+  vol. 7, 1999 — CMDP formulation (§IV-A, Eq. (22) constraint structure).
+- **[14] [Tessler2018]** C. Tessler et al., *Reward constrained policy optimization*,
+  arXiv:1805.11074, 2018 — constrained-RL formulation (§IV-B, "Following [14] and [13]").
+  All full texts UNAVAILABLE; none of our equations derives from them directly — they
+  ground the CMDP framing that Eq. (22) implements.
 
-- **DOI:** not provided in the accessed bibliography — **unavailable**. **Full text:**
-  **UNAVAILABLE**.
-- **Cited by [Lu2024-ext] for:** §I-B survey of cognitive-radar resource management.
-- **Role for this repository:** context only; no equation or parameter of ours derives
-  from it.
+### 2.4 BO-lineage references cited by [Benz2023] (PDF-verified list)
 
-**[LuGursoy2023]** Z. Lu, M. C. Gursoy, *Resource allocation for multi-target radar
-tracking via constrained deep reinforcement learning*, IEEE Transactions on Cognitive
-Communications and Networking, 9(6), pp. 1677–1690, 2023.
-
-- **DOI:** 10.1109/TCCN.2023.3304634 — verified 2026-11-26 from entry [24] of the
-  [Lu2024-ext] bibliography. **Full text:** **UNAVAILABLE** (paywall).
-- **Cited by [Lu2024-ext] for:** §I-C — the group's precursor work on constrained-DRL
-  dwell-time allocation.
-- **Role for this repository:** lineage only; our model equations come from the ICC/extended
-  versions. Recorded because it is the radar paper's closest predecessor.
+- **[24] [Maggi2021]** L. Maggi et al., *Bayesian optimization for radio resource
+  management: Open loop power control*, IEEE JSAC 39(7), pp. 1858–1871, 2021 —
+  BO-for-wireless lineage + EI definition source.
+- **[29] [Shahriari2016]** B. Shahriari et al., *Taking the human out of the loop: A
+  review of Bayesian optimization*, Proc. IEEE 104(1), pp. 148–175 — BO review
+  (the ICC paper cites NO BO source; the two method lines are disjoint — see §3.1).
+- **[30] [Huang2006]** D. Huang et al., *Sequential kriging optimization using
+  multiple-fidelity evaluations*, Structural and Multidisciplinary Optimization 32,
+  pp. 369–382, 2006 — EI formulation source.
+- **[31] [Balandat2020]** M. Balandat et al., *BoTorch: A framework for efficient
+  Monte-carlo Bayesian optimization*, NeurIPS 33, 2020 — the library our engine uses.
 
 ---
 
-## 3. What the radar paper does NOT provide (honest gaps)
+## 3. What the papers do NOT provide (honest gaps)
 
-1. **No Bayesian-optimization literature.** [Lu2024]/[Lu2024-ext] solve the allocation
-   problem with constrained DRL (DQL/DDPG, Lagrangian duality). The BO methodology in
-   this repository comes solely from [Benz2023]; the radar paper's bibliography contains
-   no BO sources to review. The combination (BO for radar dwell-time allocation) is
-   therefore OUR construction, not a reproduction of either paper (see
-   `RESEARCH_GAP_ASSESSMENT.md`).
-2. **No values for the physical scanning chain** in either version (P_t, G_t, G_r, λ, σ,
-   L, T_s, beam spacing/φ, S_0, P_d/P_fa/SNR requirements all valueless) — the eleven
-   `scanning.*` unresolved entries are faithful to both sources.
-3. **No SNR₀** in either version — confirmed twice (M2/M3 extraction; extended Table III
-   re-verified 2026-11-26).
-4. **Per-task utility weights:** the papers use w_n symbolically; no per-task values are
-   available in any accessible text — `resource.task_utility_weights` stays unresolved.
-5. **Data association:** the extended version names GNN association and an M-of-N
-   (3-of-4) track-initiation model (§II-D, §III-C) with FCFS admission; the ICC paper's
-   treatment (as extracted) did not include the M-of-N model. This repository implements
-   neither GNN association nor track initiation — noted as a scope difference, not an
-   error.
+1. **No Bayesian-optimization literature in the radar paper.** The ICC reference list
+   (14 entries, PDF-verified) contains no BO source; [Lu2024] solves the problem with
+   a constrained DQN. The BO methodology in this repository comes solely from
+   [Benz2023]. The combination (BO for radar dwell-time allocation) is OUR
+   construction, not a reproduction of either paper (see `RESEARCH_GAP_ASSESSMENT.md`).
+2. **No values for the physical scanning chain** in either version: ICC Table I lists
+   exactly 10 symbols (P_t, G_t, G_r, λ, σ, L, R_t, R_r, k, T_s) without values; the
+   detection triple (P_d, P_f, SNR_min via Shnidman) is likewise valueless. The
+   TWELVE unresolved `scanning.*` register entries are faithful to the sources
+   (k_B is resolved as a universal constant; R_t/R_r are per-target problem inputs).
+3. **No SNR₀** in either version — confirmed against the ICC PDF (M8A-R1) and the
+   extended version (2026-11-26).
+4. **Per-task utility weights:** symbolic in the model; the EXPERIMENTAL definitions
+   (training {1,3,5}; testing Eqs. (31)–(32)) are now recorded as facts, but no
+   canonical w_n vector exists — `resource.task_utility_weights` stays unresolved
+   with the labeled uniform default.
+5. **Data association and track initiation:** the ICC paper does not describe the
+   M-of-N initiation model (that appears only in the extended version, §II-D/§III-C,
+   with GNN association). This repository implements neither — a documented scope
+   difference, not an error.
 
-## 4. Verification-method note
+## 4. Verification-method note (updated M8A-R1)
 
-Citation details above were transcribed from fetched primary text (arXiv HTML, 2026-11-26)
-without paraphrasing bibliographic fields. Where the same fact appeared in multiple
-independent accessible sources (e.g., the ICC citation appears in three arXiv bibliographies
-and the GLOBECOM citation in two), it was accepted; single-source facts are marked as such
-by their "verified from" note. Anything not verifiable this way is marked **unavailable**
-rather than estimated.
+Primary-source facts were transcribed directly from the two in-repository PDFs
+(extracted text) without paraphrasing bibliographic fields; footers provided DOIs,
+ISBNs, page ranges and the IEEE Xplore download stamps. arXiv extended versions were
+fetched 2026-11-26 for version-difference analysis. Anything not verifiable this way
+(the full texts of the cited references) is marked **unavailable** rather than
+estimated.

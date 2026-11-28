@@ -31,18 +31,26 @@ in `PARAMETER_RESOLUTION_REGISTER.md` §5 — we reproduce the ICC values):
 | Θ_max budget fraction | 1 | Table II |
 | β trade-off coefficient | 1e6 | Table II |
 | γ discount factor | 0.9 | Table II |
-| Dwell action set | discrete values with 0.5 s granularity up to 25 s | Table II |
+| Dwell action set | τ ∈ {0.1, 0.2, ..., 1.0} s (ten levels, 0.1 s steps) | Sec. V-A.2 'Action' (M8A-R1 PDF-verified; the M8A draft's "0–25 s" claim was a documentation error) |
+| Training weights (recorded fact) | drawn from {1, 3, 5} during DQN training | Sec. VI |
+| Testing weights (recorded fact) | time-varying rules Eqs. (31)–(32): distance-to-radar/asset rule + approaching-target +5, cap 10, from ESTIMATED quantities | Sec. VI |
 | k_B Boltzmann constant | SI exact | universal |
 
-From [Benz2023]: Matérn-5/2 kernel, candidate pool N_c = 500, ξ = 0.01 (ξ preserved as
-a register value only; the installed BoTorch LogEI has no ξ parameter).
+From [Benz2023] (all PDF-verified in M8A-R1): Matérn-5/2 kernel with max-a-posteriori
+hyperparameter fitting on BoTorch, candidate pool N_c = 500 (10 batches × 50), ξ = 0.01
+(ξ preserved as a register value only; the installed BoTorch LogEI has no ξ parameter),
+block-wise optimization one base station at a time (2-D tilt+power subproblems), N₀
+random initial observations, STOCHASTIC evaluations (GP noise σ²I).
 
 ## 2. Missing paper parameters (class: missing-paper) — stay unresolved
 
-`tracking.reference_snr` (SNR₀) and the eleven physical scanning parameters
-(`scanning.*` except the universal constant) plus per-task weights
-(`resource.task_utility_weights`) have no value in EITHER paper version (re-verified
-2026-11-26 against the extended version). Policy: they stay `None` in the register;
+`tracking.reference_snr` (SNR₀) and the TWELVE unresolved `scanning.*` parameters
+(7 ICC Table-I hardware symbols — P_t, G_t, G_r, λ, σ, L, T_s — plus beam spacing φ,
+reference area S_0, and the detection triple P_d/P_f/SNR_min; M8A-R1 count correction:
+the universal Boltzmann constant is resolved and R_t/R_r are per-target problem inputs,
+not configuration parameters) plus per-task weights (`resource.task_utility_weights`)
+have no value in EITHER paper version (ICC PDF re-verified line-by-line 2026-11-28;
+extended version checked 2026-11-26). Policy: they stay `None` in the register;
 code paths that need them raise `UnresolvedParameterError`; nothing is invented.
 Candidate values surfaced by the extended version (P_f = 1e-3; P₀ = diag([1e4, 1e4,
 1e2, 1e2])) are recorded in the resolution paths but are NOT adopted — adoption
@@ -81,6 +89,16 @@ deliberately unresolved in the register (`optimization.evaluation_budget`).
 
 ## 6. Synthetic constructs (class: synthetic) — kept separate from validated detection
 
+**Reproduction scope statement (M8A-R1):** this repository reproduces the ICC paper's
+MODEL EQUATIONS (1)–(24) and its Table II model parameters; it does NOT reproduce the
+paper's EXPERIMENTS — no DQN/CDRL solver, no continuous action space, no
+Lagrangian-dual training, none of the paper's scenarios/figures, and no claims about
+the paper's reported performance comparisons (CDRL vs Equal/Random Allocation). Every
+statement of the form "reproduces [Lu2024]" means the equations and parameters, never
+the experimental results. Conversely the papers' experimental apparatus (DQN training
+weights {1,3,5}, testing-weight rules Eqs. (31)–(32), DQN architecture) is recorded in
+the register as reproduction context only.
+
 - Benchmarks A/B/C and the 4/8/16-D families: analytic test functions.
 - `SyntheticLinearScanningModel`: labeled synthetic; its outputs are NEVER presented as
   detection performance. No synthetic output may be described with operational radar
@@ -101,7 +119,16 @@ the two terms of utility Eq. (23) — is treated in §13.
   RETRACTED). No efficiency conclusion may be drawn from acquisition-search
   dimensionality alone.
 - Feasibility evaluation of explicit initial designs happens fail-fast at engine
-  entry; framework-level infeasible design → `RuntimeError` before any run starts.
+  entry; framework-level infeasible/insufficient designs → RuntimeError before any
+  run starts (M8A-R1: the error path is unit-tested and reports the group identity).
+- **Process noise vs realized error (M8A-R1 clarification):** the process-noise
+  variance σ_w (Table II) is a MODEL INPUT to Q (Eq. (3)) — it bounds how much
+  maneuvering the model tolerates, it is NOT the realized estimation error. The
+  tracking cost (Eqs. (14)–(15)) is the filter's SELF-ASSESSED posterior position
+  uncertainty, likewise not the realized error versus ground truth; realized error
+  requires truth-based evaluation, which the layer-separation guards keep out of the
+  estimator/optimizer. Any statement comparing σ_w choices must therefore speak of
+  model spread/covariance, never of measured accuracy.
 - EKF literal (13) can lose positive-definiteness in extreme regimes; Joseph form is
   available; equivalence tests exist (not a guarantee under all numerical conditions).
 
@@ -120,8 +147,12 @@ authoritative record. **Do not reopen without new evidence.**
    NOT the operational default.
 4. **Measurement-driven initialization is operational:** position from observation,
    velocity prior from `tracking.measurement_driven_initial_velocity[_variance]`
-   (unresolved by design). The extended paper's empirical diag([1e4,1e4,1e2,1e2]) is a
-   recorded candidate requiring approval, not an adopted value.
+   (unresolved by design). **Profile naming (M8A-R1):** the zero-vector +
+   IDENTITY-covariance initialization (ICC PDF-verified: x̂=0, P=I, "assuming that the
+   system has no prior knowledge") is the PAPER-REFERENCE profile (`paper_zero_identity`,
+   diagnostic); the measurement-driven profile is OPERATIONAL. The extended paper's
+   empirical diag([1e4,1e4,1e2,1e2]) is a recorded candidate requiring approval, not
+   an adopted value.
 5. **Budget semantics:** `discounted_cumulative` (paper Eq. (22)) is the default and is
    NOT locally decidable; `hard_per_slot` is the proposed BO-profile constraint. They
    are never conflated, and no result from one is claimed for the other.
@@ -195,10 +226,15 @@ run; none may be activated with invented values.
 - **Status:** β = 1e6 is a paper-reported value (ICC Table II), preserved **for
   reproduction only**. The extended version uses β = 3e4 — direct evidence that β is
   scenario/scale-dependent even for the authors.
-- **Why β exists:** the two utility terms have different natural scales — tracking term
-  in m² (weighted), scanning term dimensionless (Γ) or count (N_miss). β spans that
-  gap. With ICC values, tracking costs near r₀ are O(10–100) m², so β·Γ with β = 1e6
-  makes scanning dominate by ~4 orders of magnitude at Γ = O(1).
+- **Why β exists and what its DIMENSION is (M8A-R1 correction):** the tracking term
+  has the dimension weight·m²; Γ = S_max/S_0 (Eq. (21)) is dimensionless (m²/m²), so
+  β carries the tracking-term dimension (weight·m²) per unit Γ — β is NOT dimensionless
+  (the M8A register unit said "dimensionless"; corrected). With ICC values, tracking
+  costs near r₀ are O(10–100) m², so β·Γ with β = 1e6 makes scanning dominate by ~4
+  orders of magnitude at Γ = O(1) (the paper's Fig. 5 utility axis is scaled by 10⁶,
+  consistent with this reading). In the extended version's N_miss metric the scanning
+  term is a COUNT, and β's dimension changes accordingly — evidence that β is
+  metric-definition-dependent, not a transferable constant.
 - **Is it still meaningful under scale changes?** NO, not automatically. If (a) the
   tracking-cost scale changes (different σ², r₀, or E selector), (b) the scanning
   metric changes (§11), or (c) the budget Θ_max changes (0.9 vs 1 between versions!),
@@ -216,9 +252,10 @@ run; none may be activated with invented values.
 ## 14. BO suitability assessment (M8A item 15) — honest evaluation
 
 **Where the evidence genuinely supports BO here:**
-- Evaluations are deterministic on synthetic benchmarks and moderately expensive
-  (candidate generation 75–80% of wall time) — the regime BO is designed for; 10–25
-  eval budgets make model-based search sensible vs enumeration.
+- Evaluations are deterministic and CHEAP on our synthetic benchmarks, but the
+  candidate-generation stage (75–80% of wall time) dominates runtime, so the
+  effective per-observation cost is the largest term; 10–25 evaluation budgets make
+  any search method's sample efficiency the deciding factor.
 - Mixed/discrete-continuous decision spaces and complete-vector feasibility checks are
   handled by the generic problem interface (dummy-index-free; one engine, no duplicated
   algorithms).
@@ -226,10 +263,18 @@ run; none may be activated with invented values.
   benchmarks A/B/C at budget 25 (descriptive, 10 seeds, no significance claims).
 
 **Where the evidence does NOT support BO-superiority claims:**
-- The deterministic benchmarks could partially be attacked by deterministic
-  direct-search methods; no such comparison exists in our archives for most settings
-  (M5/M6 compare RS and BO variants only). No claim is made beyond the archived
-  comparisons.
+- **BO is motivated for EXPENSIVE or STOCHASTIC black-boxes — [Benz2023] itself states
+  the setting ("non-convex, non-linear, stochastic, high-dimensional and/or
+  computationally expensive to evaluate", M8A-R1 PDF-verified) and its evaluations are
+  noisy system-level simulations. Our synthetic benchmarks are the OPPOSITE regime:
+  cheap and deterministic. For cheap deterministic objectives, direct methods
+  (coordinate/pattern search, enumeration where feasible) are typically competitive
+  or better, and BO's surrogate overhead can dominate. Our runtime profile is
+  candidate-generation-dominated, NOT GP-dominated — no claim that BO is the right
+  tool for these benchmarks is made; BO's benefit relative to direct optimization
+  "must be measured, especially for inexpensive objectives" (README non-negotiable).
+  The M5/M6 archives compare RS and BO variants only; no deterministic direct-search
+  control exists yet (recorded for validation-plan V4).
 - The pairwise architecture's separable_16d advantage (+59.00, 10/0/0 records, Holm p
   .0039) is a DESCRIPTIVE synthetic result — motivation for investigation (§4 A6), not
   proof of architecture superiority; the same architecture is NOT favored on

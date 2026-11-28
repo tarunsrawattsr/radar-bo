@@ -1,6 +1,6 @@
 # Parameter Resolution Register (M8A)
 
-_Generated from `provenance_register.json` at commit `371952aef2dc` (81 entries; 17 unresolved). This register is the single source of truth for parameter provenance; the JSON register is authoritative and this document is its review companion. No missing value has been replaced by an arbitrary constant; illustrative synthetic values in code are always labeled synthetic._
+_Generated from `provenance_register.json` at commit `7e447be64fea` (84 entries; 17 unresolved). This register is the single source of truth for parameter provenance; the JSON register is authoritative and this document is its review companion. No missing value has been replaced by an arbitrary constant; illustrative synthetic values in code are always labeled synthetic._
 
 ## 1. Classification taxonomy (M8A item 5)
 
@@ -30,7 +30,7 @@ Columns: entry (dotted config path), symbol/meaning, unit, source class, current
 | `tracking.reference_snr` | SNR0: reference linear SNR — required by Eq. (5), never reported in the paper | linear SNR | paper_lu_2024 | `None` | UNRESOLVED (None) | SNR model (Eq. (5)) | Missing paper parameter |
 | `resource.dwell_time_action_set` | discrete dwell-time action set [s] (Table II) | s | paper_lu_2024 | `[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]` | RESOLVED | allocation representation, constraints, BO decision variables | Paper-reported parameter |
 | `resource.normalized_time_budget_threshold` | Theta_max = 1 (normalized by T0) | dimensionless | paper_lu_2024 | `1.0` | RESOLVED | budget constraints (Eq. (22)) | Paper-reported parameter |
-| `resource.tracking_scanning_tradeoff` | beta = 1e6 trade-off coefficient | dimensionless | paper_lu_2024 | `1000000.0` | RESOLVED | combined utility (Eq. (23)) | Paper-reported parameter |
+| `resource.tracking_scanning_tradeoff` | beta = 1e6 trade-off coefficient | (m^2 * weight) per unit Gamma | paper_lu_2024 | `1000000.0` | RESOLVED | combined utility (Eq. (23)) | Paper-reported parameter |
 | `resource.discount_factor` | gamma discount factor | dimensionless | paper_lu_2024 | `0.9` | RESOLVED | discounted cumulative budget (Eq. (22)) | Paper-reported parameter |
 | `scanning.peak_transmit_power` | P_t: peak transmit power [W]; hardware/scenario specification required | W (peak pulse power) | paper_lu_2024 | `None` | UNRESOLVED (None) | radar range equation (Eqs. (16)-(20), NOT implemented) | Hardware-dependent parameter |
 | `scanning.transmit_antenna_gain` | G_t: transmit antenna gain (linear) | linear (dimensionless) | paper_lu_2024 | `None` | UNRESOLVED (None) | radar range equation (Eqs. (16)-(20), NOT implemented) | Hardware-dependent parameter |
@@ -101,6 +101,9 @@ Columns: entry (dotted config path), symbol/meaning, unit, source class, current
 | `experiment.m7_validation_matrix` | 2 benchmarks x 5 methods x 3 seeds, budget 40 | count | experimental_setting | `{"benchmarks": 2.0, "seeds": 3.0, "evaluation_budget": 40.0, "initial_design": 10.0}` | RESOLVED | M7 validation | Experimental setting |
 | `experiment.m7_milestone_reconciliation` | 8-milestone roadmap vs 9-milestone instruction stream | count | proposed_assumption | `{"instruction_stream_milestones": 9.0, "original_roadmap_milestones": 8.0}` | RESOLVED | documentation | Proposed research assumption |
 | `experiment.m8a_run_count_reconciliation` | 220 archived full-matrix records (the '230' figure was a narrative arithmetic error, corrected) | count | proposed_assumption | `{"archived_full_matrix_records": 220.0, "pilot_records": 32.0}` | RESOLVED | M8A documentation | Derived quantity |
+| `experiment.m8a_r1_source_verification` | both source PDFs re-extracted and verified line-by-line (equations, tables, references, DOIs) | count | proposed_assumption | `{"pdfs_reextracted": 2.0, "icc_pages": 6.0, "globecom_pages": 6.0}` | RESOLVED | M8A-R1 Phase A | Documentation |
+| `paper_lu_2024.training_weight_set` | training weights drawn from {1, 3, 5}; recorded fact, NOT adopted as our default | dimensionless | paper_lu_2024 | `[1.0, 3.0, 5.0]` | RESOLVED | CDRL training (not reproduced here) | Paper-reported parameter |
+| `paper_lu_2024.testing_weight_rule` | time-varying test weights via Eqs. (31)-(32) from ESTIMATED distances/velocities, cap 10 | definition | paper_lu_2024 | `Eq. (31): w_n = min{10, 4 + 10000/d0} if d0 <= 10000 else 1, with d0 = min(d_n_r, d_n_a) (estimated distances to radar and to asset); Eq. (32): w_n = min{10, w_n + 5} if A_n < 0 else w_n, with A_n = x_n . xdot_n (position dot velocity; A_n < 0 = target approaching the radar). Weights are TIME-VARYING during tests, computed from ESTIMATED positions/velocities, capped at 10.` | RESOLVED | CDRL testing (not reproduced here) | Paper-reported parameter |
 | `experiment.m8a_shared_initial_design_interface` | validated immutable initial_design_configs + framework explicit_shared mode (backward compatible) | policy | proposed_assumption | `{"engine_parameter": 1.0, "framework_mode": 1.0}` | RESOLVED | engine + framework | Proposed research assumption |
 
 ## 3. Unresolved parameters — resolution-path analysis (M8A item 6)
@@ -313,7 +316,7 @@ Columns: entry (dotted config path), symbol/meaning, unit, source class, current
 
 **Required for baseline reproduction of Lu et al.:** the Table II parameters (all RESOLVED paper-reported) plus `tracking.reference_snr` (MISSING paper parameter — the only gap in the tracking chain) and, if the paper's per-task weights exist, `resource.task_utility_weights` (re-verification from the source PDF required). The physical scanning chain (Eqs. (16)-(20)) is NOT required for the tracking/utility baseline because it is not implemented; `scanning.reference_area` is required only when a physical Eq. (21) normalization is activated.
 
-**Required only for future extensions:** the eleven hardware/scenario parameters of the unimplemented radar-range/detector chain (`scanning.*` except the Boltzmann constant and the metric definition), plus any proposed corridor-specific scanning metric parameters (none defined yet).
+**Required only for future extensions:** the TWELVE unresolved `scanning.*` parameters of the unimplemented radar-range/detector chain — 7 hardware symbols of ICC Table I (P_t, G_t, G_r, lambda, sigma_RCS, L, T_s), the beam angular spacing phi (Eq. (16)), the reference area S_0 (Eq. (21)), and the detection triple P_d / P_f / SNR_min (Sec. III-B, Shnidman) — plus any proposed corridor-specific scanning metric parameters (none defined yet). The universal Boltzmann constant is resolved and the per-target ranges R_t/R_r are problem inputs, not configuration parameters (M8A-R1 count correction).
 
 ## 5. Extended-version cross-reference (added 2026-11-26)
 
@@ -330,6 +333,15 @@ The authors of [Lu2024] have an extended journal version on arXiv (arXiv 2606.05
 | Scanning physics | Eqs. (16)-(20) symbols, no values | Eq. (18) radar range equation, same symbols, no values; Shnidman SNR->P_d lookup |
 | EKF initialization | zero vector | measurement-driven, empirical P_0 = diag([1e4, 1e4, 1e2, 1e2]) (Eq. (14)) |
 | SNR0 | absent | absent (Table III omits it) |
+| Solver | DQN (discrete actions) | DDPG (continuous actions) |
+| Dwell actions | discrete {0.1, ..., 1.0} s (Sec. V-A.2) | continuous tau in [0, T_0] |
+| Dual-variable step size alpha | 15000 (Table II) | 5000 (Table III) |
+| Benchmarks | Equal Allocation + Random Allocation (Fig. 5) | EA + DA + OA |
+| Training weights | drawn from {1, 3, 5} (Sec. VI) | (case-based, Sec. VII) |
+| Testing weights | time-varying rules Eqs. (31)-(32), cap 10 | case II position/direction weights |
+| Noise Eq. (6) | PRINTED as sigma^2 = sigma^2_0 * SNR (contradicts own prose) | sigma^2 = sigma^2_0 / SNR (division) |
+
+Benzaghta version note (M8A-R1, verified against the GLOBECOM PDF): the GLOBECOM paper optimizes antenna TILTS + TRANSMIT POWERS with a mean-SINR-mix objective (lambda) on STOCHASTIC system-level simulations (noisy f-tilde; GP with sigma^2*I noise), while the extended journal version optimizes tilts + HPBW on deterministic extraction. Matern-5/2, xi = 0.01, N_c = 500 (10 batches x 50), BoTorch and max-a-posteriori hyperparameter fitting are verified in the GLOBECOM paper itself; block-wise BS-by-BS 2-D subproblems are the paper's own structure (one BS at a time, others fixed at their previous values).
 
 Implications: (a) 'paper-reported' parameter values are VERSION-DEPENDENT — this repository reproduces the ICC 2024 values and does not switch; (b) SNR0 remains missing in both versions, so `tracking.reference_snr` stays unresolved; (c) the extended version's P_f = 1e-3 and P_0 diag values are recorded as CANDIDATE values in the resolution paths above, requiring separate review and approval before any adoption; (d) the extended version's N_miss metric is a DIFFERENT scanning metric from the ICC Gamma — our Eq. (21)/(23) reproduction is ICC-faithful, and the difference is documented, not silently reconciled.
 
@@ -340,7 +352,7 @@ Resolving any of these requires an explicit human decision (value + source + app
 1. `tracking.reference_snr` — supply SNR0 (paper re-verification or an explicitly synthetic scenario value).
 2. `resource.task_utility_weights` — confirm whether the paper reports per-task values; otherwise approve the uniform default as the labeled research assumption.
 3. `tracking.measurement_driven_initial_velocity` + `..._variance` — approve per-scenario synthetic values (or the proposed first-two-observations estimator) for operational synthetic runs.
-4. The eleven `scanning.*` hardware/scenario parameters — required only if the physical Eqs. (16)-(20) chain is ever approved for implementation (currently out of scope).
+4. The TWELVE unresolved `scanning.*` parameters (7 Table-I hardware symbols + beam spacing + S_0 + P_d/P_f/SNR_min) — required only if the physical Eqs. (16)-(20) chain is ever approved for implementation (currently out of scope).
 5. `optimization.evaluation_budget` — set per experiment (by design unresolved in the register).
 
 ## 7. Policy reminders (unchanged by M8A)

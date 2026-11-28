@@ -34,8 +34,10 @@ Required inputs:
    Blocks: any multi-target utility comparison other than equal-priority scenarios.
 3. Initialization prior (`tracking.measurement_driven_initial_velocity[_variance]`):
    approve per-scenario values, or approve the extended paper's candidate
-   diag([1e4, 1e4, 1e2, 1e2]), or approve a first-two-observations estimator. Blocks:
-   realistic EKF transients.
+   diag([1e4, 1e4, 1e2, 1e2]), or approve a first-two-observations estimator. The
+   ICC paper's own profile (zero state, IDENTITY covariance — PDF-verified in
+   M8A-R1) remains the diagnostic paper-reference profile. Blocks: realistic EKF
+   transients.
 4. Physical scanning chain (`scanning.*`): deferred unless the physical model is
    approved for implementation; deferral is recorded, not hidden.
 
@@ -61,7 +63,12 @@ Synthetic integration tests (deterministic, seeded):
    runs must match H P Hᵀ + R within stated tolerance ( chi-square-style consistency
    test, NEES reported, thresholds stated in advance).
 4. Both σ_w readings (`table_variance`/`equation_literal`) exercised end-to-end; the
-   625-reading must show LARGER position spread — a falsifiable direction check.
+   625-reading must show LARGER model spread (posterior covariance) — a falsifiable
+   direction check on the MODEL INPUT, distinct from realized error (see assumptions
+   §8). M8A-R1: the noise-model direction check also distinguishes the accepted
+   inverse-SNR semantics (variance decreases with dwell) from the ICC paper's PRINTED
+   Eq. (6) multiplication form — the discrepancy is documented, the resolution
+   preserved.
 5. Joseph-form vs literal-form posterior covariance equality within float tolerance
    across a seeded scenario battery.
 

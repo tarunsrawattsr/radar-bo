@@ -163,7 +163,11 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
                   "(sigma_w = 25 read as the acceleration-noise variance per Table II units "
                   "and prose); 'equation_literal' -> multiplier 625 (= 25 squared, Eq. (3) as "
                   "printed). The multiplier is applied to the structured Eq. (3) matrix "
-                  "directly; no further squaring occurs.",
+                  "directly; no further squaring occurs. M8A-R1 (source-PDF verification): the "
+                  "ICC Table II row reads literally 'sigma_w ((m/s^2)^2) 25' — the paper's own "
+                  "unit annotation declares the tabulated quantity a VARIANCE (units "
+                  "(m/s^2)^2), which supports the table_variance reading; the accepted "
+                  "resolution and both implementations are PRESERVED unchanged.",
         sensitivity=(5.0, 625.0),
         notes=["Switchable: tracking.maneuverability_noise_interpretation in "
                "{'table_variance', 'equation_literal'}; both implemented, default documented, "
@@ -191,18 +195,33 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
         notes=["Experiments requiring Eq. (5) with absolute SNRs must resolve this first."]))
     reg.register(_entry(
         "resource.dwell_time_action_set", r.dwell_time_action_set, "s", "paper_lu_2024",
-        reference=f"{_LU}; action space, Sections II-III",
-        rationale="Dwell-time actions tau in {0.1, ..., 1.0} s in 0.1 s steps."))
+        reference=f"{_LU}; Section V-A.2 'Action' (M8A-R1: verified against the source PDF)",
+        rationale="Dwell-time actions tau^n_t in {0.1, 0.2, ..., 1.0} s (ten levels, 0.1 s steps, "
+                  "range [0.1, 1] quantized), as stated in the ICC paper's action definition. "
+                  "M8A-R1 correction: an earlier M8A document wrongly attributed a "
+                  "'{0, 0.5, ..., 25.0}' set to Table II; the register value was always "
+                  "{0.1..1.0} and the DOCUMENTS were corrected, not the register."))
     reg.register(_entry(
         "resource.normalized_time_budget_threshold", r.normalized_time_budget_threshold, "dimensionless",
         "paper_lu_2024", reference=f"{_LU}; Eq. (22)",
         rationale="Theta_max = 1, normalized time-budget threshold."))
     reg.register(_entry(
-        "resource.tracking_scanning_tradeoff", r.tracking_scanning_tradeoff, "dimensionless", "paper_lu_2024",
-        reference=f"{_LU}; Eq. (23)",
+        "resource.tracking_scanning_tradeoff", r.tracking_scanning_tradeoff,
+        "(m^2 * weight) per unit Gamma", "paper_lu_2024",
+        reference=f"{_LU}; Eq. (23); M8A-R1: dimensional interpretation verified against Eq. (21) and the Table II value",
         rationale="beta = 1e6 weights scanning reward against tracking cost. Reproduction only; "
                   "recalibrate if metric definitions change.",
-        notes=["Units of the two weighted terms are not matched by construction in the paper."]))
+        notes=[
+            "M8A-R1 dimensional correction: Gamma = S_max/S_0 (Eq. (21)) is DIMENSIONLESS "
+            "(m^2/m^2), so the scanning term beta*Gamma carries whatever dimension beta has. "
+            "For the Eq. (23) sum to be coherent, beta must carry the tracking-term dimension "
+            "(weight x m^2) per unit Gamma — beta is NOT dimensionless. Its magnitude is "
+            "scale-relative: with tracking costs O(10-100) m^2 near r_0, beta=1e6 makes the "
+            "scanning term dominate by ~4 orders of magnitude at Gamma=O(1) (consistent with "
+            "the paper's Fig. 5 utility axis being scaled by 1e6). Any change of cost scale, "
+            "metric, or Theta_max changes the effective trade-off; beta=1e6 must not be "
+            "carried into new configurations as a default.",
+            "Units of the two weighted terms are not matched by construction in the paper."]))
     reg.register(_entry(
         "resource.discount_factor", r.discount_factor, "dimensionless", "paper_lu_2024",
         reference=f"{_LU}; Eq. (22)", rationale="gamma = 0.9 in the discounted cumulative budget.",
@@ -693,6 +712,58 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
                   "the archives themselves were always internally consistent and were validated as "
                   "such by the M7 independent checks. No records are missing or invented.",
         notes=["Corrected via documentation only; historical archive values untouched."]))
+    reg.register(_entry(
+        "experiment.m8a_r1_source_verification",
+        {"pdfs_reextracted": 2.0, "icc_pages": 6.0, "globecom_pages": 6.0},
+        "count", "proposed_assumption",
+        rationale="M8A-R1 Phase A: both original research PDFs (uploaded to the repository root at "
+                  "commit 321e167 and tracked since) were re-extracted to notes/paper_extracts/ "
+                  "(pypdf 7.2.0 installed to a scratch directory OUTSIDE the project venv and lock; "
+                  "documented requirement: no PDF tool existed in the environment) and verified "
+                  "line-by-line: equations (1)-(32), Table I (10 symbols, no values), Table II "
+                  "(14 values), the reference list (14 entries), author names, venue, pages and "
+                  "DOIs. Footer-verified DOIs: 10.1109/ICC51166.2024.10622225 (ICC 2024) and "
+                  "10.1109/GLOBECOM54140.2023.10437768 (GLOBECOM 2023, pp. 4552-4557). IEEE Xplore "
+                  "download stamps in the PDF footers: IIT Jodhpur, 2026-10-10 (ICC) and "
+                  "2026-05-26 (GLOBECOM). All M8A documents were corrected accordingly; no "
+                  "numerical assumptions were introduced.",
+        notes=["Finding: the ICC paper's own Table II row reads 'sigma_w ((m/s^2)^2) 25' — the "
+               "unit annotation supports the table_variance reading; the accepted resolution is "
+               "preserved unchanged.",
+               "Finding: ICC Eq. (6) is PRINTED as sigma^2 = sigma^2_0 * SNR (multiplication) "
+               "while the paper's own prose says variance DECREASES with dwell time and the "
+               "extended version divides; the inverse_snr operational resolution is preserved.",
+               "Finding: the ICC dwell action set is {0.1..1.0} s (Section V-A.2); the M8A "
+               "documents that said otherwise were corrected (register value was always right)."]))
+
+    # ---- M8A-R1 Phase A: the radar paper's weight definitions (recorded FACTS;
+    # ---- NOT adopted as operational defaults — task_utility_weights stays None) --
+    reg.register(_entry(
+        "paper_lu_2024.training_weight_set", [1.0, 3.0, 5.0], "dimensionless", "paper_lu_2024",
+        reference=f"{_LU}; Section VI (Numerical Results), M8A-R1 verified against the source PDF",
+        rationale="TRAINING weights: 'During the training, the weights w^n_t assigned for tracking "
+                  "the targets are selected from the set {1, 3, 5}, and DQN is trained using "
+                  "targets with different trajectories and weights.' Recorded as a paper fact "
+                  "for reproduction purposes; this repository's operational default remains the "
+                  "labeled uniform default (resource.task_utility_weights = None) — NOT changed "
+                  "by this record.",
+        notes=["Adopting {1,3,5} (or any sampled rule) as an operational default would be a "
+               "proposed numerical selection requiring separate review + approval."]))
+    reg.register(_entry(
+        "paper_lu_2024.testing_weight_rule",
+        "Eq. (31): w_n = min{10, 4 + 10000/d0} if d0 <= 10000 else 1, with d0 = min(d_n_r, d_n_a) "
+        "(estimated distances to radar and to asset); Eq. (32): w_n = min{10, w_n + 5} if "
+        "A_n < 0 else w_n, with A_n = x_n . xdot_n (position dot velocity; A_n < 0 = target "
+        "approaching the radar). Weights are TIME-VARYING during tests, computed from ESTIMATED "
+        "positions/velocities, capped at 10.",
+        "definition", "paper_lu_2024",
+        reference=f"{_LU}; Section VI, Eqs. (31)-(32), M8A-R1 verified against the source PDF",
+        rationale="TESTING weights: the ICC paper defines time-varying test weights from estimated "
+                  "distances (radar/asset) and the approaching-target velocity rule. Recorded as "
+                  "a paper fact; the definition uses ESTIMATED quantities (compatible with our "
+                  "truth-inaccessibility guarantee). Not adopted as an operational default.",
+        notes=["Both definitions use estimated (not true) quantities, so a faithful reproduction "
+               "would compute weights inside the estimator-facing snapshot layer."]))
     reg.register(_entry(
         "experiment.m8a_shared_initial_design_interface",
         {"engine_parameter": 1.0, "framework_mode": 1.0},

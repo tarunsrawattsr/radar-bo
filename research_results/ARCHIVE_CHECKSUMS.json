@@ -29,6 +29,11 @@
   "research_results/m7_sensitivity_pilot.json": {
    "sha256": "caab7eb322d01ab8b33a720c5a2f946b7544b0195082e5e2f520143c380d7268",
    "bytes": 1646
+  },
+  "research_results/m8a_r1_test_report.json": {
+   "sha256": "779da420f698e165e6e22908bd7af786140a8100a07600b2b2a5539274194778",
+   "bytes": 129121,
+   "added": "M8A-R1 (2026-11-28): machine-readable full-suite regression report (new artifact; historical entries unchanged)"
   }
  }
 }

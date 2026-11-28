@@ -263,6 +263,7 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 - [x] M7: Validate joint, alternating and coordinate-wise BO on synthetic objectives using equal budgets. *(2026-11-26: delivered as instruction-stream M6 — ONE generic block-cyclic engine with interchangeable variable-block structures (joint = single full block, the M5 baseline; alternating = two user-defined blocks; pair-wise = two-variable blocks), shared dataset/surrogate, improvement-only current-configuration acceptance, global-budget accounting, 4/8/16-D synthetic benchmarks with independent references, 10-seed comparison vs random search; equal total budgets across architectures. Alternating/coordinate are NOT reproduced radar algorithms.)*
 - [x] M8A: Scientific Model Review and Parameter Resolution. *(2026-11-26: delivered as instruction-stream item — final M7 regression re-verified (668 passed on `371952a`); run-count reconciliation (220 archived records exactly; "230" was a narrative arithmetic error, corrected); validated immutable shared-initial-design interface (engine + framework `explicit_shared`, backward compatible, 11 new tests); full provenance audit (81 entries / 17 unresolved, resolution paths per unresolved parameter, NO invented values); literature review incl. the authors' extended arXiv version (2606.05526) with version-difference table; consolidated mathematical specification with dimensional findings; assumptions/limitations, application-validation plan, research-gap assessment; seven documents under `docs/`. STOPPED before M8B — M8B requires explicit approval of the scientific assumptions and proposed model specifications in `docs/`.)*
 - [ ] M8: Implement reproducible experiment runner, logs, statistics and figures. *(figures/statistics exist per experiment under results/ and tracked archives under research_results/; a unified runner/analysis package remains open)*
+- [x] M8A-R1: Corrective implementation from the independent review of `7e447be`. *(2026-11-28: 713 tests passing; Phase A — both source PDFs re-extracted and verified line-by-line (equations, tables, 14-entry ICC reference list, authors, venues, footer DOIs); training weights {1,3,5} and testing-weight rules Eqs. (31)-(32) recorded as register facts (NOT adopted); scanning-parameter count corrected eleven→TWELVE; β dimension corrected (weight·m² per unit Γ — NOT dimensionless); ICC Eq. (6) printed-multiplication discrepancy documented with the inverse-SNR resolution PRESERVED; all seven docs corrected, version-explicit. Phase B — authoritative initial designs persisted per comparison group with genuine SHA-256 fingerprints, reloaded on resume, malformed/duplicate/incomplete/inconsistent designs rejected, insufficient-feasible error path fixed (was a TypeError), shared-initialization verification checks records against the persisted design + recomputed objectives, separately identified `random_search_shared_start` added (plain RS unchanged). Phase C — legitimate early stopping classified COMPLETED-early (was a budget-assertion failure), engine failures distinguished, resume ADOPTS interrupted persisted records (no repetition), failure/retry histories preserved, compatibility checks strengthened. Phase D — BO-suitability for cheap deterministic objectives stated honestly, process-noise vs realized error clarified, equation-level vs experimental reproduction scope statement, paper-reference vs operational initialization profiles named. Phase E — 713 tests, machine-readable report, checksums OK, 17 parameters still None, targeted validation experiment PASS. Deliverables: `docs/M8A_R1_CROSS_VERIFICATION.md` + `docs/M8B_DECISION_REGISTER.md`. STOPPED before M8B.)*
 - [ ] M9: Document unresolved application-specific physical assumptions and scope of subsequent research; do not represent unfinished extensions as operational.
 
 After each milestone, provide a concise summary of files created, tests executed, observed results, unresolved issues and deviations from this specification. Do not mark a milestone complete based only on code generation.
@@ -293,14 +294,15 @@ This section records what is actually implemented and tested. It does not add re
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (81 entries after the two M8A additions, 17 unresolved preserved as `None`), layer-separation guard tests |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (84 entries after the M8A + M8A-R1 additions, 17 unresolved preserved as `None`), layer-separation guard tests |
 | M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
 | M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py` |
 | M5 generic BO engine (incl. README-M6 components) | Done | `radar_bo/optimization/bo/` (problem interface, benchmarks A/B/C, reference solvers, random search, dataset, conversions, GP surrogate, LogEI acquisition, candidate pools, results records, 15-step loop), `radar_bo/experiments/m5_synthetic_bo_validation.py`, `results/m5_synthetic_bo_validation/` (seeds 0-9; durably archived in `research_results/`) |
 | M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (220 archived records exactly; the earlier narrative said "230 runs" — arithmetic/reporting error corrected in M8A via `experiment.m8a_run_count_reconciliation`, archives always internally consistent), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; M7 review corrections in "M7 targeted M6 review" |
 | M7 experimental framework (instruction stream) | Done | `radar_bo/experiments/framework/` (config, benchmark/algorithm registries, matrix, checkpointed runner, metrics, runtime analysis, candidate profiling, archive integrity, sensitivity, reporting, figures, simulator adapter), validation experiment + sensitivity pilot, review corrections + archive validation + paired summaries (derived artifacts in `research_results/`); see "M7 experimental framework" below |
 | M8A scientific model review (instruction stream) | Done | shared-initial-design interface (`optimization_config.py` + `bo_loop.py` + framework `explicit_shared`, 11 tests in `radar_bo/tests/test_shared_initial_design.py`), provenance 81/17 + resolution paths + extended-version cross-reference (`radar_bo/experiments/m8a_generate_parameter_register.py` → `docs/PARAMETER_RESOLUTION_REGISTER.md`), seven review documents under `docs/`; see "M8A scientific model review" below |
-| M8B (instruction stream: application optimization) | Not started | REQUIRES explicit user approval of scientific assumptions + proposed model specifications (`docs/M8A_SCIENTIFIC_MODEL_REVIEW.md` §10, `docs/APPLICATION_VALIDATION_PLAN.md`) |
+| M8A-R1 corrective review | Done | `docs/M8A_R1_CROSS_VERIFICATION.md` (per-finding status), `docs/M8B_DECISION_REGISTER.md` (15 decisions, none adopted), initial-design store (`initial_design_store.py`), shared-start RS, early-stop/adoption/history corrections (`runner.py`, `checkpointing.py`, `algorithm_registry.py`, `random_search.py`), 33 new tests in `radar_bo/tests/test_m8a_r1_corrections.py`, machine-readable test report `research_results/m8a_r1_test_report.json` |
+| M8B (instruction stream: application optimization) | Not started | REQUIRES explicit user approval of scientific assumptions + proposed model specifications (`docs/M8B_DECISION_REGISTER.md` — decisions DR-01…DR-15; `docs/M8A_SCIENTIFIC_MODEL_REVIEW.md` §10; `docs/APPLICATION_VALIDATION_PLAN.md`) |
 | M8/M9 (roadmap: runner package / final docs) | Not started | Require explicit approval |
 
 ### Installation
@@ -316,7 +318,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 680 passed (~19 min): M1-M7 config + estimation + interfaces + generic BO engine + block architectures + experimental framework + M8A shared-initial-design suite
+.venv/bin/python -m pytest        # 713 passed (~19 min): M1-M7 + M8A shared-design suite + M8A-R1 correction suite (config, estimation, interfaces, generic BO engine, block architectures, experimental framework)
 ```
 
 ### Experiment execution
@@ -395,7 +397,7 @@ radar_bo/                  package root (editable install; suggested top-level d
 │                           integrity + checksums, sensitivity scenarios, report
 │                           + figure generation, simulator-interface adapter
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 680 tests incl. layer-separation, ground-truth-leakage and shared-design guards
+└── tests/                 713 tests incl. layer-separation, ground-truth-leakage, shared-design and R1-correction guards
 
 docs/                      M8A review deliverables (7 documents; see "M8A scientific model review")
 provenance_register.json   authoritative parameter register snapshot (regenerable)
@@ -714,6 +716,51 @@ extended-version candidate values; fixed-altitude/3-D state requirements;
 corridor-metric requirements; a deterministic direct-search control for future
 comparisons.
 
+### M8A-R1 corrective review (independent review of `7e447be`; STOP before M8B)
+
+Full per-finding status: `docs/M8A_R1_CROSS_VERIFICATION.md` (every review finding
+marked resolved/partial/unresolved/N-A). Outstanding decisions consolidated with
+approval flags: `docs/M8B_DECISION_REGISTER.md` (DR-01…DR-15 — nothing adopted).
+
+**Phase A (source verification):** both original PDFs (in-repo since the branch-point
+upload) re-extracted to `notes/paper_extracts/` (pypdf in a scratch dir; lock
+unchanged) and verified line-by-line. Corrections applied to the register and all
+seven docs: dwell action set {0.1…1.0} s (Sec. V-A.2 — the M8A DRAFT documents, not
+the register, had the wrong "{0, 0.5, …, 25}" claim); scanning count TWELVE (7
+Table-I hardware + φ + S₀ + P_d/P_f/SNR_min); β carries the tracking-term dimension
+(weight·m² per unit Γ — not dimensionless); ICC Eq. (6) is PRINTED as
+σ² = σ²₀·SNR contradicting its own prose (inverse-SNR resolution PRESERVED);
+`paper_zero_identity` = zero state + IDENTITY covariance (PDF-verified); training
+weights {1,3,5} and testing-weight rules Eqs. (31)–(32) recorded as register facts,
+NOT adopted; Benzaghta DOI/pages/venue footer-verified (was "unavailable"); ICC
+14-entry reference list verified (replaces the extended-bibliography
+reconstruction); version-explicit attribution everywhere.
+
+**Phase B (shared initial designs):** `initial_design_store.py` — ONE authoritative
+design per (benchmark, dimension, seed) persisted under `initial_designs/` with a
+genuine SHA-256 over the rows, reloaded unchanged on resume (never regenerated),
+validated on every load (malformed/duplicate/incomplete/inconsistent → explicit
+rejection); insufficient-feasible error path fixed (was `spec['benchmark_id']`
+TypeError); verification checks records against the persisted design + fingerprint +
+recomputed objectives; NEW `random_search_shared_start` (separately identified; the
+authoritative design evaluated first, remaining budget uniform random); plain
+`random_search` unchanged and still independent.
+
+**Phase C (framework):** legitimate early stopping (patience/cycle/runtime/iteration
+caps) is COMPLETED with `early_completion` metadata — the old `attempted == budget`
+assertion would have failed such runs; engine-level failure reasons → FAILED with
+the record preserved; resume ADOPTS persisted records whose manifest update was
+interrupted (no repetition of completed compatible runs); append-only status
+histories (failures/retries preserved); compatibility checks strengthened
+(component-level diffs + record-identity validation).
+
+**Phase D (interpretation):** BO suitability for cheap deterministic objectives
+stated honestly ([Benz2023] targets expensive/STOCHASTIC objectives — PDF-verified;
+our regime is the opposite; no superiority implication); process-noise variance vs
+realized estimation error distinguished; equation-level vs experimental reproduction
+scope statement; paper-reference vs operational initialization profiles named;
+historical runtime conventions re-verified consistent.
+
 ### Current limitations
 
 - M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
@@ -727,6 +774,7 @@ comparisons.
 - M6 archived-data caveat (M7 review finding): random-search rows in the M6 archive store the per-evaluation objective SEQUENCE under the key `incumbent_history` (label wrong, data intact — best == max verified); the archived candidate-generation timer includes nested feasibility validation (never add the two fields); corrected semantics live in M7 runner records and derived artifacts.
 - M7 limitations: the framework verifies shared initialization post hoc from stored records instead of injecting externally generated designs into the engine (the engine's seeded sampler IS the shared design; injection would require engine API changes and is documented as a deviation) — ADDRESSED in M8A: the engine now accepts validated immutable `initial_design_configs` and the framework `explicit_shared` mode injects them (the post-hoc verification remains available for pre-M7 archives); attempted-evaluation and wall-clock convergence axes are exact ONLY for M7 runner records (pre-M7 archives lack per-iteration timestamps — the axes are reported as unavailable there, never interpolated); Wilcoxon/bootstrap uncertainty at n = 10 is descriptive and assumption-limited; the M7 validation matrix (20 runs) validates INFRASTRUCTURE, not algorithms; sensitivity pilots cover three single-factor scenarios on one benchmark only; the simulator-interface validation uses mock providers (no physical sensing model activated, by design); `results/` artifacts from M6 were lost once to a sandbox reset and are regenerable (the durable tracked archives + checksums are the source of truth).
 - M8A limitations: the review is documentation + the one backward-compatible interface change only — NO proposed decision was applied (β normalization, initialization candidates, extended-version values, 3-D/corridor requirements all remain documented proposals requiring approval); the literature review relies on arXiv extended versions because IEEE full texts are inaccessible from this environment, and the ICC paper's own reference list is unavailable (the item-7 review uses the extended version's bibliography with the citing paper's own attribution mappings); the paper extracts were lost in the sandbox reset, so Table II facts rest on the earlier extraction as recorded in the provenance register, cross-checked where possible against the fetched extended version; the provenance-register classification of historical entries could not be re-derived from primary sources for every entry and is labeled accordingly.
+- M8A-R1 corrections to the M8A limitations: the two original PDFs are NOW in the repository (uploaded at the branch-point commit) and were re-extracted and verified line-by-line (the ICC reference list and Benzaghta DOI are no longer "unavailable" — corrected in the literature register); the extraction tool (pypdf 7.2.0) was installed to a scratch directory OUTSIDE the venv/lock (documented requirement); the M8A review's item-7 reconstruction from the extended bibliography was replaced by the verified ICC list. Remaining M8A-R1 limitations: the review artifact itself was not accessible via the GitHub API (no PR/issues/comments at execution time), so the instruction's finding list was authoritative (stated in `docs/M8A_R1_CROSS_VERIFICATION.md`); the shared-start random search and early-stop classification are validated on synthetic benchmarks only (no comparative claims); resume adoption trusts identity + fingerprint validation, not content re-verification of every field.
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
 - Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 

@@ -1,10 +1,19 @@
-"""Algorithm registry (M7 item 7).
+"""Algorithm registry (M7 item 7; M8A-R1 Phase B additions).
 
 Registers the EXISTING methods — random feasible search, joint BO
 (variable_blocks=None, the M5 baseline), alternating BO, pair-wise
-coordinate BO — and the independent direct reference solvers. All methods
-reuse the existing generic M5/M6 engine through its public interfaces; the
-registry does NOT duplicate any optimization algorithm.
+coordinate BO — plus the M8A-R1 separately identified SHARED-START random
+search (the authoritative shared design evaluated first, remaining budget
+uniform random sampling) and the independent direct reference solvers. All
+methods reuse the existing generic M5/M6 engine and the M5 random-search
+implementation through their public interfaces; the registry does NOT
+duplicate any optimization algorithm.
+
+Plain ``random_search`` remains the INDEPENDENT comparator: it has no
+initial-design phase and explicitly ignores any passed design.
+``random_search_shared_start`` is a distinct algorithm_id/architecture so
+comparisons that use the shared initial phase are never conflated with the
+independent random search.
 
 The reference "algorithm" produces the registry's independent reference
 solution for a benchmark (analytic / enumeration / numerical, no BO) and is
@@ -70,18 +79,24 @@ def _recommended(problem, mode: str) -> list[tuple[str, tuple[int, ...]]] | None
 
 
 def _run_random_search(benchmark, dimension, seed, config, reference_value, reference_method,
-                       initial_design_configs=None) -> AlgorithmRunResult:
+                       initial_design_configs=None, shared_start: bool = False) -> AlgorithmRunResult:
     # M8A: the runner passes initial_design_configs to every search-method entry for a
-    # uniform interface. Random search has NO initial-design phase (its identity is
-    # uniform random feasible sampling), so the design is explicitly IGNORED here —
+    # uniform interface. PLAIN random search has NO initial-design phase (its identity
+    # is uniform random feasible sampling), so the design is explicitly IGNORED there —
     # injecting it would change RS semantics and break comparability with historical
-    # RS records. Fairness vs BO rests on equal budgets, which the runner enforces.
-    del initial_design_configs
+    # RS records. The SEPARATELY IDENTIFIED shared-start mode (M8A-R1 Phase B) instead
+    # evaluates the authoritative shared design FIRST (the same initial phase the BO
+    # methods see) and spends the remaining budget on uniform random sampling.
     problem = benchmark.problem(dimension)
     budget = config.evaluation_budget
     assert budget is not None
-    result = RandomSearchOptimizer(problem, budget, seed=seed).optimize()
-    return AlgorithmRunResult("search", "random_search", result, None, ALGORITHM_VERSIONS["random_search"])
+    architecture = "random_search_shared_start" if shared_start else "random_search"
+    result = RandomSearchOptimizer(
+        problem, budget, seed=seed,
+        initial_configs=initial_design_configs if shared_start else None,
+    ).optimize()
+    version_key = "random_search_shared_start" if shared_start else "random_search"
+    return AlgorithmRunResult("search", architecture, result, None, ALGORITHM_VERSIONS[version_key])
 
 
 def _run_bo(architecture: str):
@@ -115,6 +130,20 @@ def _run_bo(architecture: str):
     return _runner
 
 
+def _run_random_search_shared_start(benchmark, dimension, seed, config, reference_value,
+                                    reference_method, initial_design_configs=None) -> AlgorithmRunResult:
+    """M8A-R1: shared-start random search — the authoritative shared design is
+    evaluated first (identical initial phase to the BO methods in the same
+    comparison group), then the remaining budget is uniform random feasible
+    sampling. Requires an explicit shared design; under the seeded-sampler
+    mode it runs WITHOUT a prefix (equivalent to plain random search) and is
+    documented as such."""
+    return _run_random_search(
+        benchmark, dimension, seed, config, reference_value, reference_method,
+        initial_design_configs=initial_design_configs, shared_start=True,
+    )
+
+
 def _run_reference(benchmark, dimension, seed, config, reference_value, reference_method) -> AlgorithmRunResult:
     reference = benchmark.reference(dimension)
     return AlgorithmRunResult("reference", "reference", None, reference, ALGORITHM_VERSIONS["reference"])
@@ -122,6 +151,7 @@ def _run_reference(benchmark, dimension, seed, config, reference_value, referenc
 
 ALGORITHM_VERSIONS = {
     "random_search": "random_search/m6-engine-companion/1.0",
+    "random_search_shared_start": "random_search/m6-engine-companion/1.0 + shared-start prefix (M8A-R1: authoritative initial design evaluated first, remaining budget uniform random; separately identified from plain random_search)",
     "bo_engine": "bo_single_candidate_log_ei_matern52 (block-cyclic engine, M6 refactor; joint preserved bit-for-bit vs M5)",
     "reference": "independent reference solvers (analytic/enumeration/numerical; no BO)",
 }
@@ -131,6 +161,10 @@ def _default_registry() -> dict[str, AlgorithmRegistryEntry]:
     entries: dict[str, AlgorithmRegistryEntry] = {
         "random_search": AlgorithmRegistryEntry(
             "random_search", "search", "random_search", ALGORITHM_VERSIONS["random_search"], _run_random_search,
+        ),
+        "random_search_shared_start": AlgorithmRegistryEntry(
+            "random_search_shared_start", "search", "random_search_shared_start",
+            ALGORITHM_VERSIONS["random_search_shared_start"], _run_random_search_shared_start,
         ),
         "joint_bo": AlgorithmRegistryEntry(
             "joint_bo", "search", "joint", ALGORITHM_VERSIONS["bo_engine"], _run_bo("joint"),

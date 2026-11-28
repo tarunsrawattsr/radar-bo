@@ -64,15 +64,20 @@ class InitialDesignSettings(StrictModel):
     mode: Literal["seeded_sampler", "explicit_shared"] = Field(
         default="seeded_sampler",
         description=(
-            "M8A (item 3.3): 'seeded_sampler' preserves the M5/M6 behavior (same seed per "
-            "group + retrospective verification from stored records). 'explicit_shared' "
-            "generates the design ONCE per (benchmark, dimension, seed) with the registry's "
-            "deterministic sampler, validates feasibility, and passes the SAME immutable "
-            "configuration list to every applicable optimization method through the engine's "
-            "validated initial_design_configs interface (methods with an initial-design "
-            "phase, i.e. the BO architectures; random search has no initial phase and "
-            "explicitly ignores the design); identical initial objectives are then "
-            "guaranteed by construction (still verified from stored records)."
+            "M8A (item 3.3), corrected in M8A-R1: 'seeded_sampler' preserves the M5/M6 "
+            "behavior (same seed per group + retrospective verification from stored "
+            "records). 'explicit_shared' persists ONE authoritative design per "
+            "(benchmark, dimension, seed) group under initial_designs/ with a genuine "
+            "SHA-256 fingerprint over the design rows, RELOADS it unchanged on resume "
+            "(never silently regenerated), validates it on every load (size, "
+            "dimension, finiteness, feasibility, duplicates; malformed/duplicate/"
+            "incomplete/inconsistent designs are rejected), and passes the SAME "
+            "immutable configuration list to every applicable optimization method "
+            "through the engine's validated initial_design_configs interface (the BO "
+            "architectures and the separately identified random_search_shared_start; "
+            "plain random_search has no initial phase and explicitly ignores the "
+            "design); identical initial objectives are then guaranteed by "
+            "construction and verified against the persisted artifact."
         ),
     )
     sharing_policy: Literal["same_seed_with_stored_record_verification"] = Field(
@@ -81,7 +86,10 @@ class InitialDesignSettings(StrictModel):
             "Item-10 fairness policy: all methods for one (benchmark, seed) run with "
             "the same seed through the same deterministic sampler, and the runner "
             "VERIFIES identical initial configurations and observed values directly "
-            "from the stored records (seeds alone are never trusted)."
+            "from the stored records (seeds alone are never trusted). In "
+            "'explicit_shared' mode the verification additionally compares every "
+            "record against the persisted authoritative design and its SHA-256 "
+            "fingerprint (M8A-R1)."
         ),
     )
 

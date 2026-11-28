@@ -28,7 +28,8 @@ def make_config(**overrides) -> ExperimentConfig:
 class TestAlgorithmRegistry:
     def test_all_methods_registered(self):
         assert set(AlgorithmRegistry().ids()) == {
-            "random_search", "joint_bo", "alternating_bo", "pairwise_bo", "reference",
+            "random_search", "random_search_shared_start", "joint_bo",
+            "alternating_bo", "pairwise_bo", "reference",
         }
 
     def test_architectures(self):

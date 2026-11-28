@@ -107,9 +107,15 @@ with dwell time `τ_t` [s], range `r_t` [m], reference dwell `τ_0` [s]
 σ²_{r,0} = 100 m²,  σ²_{θ,0} = 4e-4 rad²   (Table II)
 ```
 
-This matches the paper's statement that measurement variance decreases with longer
-dwell time. Alternative semantics exist behind `tracking.measurement_variance_semantics`
-but `inverse_snr` is the operational choice. `SNR0` being unresolved, any synthetic
+This matches the paper's stated monotonicity ("the variance of the measurement noise
+decreases when a longer dwell time is allocated..."). **M8A-R1 source verification:** the
+ICC paper PRINTS Eq. (6) as `σ²_{·,t} = σ²_{·,0} · SNR_t` (multiplication), which
+CONTRADICTS its own prose (variance would increase with dwell time); the authors'
+extended journal version prints the division form `σ²_{·,0}/SNR_t`. The accepted
+`inverse_snr` operational resolution (division) is consistent with the prose and the
+extended version and is PRESERVED unchanged (not reopened); the printed-form
+discrepancy is documented rather than silently reconciled. Alternative semantics exist
+behind `tracking.measurement_variance_semantics`. `SNR0` being unresolved, any synthetic
 run that needs an absolute noise scale must supply an explicitly **[synthetic]**-labeled
 SNR0; nothing is invented in the model itself.
 
@@ -129,8 +135,14 @@ Covariance-update convention: `'paper_equation_13'` (literal default) and `'jose
 (numerical-stability form); equivalence under valid numerical conditions is tested.
 `SNR0` unresolved ⇒ a run needing Eq. (5) requires a supplied (labeled) value.
 
-**Initialization (M3-resolved ambiguity, item 9):** the paper's zero-vector
-initialization is retained strictly as a **diagnostic configuration**;
+**Initialization (M3-resolved ambiguity, item 9; M8A-R1 verified):** the ICC paper
+initializes `x̂_{t|t}` as a zero vector and `P_{t|t}` as the IDENTITY matrix ("assuming
+that the system has no prior knowledge of the targets") — the `paper_zero_identity`
+profile reproduces exactly this (state 0, covariance I). It is retained strictly as a
+**diagnostic / paper-reference configuration**; the authors' extended journal version
+instead initializes from measurements with an empirical P₀ = diag([10000, 10000, 100,
+100]) (recorded as an approval-requiring candidate, not adopted). The operational
+profile is measurement-driven:
 operational synthetic estimation uses **measurement-driven initialization**
 (first observation → position; velocity prior from
 `tracking.measurement_driven_initial_velocity[_variance]`, both unresolved by
@@ -174,7 +186,10 @@ Implemented in `optimization/allocation.py`, `optimization/resource_accounting.p
 
 - **Allocation [paper-shaped, proposed representation]:** `ResourceAllocation` =
   ordered per-task dwell times `τ_i` [s], each a member of the discrete action set
-  (Table II: `{0, 0.5, 1.0, ..., 25.0}` values per our extraction), plus indices.
+  `τ ∈ {0.1, 0.2, ..., 1.0}` s (ten levels, 0.1 s steps — ICC paper Section V-A.2
+  'Action', verified against the source PDF in M8A-R1; the M8A draft wrongly
+  attributed a `{0, 0.5, ..., 25.0}` set to Table II — the register was always
+  correct, this document was fixed), plus indices.
   Content-addressed (`content_id`) for provenance.
 - **Time accounting [paper Eq. (24) convention]:**
   `total_dwell = Σ_i τ_i` [s]; normalized usage `Σ_i τ_i / T0` [dimensionless];
@@ -205,9 +220,21 @@ Eq. (23):  U_t = − Σ_n w_n c^n_t + β · Γ(τ_s,t)
 - `c^n_t` from a `TrackingCostProvider` (snapshot-diagnostic Eq. (14) provider or the
   synthetic linear provider — explicit interfaces).
 - `β = 1e6` (paper value, preserved **for reproduction only**; see item 13 of
-  `ASSUMPTIONS_AND_LIMITATIONS.md` for the scaling review).
+  `ASSUMPTIONS_AND_LIMITATIONS.md` for the scaling review). **Dimension (M8A-R1
+  correction):** β is NOT dimensionless. Γ = S_max/S_0 is dimensionless (m²/m²), so
+  the scanning term carries β's own dimension; sum coherence with the tracking term
+  requires β to have the tracking-term dimension (weight·m²) per unit Γ. β's magnitude
+  is therefore scale-relative (costs O(10–100) m² near r₀ make β·Γ dominate by ~4
+  orders of magnitude at Γ = O(1) — consistent with the paper's Fig. 5 utility axis
+  scaled by 10⁶).
 - `w_n` per-task weights: **unresolved in the register**; the code default is
   UNIFORM weights, explicitly a proposed software default, NOT a paper value.
+  M8A-R1 records the paper's own weight DEFINITIONS as facts (register entries
+  `paper_lu_2024.training_weight_set` = {1, 3, 5} for DQN training and
+  `paper_lu_2024.testing_weight_rule` = time-varying Eqs. (31)-(32) — distance to
+  radar/asset rule plus approaching-target bonus, cap 10, computed from ESTIMATED
+  quantities). These are recorded for reproduction; adopting either as our
+  operational default would require separate review and approval.
 - Failure semantics: evaluation errors yield `status="failed"` with utility `None`
   (zero is never substituted); infeasible candidates yield `status="infeasible"`;
   strict mode re-raises unexpected exception types (M4 review decision).
@@ -251,7 +278,7 @@ conditions distinguishing evaluations/iterations/visits/cycles/skips.
 | Measurement noise | `radar/measurement_noise.py` | [Lu2024] Eqs. (5)/(6)/(8) | implemented [paper]; SNR0 missing |
 | EKF | `radar/extended_kalman_filter.py` | [Lu2024] Eqs. (9)-(13) | implemented [paper] (+ Joseph [proposed]) |
 | Tracking cost | `radar/tracking_cost.py` | [Lu2024] Eqs. (14)-(15) | implemented [paper] |
-| Scanning metric | `radar/scanning_model.py` | [Lu2024] Eq. (21) | metric [paper]; provider [synthetic]; Eqs. (16)-(20) NOT implemented |
+| Scanning metric | `radar/scanning_model.py` | [Lu2024] Eq. (21); physical chain Eqs. (16)-(20) + Table I | metric [paper] (Γ = S_max/S_0, Γ≈1 = intended coverage); provider [synthetic]; Eqs. (16)-(20) NOT implemented (Table I: 10 symbols, no values) |
 | Time accounting | `optimization/resource_accounting.py` | [Lu2024] Eq. (24) | implemented [paper] |
 | Budget constraint | `optimization/constraints.py` | [Lu2024] Eq. (22) + [proposed] hard-per-slot | both implemented, non-equivalent, documented |
 | Utility | `optimization/objective.py` | [Lu2024] Eq. (23) | implemented [paper] structure; w_n default [proposed] |
@@ -261,9 +288,10 @@ conditions distinguishing evaluations/iterations/visits/cycles/skips.
 
 ## 12. Identified dimensional, definitional and assumption issues (review output; nothing changed silently)
 
-1. **Eq. (23) term-scale gap** (m² vs β·dimensionless): resolved by the paper's β =
-   1e6 for reproduction; any change of tracking-cost scale or scanning definition
-   reopens the issue → item-13 normalization plan. No code change made.
+1. **Eq. (23) term-scale gap** (tracking term in weight·m²; scanning term β·dimensionless-Γ
+   — β carrying the tracking-term dimension, see §9): resolved by the paper's β = 1e6
+   for reproduction; any change of tracking-cost scale or scanning definition reopens
+   the issue → item-13 normalization plan. No code change made.
 2. **`Γ` uncapped** [paper]: Γ > 1 is meaningful only if `S_0` is a true reference
    (not the maximum); with the synthetic provider this is moot but documented.
 3. **`SNR0` missing**: the Eq. (5)-(6)-(8) chain is implemented but cannot produce an

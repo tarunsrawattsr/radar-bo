@@ -18,12 +18,17 @@ so absence-of-evidence statements below are explicitly bounded by that scope.
 
 The radar resource-management problem — allocating dwell time between tracking N
 maneuvering targets and scanning under a time budget — is established in the works of
-the Lu/Gursoy/Mohan/Varshney group and their cited lineage: constrained POMDP and
-Lagrangian-relaxation allocations ([Schöpe2021], [Schöpe2019], [Schöpe2022]),
-optimization-based scheduling ([Orman1996], [Butler1997], [Byrne2015]),
-game-theoretic power allocation ([Deligiannis2017]), cognitive-RRM surveys
-([Charlish2020]), and the group's own CDRL line ([LuGursoy2023] TCCN, [Lu2024] ICC,
-[Lu2024-ext] journal extension). The model equations this repository reproduces
+the Lu/Gursoy/Mohan/Varshney group and their cited lineage. M8A-R1 (source-PDF
+verification) makes the attribution chain version-explicit: the ICC paper's own
+14-entry reference list cites [Schöpe2021] (motion model, SNR model, tracking cost),
+[Koch1999] (SNR), [Meikle2008] (inverse-SNR variance), [Welch & Bishop 1995]
+(Kalman filter), [Shnidman2002] (detection SNR), [Altman1999] and [Tessler2018]
+(CMDP theory), plus cognitive-radar/DRL context ([Charlish2020], [Haykin2006],
+[Mnih2015], [Thornton2020], [Selvi2020], [Meng2021]). The ICC solver is a constrained
+DQN; the extended journal version ([Lu2024-ext], DDPG) adds the Lagrangian-relaxation
+and multi-target-allocation lineage in its larger bibliography. The ICC paper's
+CDRL line: [LuGursoy2023] TCCN is cited by the extended version; the ICC list itself
+does not cite it. The model equations this repository reproduces
 (CV motion, SNR-dependent noise, EKF, trace-of-position-covariance cost, utility with
 trade-off coefficient) come from this line and are established within it.
 
@@ -36,7 +41,13 @@ Bayesian optimization for cellular-network/UAV-corridor antenna design is establ
 by [Benz2023] and its extended version (arXiv 2504.05176): GP surrogate with Matérn-5/2
 ARD kernel, EI-type acquisition, candidate pools, and comparisons of HD-BO variants.
 BO methodology in general (surrogate + acquisition + pools) is a mature field; the
-specific configuration we adopt (Matérn-5/2, N_c = 500) is that paper's.
+specific configuration we adopt (Matérn-5/2 kernel with max-a-posteriori
+hyperparameter fitting, N_c = 500 candidate pools, ξ = 0.01) is that paper's and —
+M8A-R1 correction — is verified IN the GLOBECOM PDF itself (BoTorch implementation,
+EI over 500 candidates in 10 batches × 50, block-wise BS-by-BS 2-D subproblems,
+STOCHASTIC evaluations). Its BO lineage ([Maggi2021] JSAC, [Shahriari2016] Proc. IEEE
+review, [Huang2006] sequential kriging, [Balandat2020] BoTorch) establishes the
+method's maturity independently of our adaptation.
 
 Gap status: NO gap claimed here — we adapt established BO methodology to a generic
 engine; no BO-method novelty is claimed.
@@ -49,9 +60,11 @@ against the [Lu2024] utility and budget constraints — is OUR construction. Nei
 paper does this: the radar paper's bibliography (reviewed in the literature register)
 contains no BO sources; [Benz2023] addresses cellular antennas, not radar dwell time.
 
-**Boundary of this statement:** this is bounded by the sources actually reviewed
-(the two papers' bibliographies); a broader search might find BO-radar-resource work
-that neither paper cites. Any novelty claim about this combination would therefore
+**Boundary of this statement:** bounded by the sources actually reviewed — now
+including the ICC paper's own 14-entry reference list (PDF-verified in M8A-R1, which
+contains NO Bayesian-optimization source) and the GLOBECOM paper's 31-entry list
+(BO-for-cellular-networks, not radar). A broader search might still find
+BO-radar-resource work that neither paper cites. Any novelty claim about this combination would therefore
 require a systematic literature search FIRST — which M8A deliberately did not perform.
 No novelty claim is made.
 
@@ -66,10 +79,10 @@ difference of method — NOT evidence of superiority and NOT a novelty claim.
 
 | Potential contribution | What it would need | Status |
 |---|---|---|
-| BO as a competitive alternative for radar dwell-time allocation | Systematic literature search (BO × radar resource management); comparison against the papers' own baselines (EA/DA/OA of [Lu2024-ext]) on comparable scenarios; staged validation V1–V5 of `APPLICATION_VALIDATION_PLAN.md` | NOT STARTED — no claim made |
+| BO as a competitive alternative for radar dwell-time allocation | Systematic literature search (BO × radar resource management); comparison against the papers' own baselines (Equal/Random Allocation of the ICC paper; EA/DA/OA of the extended version) on comparable scenarios; staged validation V1–V5 of `APPLICATION_VALIDATION_PLAN.md` | NOT STARTED — no claim made |
 | Block/structured BO architectures (joint/alternating/pair-wise) for grouped decision variables | Evidence beyond synthetic separable/coupled benchmarks; structure-perturbation robustness (V4.4); comparison with established block-BO literature (a search also not yet performed) | Synthetic descriptive results only (M6/M7 archives); motivation, not proof |
 | Validated immutable shared initial designs for fair algorithm comparison | Assessment against existing fair-comparison practice in the BO literature (not yet searched); peer review of the interface | Implemented + 11 regression tests; engineering contribution at most, unverified as novel |
-| Reproducible radar-model reference implementation | The ICC paper's own artifact availability would have to be checked; our implementation currently lacks SNR₀ (missing in BOTH paper versions), so even "reproduction" is partial | Partial reproduction documented; no completeness claim |
+| Reproducible radar-model reference implementation | The ICC paper's own artifact availability would have to be checked; our implementation currently lacks SNR₀ (missing in BOTH paper versions), so even "reproduction" is PARTIAL and EQUATION-LEVEL (M8A-R1 scope statement: equations + Table II parameters are reproduced; the papers' experiments, solvers and results are not) | Partial reproduction documented; no completeness claim |
 | β-normalized utility formulation (assumptions §13 plan) | A study demonstrating that the normalized formulation preserves rankings under scale changes, plus literature check whether equivalent normalization exists | PROPOSED ONLY — not implemented, no claim |
 
 ## 5. Gaps in the primary sources that our work did NOT fill (recorded honestly)

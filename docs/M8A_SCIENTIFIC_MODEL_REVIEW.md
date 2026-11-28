@@ -3,7 +3,14 @@
 _The umbrella review document for milestone M8A. It records what was verified, what
 was reconciled, what was changed (and what was deliberately NOT changed), and indexes
 the companion deliverables. Understandable independently of the project conversation.
-Status: COMPLETE — stopped for cross-verification before M8B, per the milestone gate._
+Status: COMPLETE — stopped for cross-verification before M8B, per the milestone gate.
+
+**Revised in M8A-R1 (2026-11-28):** the source PDFs were re-extracted and verified
+line-by-line, and factual errors found by the independent review were corrected
+throughout the seven M8A documents (dwell action set, scanning-parameter count,
+β dimension, Eq. (6) printed form, initialization profiles, BO-suitability framing).
+The correction log with per-finding status is `docs/M8A_R1_CROSS_VERIFICATION.md`;
+the outstanding scientific decisions are consolidated in `docs/M8B_DECISION_REGISTER.md`._
 
 Environment at review time: commit `371952a` (M7 final) base; Python 3.11.2;
 torch 2.15.0+cu132, botorch 0.18.1, gpytorch 1.15.2, numpy 2.4.6, scipy 1.17.1,
@@ -102,8 +109,9 @@ CANDIDATE values requiring separate review and approval — NOT adopted.
 1. `tracking.reference_snr`;
 2. `resource.task_utility_weights`;
 3. `tracking.measurement_driven_initial_velocity{,_variance}`;
-4. the eleven `scanning.*` hardware/scenario parameters (only if the physical chain
-   is ever approved for implementation);
+4. the TWELVE unresolved `scanning.*` parameters (7 ICC Table-I hardware symbols +
+   beam spacing + S_0 + the P_d/P_f/SNR_min detection triple — only if the physical
+   chain is ever approved for implementation);
 5. `optimization.evaluation_budget` (per experiment, by design).
 
 ## 4. Literature review (item 7) — summary
