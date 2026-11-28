@@ -61,6 +61,20 @@ class InitialDesignSettings(StrictModel):
 
     size: int = Field(default=30, ge=1, description="Initial-design size (inherited M5/M6; not proven optimal).")
     sampler: Literal["seeded_uniform_feasible"] = "seeded_uniform_feasible"
+    mode: Literal["seeded_sampler", "explicit_shared"] = Field(
+        default="seeded_sampler",
+        description=(
+            "M8A (item 3.3): 'seeded_sampler' preserves the M5/M6 behavior (same seed per "
+            "group + retrospective verification from stored records). 'explicit_shared' "
+            "generates the design ONCE per (benchmark, dimension, seed) with the registry's "
+            "deterministic sampler, validates feasibility, and passes the SAME immutable "
+            "configuration list to every applicable optimization method through the engine's "
+            "validated initial_design_configs interface (methods with an initial-design "
+            "phase, i.e. the BO architectures; random search has no initial phase and "
+            "explicitly ignores the design); identical initial objectives are then "
+            "guaranteed by construction (still verified from stored records)."
+        ),
+    )
     sharing_policy: Literal["same_seed_with_stored_record_verification"] = Field(
         default="same_seed_with_stored_record_verification",
         description=(

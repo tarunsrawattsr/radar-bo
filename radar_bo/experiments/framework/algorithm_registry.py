@@ -48,10 +48,12 @@ class AlgorithmRegistryEntry:
 
     def run(self, benchmark: BenchmarkRegistryEntry, dimension: int | None, seed: int,
             config: OptimizationConfig, reference_value: float | None,
-            reference_method: str | None) -> AlgorithmRunResult:
+            reference_method: str | None, initial_design_configs: list[list[float]] | None = None
+            ) -> AlgorithmRunResult:
         return self.runner(
             benchmark=benchmark, dimension=dimension, seed=seed, config=config,
             reference_value=reference_value, reference_method=reference_method,
+            initial_design_configs=initial_design_configs,
         )
 
 
@@ -67,7 +69,14 @@ def _recommended(problem, mode: str) -> list[tuple[str, tuple[int, ...]]] | None
     raise AlgorithmRegistryError(f"Unknown recommended-blocks mode: {mode}")
 
 
-def _run_random_search(benchmark, dimension, seed, config, reference_value, reference_method) -> AlgorithmRunResult:
+def _run_random_search(benchmark, dimension, seed, config, reference_value, reference_method,
+                       initial_design_configs=None) -> AlgorithmRunResult:
+    # M8A: the runner passes initial_design_configs to every search-method entry for a
+    # uniform interface. Random search has NO initial-design phase (its identity is
+    # uniform random feasible sampling), so the design is explicitly IGNORED here —
+    # injecting it would change RS semantics and break comparability with historical
+    # RS records. Fairness vs BO rests on equal budgets, which the runner enforces.
+    del initial_design_configs
     problem = benchmark.problem(dimension)
     budget = config.evaluation_budget
     assert budget is not None
@@ -76,7 +85,8 @@ def _run_random_search(benchmark, dimension, seed, config, reference_value, refe
 
 
 def _run_bo(architecture: str):
-    def _runner(benchmark, dimension, seed, config, reference_value, reference_method) -> AlgorithmRunResult:
+    def _runner(benchmark, dimension, seed, config, reference_value, reference_method,
+                initial_design_configs=None) -> AlgorithmRunResult:
         problem = benchmark.problem(dimension)
         if architecture == "joint":
             specs = None
@@ -88,9 +98,12 @@ def _run_bo(architecture: str):
                     f"Benchmark '{benchmark.benchmark_id}' provides no recommended {architecture} grouping."
                 )
             mode = "alternating" if architecture == "alternating" else "coordinate"
-        run_config = config.model_copy(
-            update={"search_mode": mode, "variable_blocks": specs, "random_seed": seed}
-        )
+        update = {"search_mode": mode, "variable_blocks": specs, "random_seed": seed}
+        if initial_design_configs is not None:
+            # M8A item 3.3: validated immutable shared design (the engine re-validates
+            # dimension/finiteness/feasibility and fails fast on any violation).
+            update["initial_design_configs"] = [list(map(float, row)) for row in initial_design_configs]
+        run_config = config.model_copy(update=update)
         result = BayesianOptimizer(
             problem, run_config,
             reference_objective=reference_value,

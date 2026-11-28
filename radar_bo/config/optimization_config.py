@@ -108,6 +108,18 @@ class OptimizationConfig(StrictModel):
             "at the current configuration and are reported)."
         ),
     )
+    initial_design_configs: list[list[float]] | None = Field(
+        default=None,
+        description=(
+            "M8A (item 3.3): EXPLICIT shared initial design. When provided, the engine evaluates "
+            "exactly these configurations (in the given order) as the initial design instead of "
+            "drawing the seeded sampler. The input is treated as IMMUTABLE (copied on use, never "
+            "mutated). Validation: len == num_initial_observations, every row has the problem "
+            "dimension, finite values and a FEASIBLE complete vector (infeasible or malformed "
+            "designs fail fast with ValueError — never skipped, never repaired). None preserves "
+            "the M5/M6 seeded-sampler behavior bit-for-bit."
+        ),
+    )
     evaluations_per_block_visit: int = Field(
         default=1, ge=1,
         description=(

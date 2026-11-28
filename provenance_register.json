@@ -966,6 +966,36 @@
       "notes": [
         "No milestone renumbering was applied to existing artifacts; existing archives keep their original M5/M6 labels."
       ]
+    },
+    {
+      "name": "experiment.m8a_run_count_reconciliation",
+      "value": {
+        "archived_full_matrix_records": 220.0,
+        "pilot_records": 32.0
+      },
+      "unit": "count",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M8A item 3.2 reconciliation: the durable M6 full-matrix archive contains exactly 220 records (160 primary = 4 benchmarks x 4 methods x 10 seeds + 60 dimension-study = 2 x 3 x 10) and the pilot archive 32 records. The '230 runs' figure quoted in the M6/M7 narrative summaries was an ARITHMETIC/REPORTING ERROR (correct count 220); the archives themselves were always internally consistent and were validated as such by the M7 independent checks. No records are missing or invented.",
+      "sensitivity_range": null,
+      "notes": [
+        "Corrected via documentation only; historical archive values untouched."
+      ]
+    },
+    {
+      "name": "experiment.m8a_shared_initial_design_interface",
+      "value": {
+        "engine_parameter": 1.0,
+        "framework_mode": 1.0
+      },
+      "unit": "policy",
+      "source": "proposed_assumption",
+      "reference": null,
+      "rationale": "M8A item 3.3: BayesianOptimizer accepts initial_design_configs (validated immutable explicit shared design: exact count, dimension, finiteness and feasibility enforced fail-fast; input never mutated; pool report records the explicit mode with zero sampling cost). The experiment framework gains initial_design.mode='explicit_shared': one deterministic design per (benchmark, dimension, seed) is generated from the registry sampler and passed UNCHANGED to every applicable method, guaranteeing identical initial configurations AND observed values by construction (still verified from stored records). Default None preserves M5/M6 seeded behavior bit-for-bit (frozen-trajectory regression test passes unchanged).",
+      "sensitivity_range": null,
+      "notes": [
+        "Historical optimization trajectories and archives are unaffected."
+      ]
     }
   ]
 }

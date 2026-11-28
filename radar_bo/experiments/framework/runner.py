@@ -265,12 +265,37 @@ class ExperimentRunner:
                 problem = benchmark.problem(spec.dimension)  # INDEPENDENT instance per run
                 engine_config = _engine_config(self.config, spec.seed)
                 reference = benchmark.reference(spec.dimension)
+                initial_design_configs = None
+                if self.config.initial_design.mode == "explicit_shared":
+                    # M8A item 3.3: one deterministic design per (benchmark, dimension, seed),
+                    # generated from a FRESH problem instance, feasibility-validated, then
+                    # passed unchanged to every applicable method.
+                    from radar_bo.optimization.bo.candidates import CandidateGenerator
+
+                    design_problem = benchmark.problem(spec.dimension)
+                    design_pool, _report = CandidateGenerator(
+                        design_problem,
+                        num_candidates=self.config.initial_design.size,
+                        seed=spec.seed,
+                        exclude_evaluated=True,
+                    ).generate_pool()
+                    if design_pool.shape[0] < self.config.initial_design.size:
+                        raise RuntimeError(
+                            f"explicit_shared initial design could not be generated for "
+                            f"{spec['benchmark_id']} d={spec['dimension']} seed={spec['seed']} "
+                            f"({design_pool.shape[0]} feasible points found)."
+                        )
+                    initial_design_configs = [
+                        [float(v) for v in design_pool[i]]
+                        for i in range(self.config.initial_design.size)
+                    ]
                 started = time.perf_counter()
                 out = algorithm.run(
                     benchmark=benchmark, dimension=spec.dimension, seed=spec.seed,
                     config=engine_config,
                     reference_value=reference.objective_value,
                     reference_method=reference.verification_method,
+                    initial_design_configs=initial_design_configs,
                 )
                 wall = time.perf_counter() - started
                 if out.architecture in ("random_search",):

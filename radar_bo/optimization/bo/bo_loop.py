@@ -92,7 +92,7 @@ from radar_bo.optimization.bo.blocks import (
     resolve_blocks,
     validate_blocks,
 )
-from radar_bo.optimization.bo.candidates import CandidateGenerator
+from radar_bo.optimization.bo.candidates import CandidateGenerator, CandidatePoolReport
 from radar_bo.optimization.bo.dataset import ObservationDataset
 from radar_bo.optimization.bo.problem import OptimizationProblem
 from radar_bo.optimization.bo.results import IterationDiagnostics, OptimizationResult
@@ -230,9 +230,37 @@ class BayesianOptimizer:
             maximize=problem.maximize,
         )
         allow_duplicates_in_dataset = problem.observation_noise_std is not None
-        design_generator = CandidateGenerator(
-            problem, num_candidates=settings.num_initial_observations, seed=self.seed, exclude_evaluated=True
-        )
+        # ---- M8A (item 3.3): validated immutable EXPLICIT shared initial design ----
+        explicit_initial: tuple[tuple[float, ...], ...] | None = None
+        if settings.initial_design_configs is not None:
+            raw = settings.initial_design_configs
+            if len(raw) != settings.num_initial_observations:
+                raise ValueError(
+                    f"initial_design_configs must contain exactly num_initial_observations "
+                    f"({settings.num_initial_observations}) rows; got {len(raw)}."
+                )
+            frozen_rows: list[tuple[float, ...]] = []
+            for i, row in enumerate(raw):
+                arr = np.asarray(row, dtype=np.float64).flatten()
+                if arr.shape[0] != problem.dimension:
+                    raise ValueError(
+                        f"initial_design_configs[{i}] has dimension {arr.shape[0]}; "
+                        f"problem dimension is {problem.dimension}."
+                    )
+                if not np.all(np.isfinite(arr)):
+                    raise ValueError(f"initial_design_configs[{i}] contains non-finite values.")
+                if not problem.is_feasible(arr):
+                    raise ValueError(
+                        f"initial_design_configs[{i}] is infeasible for the problem's constraints "
+                        "(explicit shared designs are validated, never repaired or skipped)."
+                    )
+                frozen_rows.append(tuple(float(v) for v in arr))
+            explicit_initial = tuple(frozen_rows)  # immutable snapshot of the shared design
+            design_generator = None
+        else:
+            design_generator = CandidateGenerator(
+                problem, num_candidates=settings.num_initial_observations, seed=self.seed, exclude_evaluated=True
+            )
         candidate_generator = CandidateGenerator(
             problem,
             num_candidates=settings.num_acquisition_candidates,
@@ -279,7 +307,25 @@ class BayesianOptimizer:
         current_value: float | None = None
 
         # ---- 2-3. Initial design (consumes the same budget; instruction 22) ----
-        initial_pool, pool_report = design_generator.generate_pool()
+        if explicit_initial is not None:
+            # M8A item 3.3: no sampling occurred; the shared design IS the pool.
+            initial_pool = np.asarray(explicit_initial, dtype=np.float64)
+            pool_report = CandidatePoolReport(
+                requested_size=len(explicit_initial),
+                n_generated=len(explicit_initial),
+                final_size=len(explicit_initial),
+                rejected_infeasible=0,
+                rejected_duplicate_within_pool=0,
+                rejected_duplicate_evaluated=0,
+                seed=int(self.seed),
+                excluded_evaluated=False,
+                generation_duration_s=0.0,
+                feasibility_validation_s=0.0,
+                notes=["Explicit shared initial design (M8A item 3.3): validated immutable input; "
+                       "no sampler was used; feasibility was verified before optimization started."],
+            )
+        else:
+            initial_pool, pool_report = design_generator.generate_pool()
         pool_stats = {
             "pool_requests": 1,
             "pool_requested_total": pool_report.requested_size,

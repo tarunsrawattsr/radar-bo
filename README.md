@@ -261,6 +261,7 @@ Integration tests must cover configuration-to-simulator, evaluator-to-dataset, d
 - [x] M5 (duplicate line in this specification): same scope; the duplicate is marked once with the line above.
 - [x] M6: Implement dataset, GP, acquisition, candidate selection and stopping criteria using BoTorch. *(2026-11-26: delivered INSIDE M5 as application-independent infrastructure per the working instructions — observation dataset, NumPy↔torch conversions, float64-CPU SingleTaskGP with explicit Matérn-5/2 + Normalize/Standardize, conventional LogExpectedImprovement (installed API verified: no xi), 500-candidate feasible pools, generic 15-step single-candidate loop with budget accounting and 7 stopping conditions.)*
 - [x] M7: Validate joint, alternating and coordinate-wise BO on synthetic objectives using equal budgets. *(2026-11-26: delivered as instruction-stream M6 — ONE generic block-cyclic engine with interchangeable variable-block structures (joint = single full block, the M5 baseline; alternating = two user-defined blocks; pair-wise = two-variable blocks), shared dataset/surrogate, improvement-only current-configuration acceptance, global-budget accounting, 4/8/16-D synthetic benchmarks with independent references, 10-seed comparison vs random search; equal total budgets across architectures. Alternating/coordinate are NOT reproduced radar algorithms.)*
+- [x] M8A: Scientific Model Review and Parameter Resolution. *(2026-11-26: delivered as instruction-stream item — final M7 regression re-verified (668 passed on `371952a`); run-count reconciliation (220 archived records exactly; "230" was a narrative arithmetic error, corrected); validated immutable shared-initial-design interface (engine + framework `explicit_shared`, backward compatible, 11 new tests); full provenance audit (81 entries / 17 unresolved, resolution paths per unresolved parameter, NO invented values); literature review incl. the authors' extended arXiv version (2606.05526) with version-difference table; consolidated mathematical specification with dimensional findings; assumptions/limitations, application-validation plan, research-gap assessment; seven documents under `docs/`. STOPPED before M8B — M8B requires explicit approval of the scientific assumptions and proposed model specifications in `docs/`.)*
 - [ ] M8: Implement reproducible experiment runner, logs, statistics and figures. *(figures/statistics exist per experiment under results/ and tracked archives under research_results/; a unified runner/analysis package remains open)*
 - [ ] M9: Document unresolved application-specific physical assumptions and scope of subsequent research; do not represent unfinished extensions as operational.
 
@@ -287,18 +288,20 @@ A reproducible research repository exists with validated configuration models, a
 
 This section records what is actually implemented and tested. It does not add requirements; sections 1–15 remain the specification.
 
-### Status: M1–M7 (instruction stream) complete — M8/M9 of the instruction stream NOT started
+### Status: M1–M7 (instruction stream) + M8A (scientific model review) complete — M8B requires explicit approval; M8/M9 of the roadmap NOT started
 
 | Milestone | State | Evidence |
 |---|---|---|
 | M1 repository/environment/dependencies | Done | `.venv` (Python 3.11.2), `pyproject.toml`, `requirements-lock.txt` (62 pinned deps), `.gitignore` |
-| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (79 entries, 17 unresolved preserved as `None`), layer-separation guard tests |
+| M2 config + provenance | Done | `radar_bo/config/` (7 models + register), `provenance_register.json` (81 entries after the two M8A additions, 17 unresolved preserved as `None`), layer-separation guard tests |
 | M3 planar estimation baseline | Done | `radar_bo/environment/`, `radar_bo/radar/` (EKF parts), `radar_bo/numerics.py` — Eqs. (1)-(15); synthetic validation in `results/m3_synthetic_validation/` (regenerable) |
 | M4 metric/allocation/feasibility/snapshot interfaces | Done | `radar_bo/radar/scanning_model.py` (Eq. (21)), `radar_bo/optimization/` (allocation, constraints, accounting, Eq. (23) evaluator), `radar_bo/simulation/` (frozen snapshots), `radar_bo/experiments/m4_integration_validation.py` |
 | M5 generic BO engine (incl. README-M6 components) | Done | `radar_bo/optimization/bo/` (problem interface, benchmarks A/B/C, reference solvers, random search, dataset, conversions, GP surrogate, LogEI acquisition, candidate pools, results records, 15-step loop), `radar_bo/experiments/m5_synthetic_bo_validation.py`, `results/m5_synthetic_bo_validation/` (seeds 0-9; durably archived in `research_results/`) |
-| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (230 runs, all validity checks green), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; M7 review corrections in "M7 targeted M6 review" |
+| M6 block architectures (README-M7 scope) | Done | `radar_bo/optimization/bo/blocks.py`, `scheduling.py`, `block_candidates.py`, `benchmarks_highdim.py` (4/8/16-D), block-cyclic refactor of `bo_loop.py` (joint preserved), `radar_bo/experiments/m6_block_architecture_comparison.py`, `m6_generate_figures.py`, `m6_merge_results.py`; pilot + full matrix executed (220 archived records exactly; the earlier narrative said "230 runs" — arithmetic/reporting error corrected in M8A via `experiment.m8a_run_count_reconciliation`, archives always internally consistent), measured narrative in "End-of-M6 status"; durable archive `research_results/m6_block_architecture_full_evidence.json`; M7 review corrections in "M7 targeted M6 review" |
 | M7 experimental framework (instruction stream) | Done | `radar_bo/experiments/framework/` (config, benchmark/algorithm registries, matrix, checkpointed runner, metrics, runtime analysis, candidate profiling, archive integrity, sensitivity, reporting, figures, simulator adapter), validation experiment + sensitivity pilot, review corrections + archive validation + paired summaries (derived artifacts in `research_results/`); see "M7 experimental framework" below |
-| M8/M9 (instruction stream) | Not started | Require explicit approval |
+| M8A scientific model review (instruction stream) | Done | shared-initial-design interface (`optimization_config.py` + `bo_loop.py` + framework `explicit_shared`, 11 tests in `radar_bo/tests/test_shared_initial_design.py`), provenance 81/17 + resolution paths + extended-version cross-reference (`radar_bo/experiments/m8a_generate_parameter_register.py` → `docs/PARAMETER_RESOLUTION_REGISTER.md`), seven review documents under `docs/`; see "M8A scientific model review" below |
+| M8B (instruction stream: application optimization) | Not started | REQUIRES explicit user approval of scientific assumptions + proposed model specifications (`docs/M8A_SCIENTIFIC_MODEL_REVIEW.md` §10, `docs/APPLICATION_VALIDATION_PLAN.md`) |
+| M8/M9 (roadmap: runner package / final docs) | Not started | Require explicit approval |
 
 ### Installation
 
@@ -313,7 +316,7 @@ The lock was frozen from the working environment: numpy 2.4.6, pydantic 2.14.4, 
 ### Test execution
 
 ```bash
-.venv/bin/python -m pytest        # 668 passed (~18 min): M1-M7 config + estimation + interfaces + generic BO engine + block architectures + experimental framework
+.venv/bin/python -m pytest        # 680 passed (~19 min): M1-M7 config + estimation + interfaces + generic BO engine + block architectures + experimental framework + M8A shared-initial-design suite
 ```
 
 ### Experiment execution
@@ -392,12 +395,16 @@ radar_bo/                  package root (editable install; suggested top-level d
 │                           integrity + checksums, sensitivity scenarios, report
 │                           + figure generation, simulator-interface adapter
 ├── numerics.py            shared validation helpers (shapes, finiteness, covariance, angles)
-└── tests/                 668 tests incl. layer-separation and ground-truth-leakage guards
+└── tests/                 680 tests incl. layer-separation, ground-truth-leakage and shared-design guards
+
+docs/                      M8A review deliverables (7 documents; see "M8A scientific model review")
 provenance_register.json   authoritative parameter register snapshot (regenerable)
 requirements-lock.txt      pinned dependency lock
 research_results/          TRACKED durable evidence archives (per-seed histories, references,
                            runtimes, versions, commit ids; see research_results/README.md)
-notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored, regenerable)
+notes/paper_extracts/      plain-text extractions of the two reference PDFs (gitignored);
+                           LOST in the 2026-11-26 sandbox reset and not regenerated —
+                           literature facts re-verified from arXiv extended versions (see docs/)
 ```
 
 Planned but not yet created: `analysis/` and `main.py` (unified experiment-runner package).
@@ -645,6 +652,68 @@ package") plus parts of roadmap M7 ("analysis extensions"). No historical
 artifacts were renamed; existing archives keep their M5/M6 labels. This is the
 explicitly identified additional milestone.
 
+### M8A scientific model review (instruction-stream item; STOP before M8B)
+
+Scope: review only — NO application-specific optimization, NO physical radar
+power-allocation implementation, NO corridor sensing optimization, NO large-scale
+application experiments. The only code change is the backward-compatible
+shared-initial-design interface (below) plus two new provenance entries and the
+documentation set.
+
+**Evidence reconciliation:**
+- Final M7 regression: 668 passed (676 s) re-confirmed on committed `371952a`.
+- Run counts: the M6 full-matrix archive holds exactly 220 records (160 primary =
+  4 benchmarks × 4 methods × 10 seeds + 60 dimension-study = 2 × 3 × 10;
+  alternating deliberately omitted from the dimension study) and the pilot archive
+  32 records. The narrative figure "230 runs" was an arithmetic/reporting error —
+  corrected via `experiment.m8a_run_count_reconciliation`; archives untouched.
+- Profiling findings preserved: candidate generation 75–80% of wall, GP fit 20–23%,
+  acquisition <1%; "GP fitting dominates" stays RETRACTED; no efficiency inference
+  from acquisition-search dimensionality alone.
+
+**Shared initial designs (validated immutable interface; fairness by construction):**
+- Engine: `OptimizationConfig.initial_design_configs` — fail-fast ValueError on
+  count/dimension/finiteness/feasibility; immutable tuple snapshot; explicit designs
+  evaluated exactly in order; budget accounting unchanged; pool report notes explicit
+  mode with zero sampling cost. Default `None` preserves M5/M6 behavior bit-for-bit
+  (frozen trajectory 9.905619188792086 reproduced).
+- Framework: `InitialDesignSettings.mode='explicit_shared'` — one design per
+  (benchmark, dimension, seed) generated from a fresh problem and passed unchanged to
+  every applicable method; infeasible design → RuntimeError before any run.
+- 11 regression tests in `radar_bo/tests/test_shared_initial_design.py` (all pass).
+
+**Provenance and documents:**
+- `provenance_register.json`: 81 entries (17 unresolved preserved as `None`; NO
+  missing value replaced by an arbitrary constant; illustrative values always labeled
+  synthetic). Generated review companion: `docs/PARAMETER_RESOLUTION_REGISTER.md`
+  (8-class taxonomy, per-unresolved-parameter resolution paths, extended-version
+  cross-reference, parameters-requiring-approval list).
+- `docs/` deliverables: `M8A_SCIENTIFIC_MODEL_REVIEW.md` (umbrella summary + stop
+  statement), `MATHEMATICAL_MODEL_SPECIFICATION.md` (every implemented equation mapped
+  to paper/proposed/synthetic + dimensional findings),
+  `LITERATURE_AND_SOURCE_REGISTER.md` (verified citations; inaccessible sources marked
+  unavailable; nothing fabricated), `ASSUMPTIONS_AND_LIMITATIONS.md` (paper facts vs
+  proposed assumptions vs settings vs synthetic constructs; accepted resolutions
+  preserved; tracking-state/scanning-metric/resource/β-scaling reviews; honest BO
+  suitability assessment), `APPLICATION_VALIDATION_PLAN.md` (stages V1–V6 with
+  model-rejection conditions; software vs scientific validation separated),
+  `RESEARCH_GAP_ASSESSMENT.md` (established lines, our combination, non-claims).
+
+**Extended-version finding (2026-11-26):** the radar-paper authors' extended journal
+version (arXiv 2606.05526) was fetched and cross-checked. Its Table III reports
+DIFFERENT values from the ICC Table II values reproduced here (σ²_{r,0} 16 vs 100,
+σ²_{θ,0} 1e-6 vs 4e-4, σ²_w 16 vs 25, β 3e4 vs 1e6, Θ_max 0.9 vs 1) and replaces the
+ICC scanning metric (Γ area ratio) with a missed-target count; SNR0 is absent in BOTH
+versions (unresolved status re-confirmed). Its P_f = 1e-3 and P₀ = diag([1e4, 1e4,
+1e2, 1e2]) are recorded as candidate values requiring separate review and approval —
+not adopted. This repository reproduces the ICC values and does not silently switch.
+
+**Proposed decisions documented but NOT applied (each requires separate review +
+approval):** β normalization plan; first-two-observations velocity estimator;
+extended-version candidate values; fixed-altitude/3-D state requirements;
+corridor-metric requirements; a deterministic direct-search control for future
+comparisons.
+
 ### Current limitations
 
 - M3+M4 validate numerical and pipeline correctness only: all experiment artifacts are synthetic-validation records, NOT reproductions of the papers' experiments and NOT operational surveillance capability. The single-run M3 RMS position error is a numerical-validation result, NOT evidence of statistical filter consistency (no consistency analysis, e.g. NEES/NIS, has been performed).
@@ -656,7 +725,8 @@ explicitly identified additional milestone.
 - M5 limitations: the generic engine implements the SINGLE-candidate JOINT mode only (no batching, no alternating/coordinate modes); acquisition supports conventional LogEI for low-noise/deterministic objectives (no noisy qLog variant is exercised); the GP likelihood noise is INFERRED (never forced to zero) even for deterministic benchmarks; the M5 validation budgets (100 evaluations, initial design 30) are provisional synthetic settings, not paper-derived; the seed 0-9 comparison is descriptive over 10 seeds and makes no superiority claim; BO results that fail to beat random search on some seeds are reported as measured; termination at a budget is not proof of global convergence; benchmark C's reference is numerical_approximate and may be exceeded legitimately.
 - M6 limitations: the block architectures use ONE deterministic cyclic scheduler (priority/adaptive scheduling is future work); the improvement-only current-configuration acceptance policy can stall block-restricted search (demonstrated on the stagnation LP — this is honest evidence, not a defect); pair-wise and alternating coincide structurally on problems whose recommended groupings are identical (e.g. separable_4d) and their results must then be read as one architecture (identical numbers there); convergence curves use the per-evaluation incumbent history recorded by the full matrix (exact placement); block-restricted search on tightly constrained problems pays a large candidate-GENERATION cost (mostly-infeasible sampling, rejections never repaired) that can exceed the GP cost it was meant to save; the M6 comparison is descriptive over 10 seeds on synthetic problems only; the constrained-mixed reference is numerical_approximate; the discrete 2-variable block exhausts after 16 distinct combinations and then contributes only skips; figures are regenerable artifacts (not tracked) while the underlying per-seed data IS tracked under research_results/.
 - M6 archived-data caveat (M7 review finding): random-search rows in the M6 archive store the per-evaluation objective SEQUENCE under the key `incumbent_history` (label wrong, data intact — best == max verified); the archived candidate-generation timer includes nested feasibility validation (never add the two fields); corrected semantics live in M7 runner records and derived artifacts.
-- M7 limitations: the framework verifies shared initialization post hoc from stored records instead of injecting externally generated designs into the engine (the engine's seeded sampler IS the shared design; injection would require engine API changes and is documented as a deviation); attempted-evaluation and wall-clock convergence axes are exact ONLY for M7 runner records (pre-M7 archives lack per-iteration timestamps — the axes are reported as unavailable there, never interpolated); Wilcoxon/bootstrap uncertainty at n = 10 is descriptive and assumption-limited; the M7 validation matrix (20 runs) validates INFRASTRUCTURE, not algorithms; sensitivity pilots cover three single-factor scenarios on one benchmark only; the simulator-interface validation uses mock providers (no physical sensing model activated, by design); `results/` artifacts from M6 were lost once to a sandbox reset and are regenerable (the durable tracked archives + checksums are the source of truth).
+- M7 limitations: the framework verifies shared initialization post hoc from stored records instead of injecting externally generated designs into the engine (the engine's seeded sampler IS the shared design; injection would require engine API changes and is documented as a deviation) — ADDRESSED in M8A: the engine now accepts validated immutable `initial_design_configs` and the framework `explicit_shared` mode injects them (the post-hoc verification remains available for pre-M7 archives); attempted-evaluation and wall-clock convergence axes are exact ONLY for M7 runner records (pre-M7 archives lack per-iteration timestamps — the axes are reported as unavailable there, never interpolated); Wilcoxon/bootstrap uncertainty at n = 10 is descriptive and assumption-limited; the M7 validation matrix (20 runs) validates INFRASTRUCTURE, not algorithms; sensitivity pilots cover three single-factor scenarios on one benchmark only; the simulator-interface validation uses mock providers (no physical sensing model activated, by design); `results/` artifacts from M6 were lost once to a sandbox reset and are regenerable (the durable tracked archives + checksums are the source of truth).
+- M8A limitations: the review is documentation + the one backward-compatible interface change only — NO proposed decision was applied (β normalization, initialization candidates, extended-version values, 3-D/corridor requirements all remain documented proposals requiring approval); the literature review relies on arXiv extended versions because IEEE full texts are inaccessible from this environment, and the ICC paper's own reference list is unavailable (the item-7 review uses the extended version's bibliography with the citing paper's own attribution mappings); the paper extracts were lost in the sandbox reset, so Table II facts rest on the earlier extraction as recorded in the provenance register, cross-checked where possible against the fetched extended version; the provenance-register classification of historical entries could not be re-derived from primary sources for every entry and is labeled accordingly.
 - The PyPI torch wheel bundles CUDA runtime libraries (~4 GB installed) although only CPU execution is used; this is a wheel-availability artifact, not a GPU requirement.
 - Ambiguity handling (switchable, documented defaults): process covariance multiplier (`table_variance` = 25 default — a reading of Table II units/prose, NOT an author-confirmed correction; `equation_literal` = 625), initialization policy (`paper_zero_identity` diagnostic default / `measurement_driven` operational / `experimental_custom`), covariance update (`paper_equation_13` default / `joseph`), time-budget semantics (`discounted_cumulative` paper default; `hard_per_slot` proposed BO profile — implemented in M4 and never treated as equivalent to the paper semantics).
 

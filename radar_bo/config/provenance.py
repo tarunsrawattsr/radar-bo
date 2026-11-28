@@ -681,6 +681,32 @@ def build_default_provenance(config: SimulationConfig | None = None) -> Provenan
         notes=["No milestone renumbering was applied to existing artifacts; existing archives keep "
                "their original M5/M6 labels."]))
 
+    # ---- M8A: scientific model review and parameter resolution -----------------
+    reg.register(_entry(
+        "experiment.m8a_run_count_reconciliation",
+        {"archived_full_matrix_records": 220.0, "pilot_records": 32.0},
+        "count", "proposed_assumption",
+        rationale="M8A item 3.2 reconciliation: the durable M6 full-matrix archive contains exactly "
+                  "220 records (160 primary = 4 benchmarks x 4 methods x 10 seeds + 60 dimension-study "
+                  "= 2 x 3 x 10) and the pilot archive 32 records. The '230 runs' figure quoted in the "
+                  "M6/M7 narrative summaries was an ARITHMETIC/REPORTING ERROR (correct count 220); "
+                  "the archives themselves were always internally consistent and were validated as "
+                  "such by the M7 independent checks. No records are missing or invented.",
+        notes=["Corrected via documentation only; historical archive values untouched."]))
+    reg.register(_entry(
+        "experiment.m8a_shared_initial_design_interface",
+        {"engine_parameter": 1.0, "framework_mode": 1.0},
+        "policy", "proposed_assumption",
+        rationale="M8A item 3.3: BayesianOptimizer accepts initial_design_configs (validated immutable "
+                  "explicit shared design: exact count, dimension, finiteness and feasibility enforced "
+                  "fail-fast; input never mutated; pool report records the explicit mode with zero "
+                  "sampling cost). The experiment framework gains initial_design.mode='explicit_shared': "
+                  "one deterministic design per (benchmark, dimension, seed) is generated from the "
+                  "registry sampler and passed UNCHANGED to every applicable method, guaranteeing "
+                  "identical initial configurations AND observed values by construction (still verified "
+                  "from stored records). Default None preserves M5/M6 seeded behavior bit-for-bit "
+                  "(frozen-trajectory regression test passes unchanged).",
+        notes=["Historical optimization trajectories and archives are unaffected."]))
     return reg
 
 
